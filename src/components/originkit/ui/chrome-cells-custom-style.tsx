@@ -533,7 +533,7 @@ const __originkitPresetProps = {
   "background": "#040405",
   "baseColor": "#A4A4A4",
   "accentColor": "#3B66CC",
-  "speed": 78,
+  "speed": 45,
   "hover": 200,
   "web": {
     "warp": 250,

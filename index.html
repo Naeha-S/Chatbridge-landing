@@ -3,43 +3,116 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>ChatBridge: Local AI Conversational Continuity</title>
+    <title>ChatBridge: Local AI Conversational Continuity & Context Portability</title>
     <meta
       name="description"
-      content="A browser extension that preserves conversational context when moving between ChatGPT, Claude, and Gemini without cloud storage or server tracking."
+      content="Free Chrome extension that transfers active conversation context between ChatGPT, Claude, and Gemini with on-device AES-256-GCM encryption and hybrid RRF retrieval."
     />
-    <meta property="og:title" content="ChatBridge: Local AI Conversational Continuity" />
+    <meta
+      name="keywords"
+      content="AI conversational memory, cross-model context handoff, ChatGPT to Claude, ChatGPT to Gemini, local-first LLM memory, AES-256-GCM browser storage, Reciprocal Rank Fusion, WebCrypto extension, prompt token compression"
+    />
+    <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
+    <link rel="canonical" href="https://chatbridge.app/" />
+
+    <!-- Open Graph / Social Sharing Cards -->
+    <meta property="og:title" content="ChatBridge: Local AI Conversational Continuity & Context Portability" />
     <meta
       property="og:description"
-      content="Browser native continuity layer for AI conversations. Hybrid lexical and semantic retrieval with encrypted local storage."
+      content="Carry conversational context across ChatGPT, Claude, and Gemini with encrypted on-device hybrid retrieval and zero telemetry."
     />
     <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://chatbridge.app/" />
     <meta property="og:site_name" content="ChatBridge" />
+
+    <!-- Twitter Cards -->
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="ChatBridge: Local AI Conversational Continuity" />
+    <meta name="twitter:title" content="ChatBridge: Local AI Conversational Continuity & Context Portability" />
     <meta
       name="twitter:description"
-      content="Carry conversational context across ChatGPT, Claude, and Gemini with encrypted local first hybrid memory retrieval."
+      content="Transfer conversational context across ChatGPT, Claude, and Gemini with encrypted on-device hybrid memory retrieval."
     />
+
+    <!-- Schema.org Rich Structured Data Graph -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
-      "@type": "SoftwareApplication",
-      "name": "ChatBridge",
-      "operatingSystem": "Chrome, Chromium, Brave, Edge",
-      "applicationCategory": "ProductivityApplication",
-      "description": "Browser native, local first conversational continuity tool to carry context across ChatGPT, Claude, and Gemini using hybrid retrieval.",
-      "offers": {
-        "@type": "Offer",
-        "price": "0",
-        "priceCurrency": "USD"
-      }
+      "@graph": [
+        {
+          "@type": "SoftwareApplication",
+          "@id": "https://chatbridge.app/#software",
+          "name": "ChatBridge",
+          "operatingSystem": "Chromium, Google Chrome, Brave, Microsoft Edge",
+          "applicationCategory": "UtilitiesApplication",
+          "softwareVersion": "0.4.2",
+          "description": "Browser extension providing local-first conversational continuity between ChatGPT, Claude, and Google Gemini using Reciprocal Rank Fusion and AES-256-GCM encryption.",
+          "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "USD"
+          },
+          "featureList": [
+            "Cross-tab AI conversation memory",
+            "Hardware-backed AES-256-GCM encryption",
+            "Reciprocal Rank Fusion hybrid retrieval (+3.9pp Recall@5)",
+            "95% prompt token reduction",
+            "Zero remote telemetry or cloud databases"
+          ]
+        },
+        {
+          "@type": "HowTo",
+          "name": "How to Transfer AI Conversation Context from ChatGPT to Claude",
+          "description": "Step-by-step procedure to move reasoning, code parameters, and constraints between AI tabs using ChatBridge.",
+          "step": [
+            {
+              "@type": "HowToStep",
+              "name": "Converse in ChatGPT",
+              "text": "Converse with ChatGPT to brainstorm architecture, algorithms, or content strategies."
+            },
+            {
+              "@type": "HowToStep",
+              "name": "Switch to Destination Model",
+              "text": "Open Claude or Gemini in a new browser tab."
+            },
+            {
+              "@type": "HowToStep",
+              "name": "Summon Context",
+              "text": "Press Cmd+Shift+K to summon relevant past dialogue turns ranked by hybrid RRF."
+            },
+            {
+              "@type": "HowToStep",
+              "name": "Execute without re-explaining",
+              "text": "Insert the condensed context pill directly into your target prompt."
+            }
+          ]
+        },
+        {
+          "@type": "FAQPage",
+          "mainEntity": [
+            {
+              "@type": "Question",
+              "name": "Does ChatBridge upload my conversations to a server?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "No. ChatBridge operates 100% on your device. Transcripts are encrypted with AES-256-GCM and stored solely in local chrome.storage.local."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "Which AI platforms are supported?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "ChatGPT (chatgpt.com), Claude (claude.ai), and Google Gemini (gemini.google.com) are natively supported."
+              }
+            }
+          ]
+        }
+      ]
     }
     </script>
   </head>
-  <body class="bg-[#FBFBFA] text-[#1D1D1F] antialiased min-h-screen selection:bg-[#E5E5EA] selection:text-[#1D1D1F]">
+  <body class="bg-[#040405] text-[#F5F5F7] antialiased min-h-screen selection:bg-[#2997FF] selection:text-white">
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
-

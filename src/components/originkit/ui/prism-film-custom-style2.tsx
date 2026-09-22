@@ -516,7 +516,7 @@ const __originkitPresetProps = {
   "background": "#FFFFFF",
   "color1": "#493F6B70",
   "color2": "#1016378A",
-  "speed": 21,
+  "speed": 16,
   "size": 115,
   "angle": 123,
   "split": 31,

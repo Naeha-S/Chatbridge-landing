@@ -1,4 +1,4 @@
-export type PageView = 'home' | 'features' | 'how-it-works' | 'privacy' | 'guides' | 'install';
+export type PageView = 'home' | 'features' | 'how-it-works' | 'privacy' | 'local-privacy' | 'guides' | 'install';
 
 export type GuideSlug =
   | 'chatgpt-to-claude'

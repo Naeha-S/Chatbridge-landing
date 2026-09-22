@@ -13,7 +13,6 @@ interface FooterProps {
 export const Footer: React.FC<FooterProps> = ({
   setCurrentView,
   onOpenInstall,
-  onOpenPaper,
   onOpenFeedback,
   onOpenOnboarding,
 }) => {
@@ -28,27 +27,27 @@ export const Footer: React.FC<FooterProps> = ({
   ];
 
   return (
-    <footer className="bg-[#F5F5F7] border-t border-[#E5E5EA] text-[#6E6E73] text-xs">
+    <footer className="bg-[#F5F5F7] dark:bg-[#07070B] border-t border-[#E5E5EA] dark:border-[#22222E] text-[#6E6E73] dark:text-[#8E8E98] text-xs transition-colors">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 py-14">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10">
           {/* Brand Column */}
           <div className="lg:col-span-2 space-y-3">
             <div className="flex items-center gap-2">
-              <span className="font-semibold text-sm tracking-tight text-[#1D1D1F]">
+              <span className="font-semibold text-sm tracking-tight text-[#1D1D1F] dark:text-[#F5F5F7]">
                 ChatBridge
               </span>
-              <span className="text-[11px] font-mono text-[#6E6E73] bg-white px-1.5 py-0.5 rounded border border-[#E5E5EA]">
+              <span className="text-[11px] font-mono text-[#6E6E73] dark:text-[#8E8E98] bg-white dark:bg-[#14141E] px-1.5 py-0.5 rounded border border-[#E5E5EA] dark:border-[#262638]">
                 Local-First
               </span>
             </div>
-            <p className="text-[#515154] text-xs leading-relaxed max-w-sm">
+            <p className="text-[#515154] dark:text-[#A1A1A6] text-xs leading-relaxed max-w-sm">
               A browser extension for cross-assistant continuity. Carry useful discussion context between ChatGPT, Claude, and Gemini without repeatedly starting from zero.
             </p>
             <div className="flex items-center gap-2.5 pt-2">
               <button
                 id="footer-install-btn"
                 onClick={onOpenInstall}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#1D1D1F] hover:bg-[#333336] text-white text-xs font-medium transition-colors"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#1D1D1F] dark:bg-white hover:bg-[#333336] dark:hover:bg-[#E5E5EA] text-white dark:text-[#0A0A0D] text-xs font-medium transition-colors"
               >
                 <DownloadIcon className="w-3.5 h-3.5" />
                 <span>Add to Chrome</span>
@@ -59,7 +58,7 @@ export const Footer: React.FC<FooterProps> = ({
                   setCurrentView('features');
                   window.scrollTo({ top: 0, behavior: 'smooth' });
                 }}
-                className="inline-flex items-center px-3 py-1.5 rounded-full bg-white hover:bg-[#E5E5EA] border border-[#D1D1D6] text-[#1D1D1F] text-xs font-medium transition-colors"
+                className="inline-flex items-center px-3 py-1.5 rounded-full bg-white dark:bg-[#14141E] hover:bg-[#E5E5EA] dark:hover:bg-[#20202E] border border-[#D1D1D6] dark:border-[#2C2C3E] text-[#1D1D1F] dark:text-[#E5E5EA] text-xs font-medium transition-colors"
               >
                 <span>Engineering Details</span>
               </button>
@@ -68,51 +67,19 @@ export const Footer: React.FC<FooterProps> = ({
 
           {/* Architecture Links */}
           <div className="space-y-2.5">
-            <h4 className="text-xs font-mono font-medium uppercase tracking-wider text-[#1D1D1F]">
+            <h4 className="font-mono text-xs font-medium uppercase tracking-wider text-[#1D1D1F] dark:text-[#F5F5F7]">
               Architecture
             </h4>
-            <ul className="space-y-1.5">
-              <li>
-                <button
-                  onClick={() => {
-                    setCurrentView('features');
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                  }}
-                  className="hover:text-[#1D1D1F] transition-colors"
-                >
-                  DOM Resilience
-                </button>
-              </li>
-              {onOpenOnboarding && (
-                <li>
-                  <button
-                    onClick={onOpenOnboarding}
-                    className="text-[#0071E3] hover:underline transition-colors font-medium"
-                  >
-                    Setup Guide (Carousel)
-                  </button>
-                </li>
-              )}
+            <ul className="space-y-2">
               <li>
                 <button
                   onClick={() => {
                     setCurrentView('how-it-works');
                     window.scrollTo({ top: 0, behavior: 'smooth' });
                   }}
-                  className="hover:text-[#1D1D1F] transition-colors"
+                  className="hover:text-[#1D1D1F] dark:hover:text-white transition-colors"
                 >
-                  Pipeline Stages
-                </button>
-              </li>
-              <li>
-                <button
-                  onClick={() => {
-                    setCurrentView('privacy');
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                  }}
-                  className="hover:text-[#1D1D1F] transition-colors"
-                >
-                  AES-256-GCM Storage
+                  Continuity Pipeline
                 </button>
               </li>
               <li>
@@ -121,127 +88,154 @@ export const Footer: React.FC<FooterProps> = ({
                     setCurrentView('features');
                     window.scrollTo({ top: 0, behavior: 'smooth' });
                   }}
-                  className="hover:text-[#1D1D1F] transition-colors"
+                  className="hover:text-[#1D1D1F] dark:hover:text-white transition-colors"
                 >
-                  Retrieval Benchmarks
+                  Hybrid RRF Retrieval
+                </button>
+              </li>
+              <li>
+                <button
+                  onClick={() => {
+                    setCurrentView('features');
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                  }}
+                  className="hover:text-[#1D1D1F] dark:hover:text-white transition-colors"
+                >
+                  Dynamic Prompt Compression
+                </button>
+              </li>
+              <li>
+                <button
+                  onClick={() => {
+                    setCurrentView('features');
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                  }}
+                  className="hover:text-[#1D1D1F] dark:hover:text-white transition-colors"
+                >
+                  DOM Observation & Fallbacks
                 </button>
               </li>
             </ul>
           </div>
 
-          {/* Guides & Research */}
+          {/* Guides Links */}
           <div className="space-y-2.5">
-            <h4 className="text-xs font-mono font-medium uppercase tracking-wider text-[#1D1D1F]">
-              Guides
+            <h4 className="font-mono text-xs font-medium uppercase tracking-wider text-[#1D1D1F] dark:text-[#F5F5F7]">
+              Guides & Use Cases
             </h4>
-            <ul className="space-y-1.5">
+            <ul className="space-y-2">
               <li>
                 <button
                   onClick={() => {
                     setCurrentView('guides');
+                    window.location.hash = '#chatgpt-to-claude';
                     window.scrollTo({ top: 0, behavior: 'smooth' });
                   }}
-                  className="hover:text-[#1D1D1F] transition-colors"
+                  className="hover:text-[#1D1D1F] dark:hover:text-white transition-colors"
                 >
-                  ChatGPT to Claude
+                  ChatGPT to Claude Continuity
                 </button>
               </li>
               <li>
                 <button
                   onClick={() => {
                     setCurrentView('guides');
+                    window.location.hash = '#chatgpt-to-gemini';
                     window.scrollTo({ top: 0, behavior: 'smooth' });
                   }}
-                  className="hover:text-[#1D1D1F] transition-colors"
+                  className="hover:text-[#1D1D1F] dark:hover:text-white transition-colors"
                 >
-                  ChatGPT to Gemini
+                  ChatGPT to Gemini Research
                 </button>
               </li>
               <li>
                 <button
                   onClick={() => {
                     setCurrentView('guides');
+                    window.location.hash = '#ai-conversation-memory';
                     window.scrollTo({ top: 0, behavior: 'smooth' });
                   }}
-                  className="hover:text-[#1D1D1F] transition-colors"
+                  className="hover:text-[#1D1D1F] dark:hover:text-white transition-colors"
                 >
-                  Local-First Memory
+                  Cross-Assistant AI Memory
                 </button>
               </li>
               <li>
                 <button
                   onClick={() => {
                     setCurrentView('guides');
+                    window.location.hash = '#local-ai-memory';
                     window.scrollTo({ top: 0, behavior: 'smooth' });
                   }}
-                  className="hover:text-[#1D1D1F] transition-colors"
+                  className="hover:text-[#1D1D1F] dark:hover:text-white transition-colors"
                 >
-                  Rank Fusion (RRF)
+                  Local Encrypted Storage Model
                 </button>
               </li>
             </ul>
           </div>
 
-          {/* Trust & Transparency */}
+          {/* Privacy & Support */}
           <div className="space-y-2.5">
-            <h4 className="text-xs font-mono font-medium uppercase tracking-wider text-[#1D1D1F]">
-              Transparency
+            <h4 className="font-mono text-xs font-medium uppercase tracking-wider text-[#1D1D1F] dark:text-[#F5F5F7]">
+              Privacy & Support
             </h4>
-            <ul className="space-y-1.5">
+            <ul className="space-y-2">
               <li>
                 <button
                   onClick={() => {
-                    setCurrentView('privacy');
+                    setCurrentView('local-privacy');
                     window.scrollTo({ top: 0, behavior: 'smooth' });
                   }}
-                  className="hover:text-[#1D1D1F] transition-colors"
+                  className="hover:text-[#1D1D1F] dark:hover:text-white transition-colors"
                 >
-                  Privacy Architecture
-                </button>
-              </li>
-              <li>
-                <button
-                  onClick={() => {
-                    setCurrentView('privacy');
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                  }}
-                  className="hover:text-[#1D1D1F] transition-colors"
-                >
-                  Threat Model Matrix
+                  Local Privacy Model
                 </button>
               </li>
               <li>
                 <button
                   onClick={onOpenFeedback}
-                  className="hover:text-[#1D1D1F] transition-colors"
+                  className="hover:text-[#1D1D1F] dark:hover:text-white transition-colors"
                 >
-                  Feedback & Support
+                  Report Issue / Feedback
                 </button>
               </li>
+              {onOpenOnboarding && (
+                <li>
+                  <button
+                    onClick={onOpenOnboarding}
+                    className="hover:text-[#1D1D1F] dark:hover:text-white transition-colors"
+                  >
+                    Quick Tour
+                  </button>
+                </li>
+              )}
               <li>
                 <button
                   onClick={() => setShowSitemap(true)}
-                  className="hover:text-[#1D1D1F] transition-colors"
+                  className="hover:text-[#1D1D1F] dark:hover:text-white transition-colors"
                 >
-                  Sitemap Index
+                  HTML Sitemap
                 </button>
               </li>
             </ul>
           </div>
         </div>
 
-        {/* Bottom Attribution */}
-        <div className="mt-12 pt-6 border-t border-[#E5E5EA] flex flex-col sm:flex-row items-center justify-between gap-4 text-[11px] text-[#86868B]">
-          <p>© {new Date().getFullYear()} ChatBridge. Stored conversation data remains exclusively on your device.</p>
-          <div className="flex items-center gap-3">
+        {/* Bottom Bar */}
+        <div className="mt-12 pt-6 border-t border-[#E5E5EA] dark:border-[#22222E] flex flex-col sm:flex-row items-center justify-between gap-4 text-[11px] text-[#86868B] dark:text-[#787884]">
+          <div>
+            © {new Date().getFullYear()} ChatBridge. Open client-side browser extension for AI continuity.
+          </div>
+          <div className="flex items-center gap-4">
             <button
               onClick={() => {
-                setCurrentView('privacy');
+                setCurrentView('local-privacy');
                 window.scrollTo({ top: 0, behavior: 'smooth' });
               }}
-              className="hover:text-[#1D1D1F]"
+              className="hover:text-[#1D1D1F] dark:hover:text-white"
             >
-              Privacy
+              Privacy Policy
             </button>
             <span>•</span>
             <button
@@ -249,12 +243,12 @@ export const Footer: React.FC<FooterProps> = ({
                 setCurrentView('features');
                 window.scrollTo({ top: 0, behavior: 'smooth' });
               }}
-              className="hover:text-[#1D1D1F]"
+              className="hover:text-[#1D1D1F] dark:hover:text-white"
             >
               Engineering
             </button>
             <span>•</span>
-            <button onClick={onOpenFeedback} className="hover:text-[#1D1D1F]">
+            <button onClick={onOpenFeedback} className="hover:text-[#1D1D1F] dark:hover:text-white">
               Support
             </button>
           </div>
@@ -263,15 +257,15 @@ export const Footer: React.FC<FooterProps> = ({
 
       {/* Clean Sitemap Modal */}
       {showSitemap && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-xs">
-          <div className="bg-white rounded-xl border border-[#E5E5EA] max-w-lg w-full p-6 space-y-4 shadow-lg">
-            <div className="flex items-center justify-between pb-3 border-b border-[#E5E5EA]">
-              <span className="text-xs font-mono font-medium text-[#1D1D1F]">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
+          <div className="bg-white dark:bg-[#12121A] rounded-2xl border border-[#E5E5EA] dark:border-[#2A2A3C] max-w-lg w-full p-6 space-y-4 shadow-xl">
+            <div className="flex items-center justify-between pb-3 border-b border-[#E5E5EA] dark:border-[#22222E]">
+              <span className="text-xs font-mono font-medium text-[#1D1D1F] dark:text-[#F5F5F7]">
                 Index of Available Pages
               </span>
               <button
                 onClick={() => setShowSitemap(false)}
-                className="text-[#6E6E73] hover:text-[#1D1D1F] p-1"
+                className="text-[#6E6E73] dark:text-[#8E8E98] hover:text-[#1D1D1F] dark:hover:text-white p-1"
                 aria-label="Close sitemap modal"
               >
                 <CloseIcon className="w-4 h-4" />
@@ -279,16 +273,16 @@ export const Footer: React.FC<FooterProps> = ({
             </div>
             <div className="space-y-2 max-h-64 overflow-y-auto text-xs font-mono">
               {sitemapUrls.map((item, idx) => (
-                <div key={idx} className="p-2.5 rounded bg-[#F5F5F7] border border-[#E5E5EA]">
-                  <span className="text-[#0071E3] block">{item.url}</span>
-                  <span className="text-[11px] text-[#6E6E73]">{item.title}</span>
+                <div key={idx} className="p-2.5 rounded-lg bg-[#F5F5F7] dark:bg-[#181824] border border-[#E5E5EA] dark:border-[#262638]">
+                  <span className="text-[#0071E3] dark:text-[#2997FF] block">{item.url}</span>
+                  <span className="text-[11px] text-[#6E6E73] dark:text-[#8E8E98]">{item.title}</span>
                 </div>
               ))}
             </div>
             <div className="pt-2 text-right">
               <button
                 onClick={() => setShowSitemap(false)}
-                className="px-3 py-1.5 rounded-md bg-[#F5F5F7] hover:bg-[#E5E5EA] text-xs font-medium text-[#1D1D1F] transition-colors"
+                className="px-3.5 py-1.5 rounded-lg bg-[#F5F5F7] dark:bg-[#1A1A28] hover:bg-[#E5E5EA] dark:hover:bg-[#252536] text-xs font-medium text-[#1D1D1F] dark:text-[#F5F5F7] transition-colors"
               >
                 Done
               </button>

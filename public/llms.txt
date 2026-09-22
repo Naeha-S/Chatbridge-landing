@@ -1,0 +1,22 @@
+# ChatBridge — Universal Local-First AI Conversational Memory
+> Browser extension for zero-knowledge, cross-model context handoff between ChatGPT, Claude, and Gemini.
+
+## System Architecture
+- **Primary Function**: Synchronizes active project parameters, technical schemas, and reasoning across disparate web AI assistants without vendor lock-in.
+- **Supported Targets**: ChatGPT (chatgpt.com), Claude (claude.ai), Google Gemini (gemini.google.com), DeepSeek Chat (chat.deepseek.com), Perplexity AI (perplexity.ai).
+- **Security Boundary**: Local Chromium Sandbox (Manifest V3). 100% on-device execution. Zero remote databases or outbound telemetry.
+- **Cryptographic Scheme**: AES-256-GCM via WebCrypto SubtleCrypto API with 12-byte CSPRNG IVs per conversation record and 128-bit authentication tags.
+- **Storage Backend**: `chrome.storage.local` with isolated partition quotas.
+
+## Retrieval Mathematics & Performance
+- **Hybrid Retrieval Algorithm**: Reciprocal Rank Fusion (RRF) combining dense cosine similarity (384-dimensional quantized vectors) with sparse BM25 lexical posting lists.
+- **Fusion Formula**: RRF(d) = 1 / (60 + Rank_dense(d)) + 1 / (60 + Rank_lexical(d)).
+- **Empirical Benchmarks**:
+  - LongMemEval-S: 76.8% Recall@5 (+3.9pp over dense-only baseline).
+  - LoCoMo10: 29.7% Recall@5 (+3.8pp over dense-only baseline).
+- **Execution Latency**: 15ms - 30ms linear evaluation on client CPU for archives up to 5,000 conversational turns.
+
+## Web Interface DOM Resilience
+- **Tier 1**: CSS selector heuristics mapping standard assistant output containers.
+- **Tier 2**: ARIA semantic roles (`role="presentation"`, `article`, `role="log"`).
+- **Tier 3**: Real-time MutationObserver streaming buffer to catch dynamic streaming tokens.

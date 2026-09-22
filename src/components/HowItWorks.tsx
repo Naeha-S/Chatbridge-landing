@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowRightIcon } from './Icons';
+import { colors, spacing, typography, MOTION_VARIANTS } from '../theme';
 
 export const HowItWorks: React.FC = () => {
   const [activeStep, setActiveStep] = useState<number>(1);
@@ -77,110 +79,141 @@ Please proceed with implementing the GetOrSet method.`
   const current = steps[activeStep - 1];
 
   return (
-    <section id="how-it-works" className="py-20 md:py-28 border-b border-[#E5E5EA] bg-[#FBFBFA]">
+    <section id="how-it-works" className="py-20 md:py-28 border-b border-[#E5E5EA] dark:border-[#22222D] bg-[#FBFBFA] dark:bg-[#040405] transition-colors">
       <div className="max-w-5xl mx-auto px-4 sm:px-6">
-        {/* Section Header */}
-        <div className="max-w-2xl mb-14 space-y-3">
-          <p className="text-xs font-mono font-medium tracking-wide text-[#6E6E73] uppercase">
-            Technical Architecture
-          </p>
-          <h2 className="text-3xl sm:text-4xl font-semibold tracking-tight text-[#1D1D1F]">
+        {/* Section Header with Staggered Framer Motion Reveal */}
+        <motion.div
+          variants={MOTION_VARIANTS.containerStagger}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: '-50px' }}
+          className="max-w-2xl mb-14 space-y-3"
+        >
+          <motion.div variants={MOTION_VARIANTS.itemFadeInUp}>
+            <span className="text-xs font-mono font-medium tracking-wide uppercase text-[#0071E3] dark:text-[#2997FF]">
+              Technical Architecture
+            </span>
+          </motion.div>
+          <motion.h2 variants={MOTION_VARIANTS.itemFadeInUp} className="text-3xl sm:text-4xl font-semibold tracking-tight text-[#1D1D1F] dark:text-[#F5F5F7]">
             How continuity works.
-          </h2>
-          <p className="text-base text-[#515154] leading-relaxed">
+          </motion.h2>
+          <motion.p variants={MOTION_VARIANTS.itemFadeInUp} className="text-base sm:text-lg leading-relaxed max-w-2xl text-[#515154] dark:text-[#A1A1A6]">
             Four client-side stages operate entirely inside your browser sandbox without remote API dependencies.
-          </p>
-        </div>
+          </motion.p>
+        </motion.div>
 
-        {/* Step Selector Tab Bar */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-8" role="tablist">
+        {/* Step Selector Tab Bar with Stagger Entrance */}
+        <motion.div
+          variants={MOTION_VARIANTS.containerStagger}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: '-50px' }}
+          className="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-8"
+          role="tablist"
+        >
           {steps.map((st) => {
             const isSelected = activeStep === st.index;
             return (
-              <button
+              <motion.button
+                variants={MOTION_VARIANTS.itemFadeInUp}
                 key={st.index}
                 role="tab"
                 aria-selected={isSelected}
                 id={`step-tab-${st.index}`}
                 onClick={() => setActiveStep(st.index)}
-                className={`text-left p-4 rounded-xl border transition-colors ${
+                className={`text-left p-4 rounded-xl border transition-all ${
                   isSelected
-                    ? 'bg-white border-[#1D1D1F] shadow-2xs'
-                    : 'bg-[#F5F5F7] border-[#E5E5EA] hover:bg-white hover:border-[#D1D1D6]'
+                    ? 'bg-white dark:bg-[#1A1A26] border-[#1D1D1F] dark:border-[#2997FF] shadow-2xs scale-[1.01]'
+                    : 'bg-[#F5F5F7] dark:bg-[#0E0E14] border-[#E5E5EA] dark:border-[#22222E] hover:bg-white dark:hover:bg-[#141420] hover:border-[#D1D1D6] dark:hover:border-[#333344]'
                 }`}
               >
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-xs font-mono text-[#86868B]">0{st.index}</span>
-                  <span className="text-[11px] font-mono text-[#6E6E73]">{st.subtitle}</span>
+                  <span className="text-xs font-mono text-[#86868B] dark:text-[#787884]">0{st.index}</span>
+                  <span className="text-[11px] font-mono text-[#6E6E73] dark:text-[#8E8E98]">{st.subtitle}</span>
                 </div>
-                <h3 className="text-sm font-semibold text-[#1D1D1F]">{st.name}</h3>
-                <p className="text-xs text-[#6E6E73] mt-1 leading-snug line-clamp-2">
+                <h3 className="text-sm font-semibold text-[#1D1D1F] dark:text-[#F5F5F7]">{st.name}</h3>
+                <p className="text-xs text-[#6E6E73] dark:text-[#9E9EA7] mt-1 leading-snug line-clamp-2">
                   {st.summary}
                 </p>
-              </button>
+              </motion.button>
             );
           })}
-        </div>
+        </motion.div>
 
-        {/* Active Stage Detail */}
-        <div className="bg-white rounded-xl border border-[#E5E5EA] p-6 sm:p-8 shadow-sm">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-            {/* Left Column: Description */}
-            <div className="lg:col-span-6 space-y-4">
-              <div className="flex items-center gap-2">
-                <span className="text-xs font-mono px-2 py-0.5 rounded bg-[#F5F5F7] text-[#1D1D1F] border border-[#E5E5EA]">
-                  Stage {current.index} of 4
-                </span>
-                <span className="text-xs font-mono text-[#6E6E73]">{current.subtitle}</span>
-              </div>
-
-              <h3 className="text-2xl font-semibold text-[#1D1D1F]">
-                {current.name}: {current.summary}
-              </h3>
-
-              <p className="text-sm text-[#515154] leading-relaxed">
-                {current.description}
-              </p>
-
-              <div className="p-3.5 rounded-lg bg-[#F5F5F7] border border-[#E5E5EA] text-xs text-[#515154]">
-                <strong className="text-[#1D1D1F] font-medium block mb-0.5">Implementation boundary</strong>
-                {current.implementationNote}
-              </div>
-
-              {/* Step Navigation Buttons */}
-              <div className="pt-2 flex items-center gap-2">
-                <button
-                  disabled={activeStep === 1}
-                  onClick={() => setActiveStep((prev) => Math.max(1, prev - 1))}
-                  className="px-3 py-1.5 rounded-md text-xs font-medium text-[#1D1D1F] bg-[#F5F5F7] hover:bg-[#E5E5EA] disabled:opacity-30 disabled:pointer-events-none transition-colors"
-                >
-                  Previous
-                </button>
-                <button
-                  disabled={activeStep === 4}
-                  onClick={() => setActiveStep((prev) => Math.min(4, prev + 1))}
-                  className="px-3.5 py-1.5 rounded-md text-xs font-medium text-white bg-[#1D1D1F] hover:bg-[#333336] disabled:opacity-30 disabled:pointer-events-none inline-flex items-center gap-1 transition-colors"
-                >
-                  <span>Next Stage</span>
-                  <ArrowRightIcon className="w-3 h-3" />
-                </button>
-              </div>
-            </div>
-
-            {/* Right Column: Code Sample */}
-            <div className="lg:col-span-6">
-              <div className="rounded-lg border border-[#E5E5EA] bg-[#F5F5F7] overflow-hidden">
-                <div className="px-3.5 py-2 border-b border-[#E5E5EA] bg-[#EBEBED] flex items-center justify-between text-xs font-mono text-[#6E6E73]">
-                  <span>{current.name.toLowerCase()}-pipeline.ts</span>
-                  <span>TypeScript</span>
+        {/* Active Stage Detail with Motion Variants and AnimatePresence */}
+        <motion.div
+          variants={MOTION_VARIANTS.cardScaleReveal}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: '-50px' }}
+          className="bg-white dark:bg-[#0E0E14] rounded-2xl border border-[#E5E5EA] dark:border-[#262633] p-6 sm:p-8 shadow-sm overflow-hidden"
+        >
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={current.index}
+              variants={MOTION_VARIANTS.tabContentFade}
+              initial="hidden"
+              animate="visible"
+              exit="exit"
+              className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start"
+            >
+              {/* Left Column: Description */}
+              <div className="lg:col-span-6 space-y-4">
+                <div className="flex items-center gap-2">
+                  <span className="text-xs font-mono px-2 py-0.5 rounded bg-[#F5F5F7] dark:bg-[#181824] text-[#1D1D1F] dark:text-[#F5F5F7] border border-[#E5E5EA] dark:border-[#262638]">
+                    Stage {current.index} of 4
+                  </span>
+                  <span className="text-xs font-mono text-[#6E6E73] dark:text-[#8E8E98]">{current.subtitle}</span>
                 </div>
-                <pre className="p-4 text-xs font-mono text-[#1D1D1F] overflow-x-auto leading-relaxed max-h-72">
-                  <code>{current.code}</code>
-                </pre>
+
+                <h3 className="text-lg sm:text-xl font-semibold tracking-tight text-[#1D1D1F] dark:text-[#F5F5F7]">
+                  {current.name}: {current.summary}
+                </h3>
+
+                <p className="text-sm sm:text-base leading-relaxed text-[#515154] dark:text-[#C7C7CC]">
+                  {current.description}
+                </p>
+
+                <div className="p-3.5 rounded-xl bg-[#F5F5F7] dark:bg-[#14141E] border border-[#E5E5EA] dark:border-[#22222E] text-xs text-[#515154] dark:text-[#A1A1A6]">
+                  <strong className="text-[#1D1D1F] dark:text-[#F5F5F7] font-medium block mb-0.5">Implementation boundary</strong>
+                  {current.implementationNote}
+                </div>
+
+                {/* Step Navigation Buttons */}
+                <div className="pt-2 flex items-center gap-2">
+                  <button
+                    disabled={activeStep === 1}
+                    onClick={() => setActiveStep((prev) => Math.max(1, prev - 1))}
+                    className="px-3 py-1.5 rounded-md text-xs font-medium text-[#1D1D1F] dark:text-[#E5E5EA] bg-[#F5F5F7] dark:bg-[#1A1A26] hover:bg-[#E5E5EA] dark:hover:bg-[#252536] disabled:opacity-30 disabled:pointer-events-none transition-colors border border-transparent dark:border-[#2A2A3A]"
+                  >
+                    Previous
+                  </button>
+                  <button
+                    disabled={activeStep === 4}
+                    onClick={() => setActiveStep((prev) => Math.min(4, prev + 1))}
+                    className="px-3.5 py-1.5 rounded-md text-xs font-medium text-white bg-[#1D1D1F] dark:bg-[#0071E3] hover:bg-[#333336] dark:hover:bg-[#0077ED] disabled:opacity-30 disabled:pointer-events-none inline-flex items-center gap-1 transition-colors shadow-2xs"
+                  >
+                    <span>Next Stage</span>
+                    <ArrowRightIcon className="w-3 h-3" />
+                  </button>
+                </div>
               </div>
-            </div>
-          </div>
-        </div>
+
+              {/* Right Column: Code Sample */}
+              <div className="lg:col-span-6">
+                <div className="rounded-xl border border-[#E5E5EA] dark:border-[#282838] bg-[#F5F5F7] dark:bg-[#09090E] overflow-hidden">
+                  <div className="px-3.5 py-2 border-b border-[#E5E5EA] dark:border-[#222230] bg-[#EBEBED] dark:bg-[#14141E] flex items-center justify-between text-xs font-mono text-[#6E6E73] dark:text-[#8E8E98]">
+                    <span>{current.name.toLowerCase()}-pipeline.ts</span>
+                    <span className="text-[#0071E3] dark:text-[#2997FF]">TypeScript</span>
+                  </div>
+                  <pre className="p-4 text-xs font-mono text-[#1D1D1F] dark:text-[#E5E5EA] overflow-x-auto leading-relaxed max-h-72">
+                    <code>{current.code}</code>
+                  </pre>
+                </div>
+              </div>
+            </motion.div>
+          </AnimatePresence>
+        </motion.div>
       </div>
     </section>
   );
