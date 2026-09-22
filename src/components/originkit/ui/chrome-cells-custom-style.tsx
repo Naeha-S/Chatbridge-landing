@@ -531,9 +531,9 @@ function __OriginkitBase_ChromeCells(props: ChromeCellsProps) {
 
 const __originkitPresetProps = {
   "background": "#040405",
-  "baseColor": "#989898",
-  "accentColor": "#2C53AB",
-  "speed": 87,
+  "baseColor": "#A4A4A4",
+  "accentColor": "#3B66CC",
+  "speed": 78,
   "hover": 200,
   "web": {
     "warp": 250,
@@ -542,7 +542,7 @@ const __originkitPresetProps = {
     "thickness": 30
   },
   "metal": {
-    "light": 136,
+    "light": 156,
     "polish": 100,
     "contrast": 101
   }

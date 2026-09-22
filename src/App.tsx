@@ -15,6 +15,7 @@ import { InstallModal } from './components/InstallModal';
 import { FeedbackModal } from './components/FeedbackModal';
 import { FeedbackWidget } from './components/FeedbackWidget';
 import { OnboardingCarousel } from './components/OnboardingCarousel';
+import { ConversionCTA } from './components/ConversionCTA';
 import { DownloadIcon, ArrowRightIcon } from './components/Icons';
 
 export default function App() {
@@ -149,61 +150,15 @@ export default function App() {
             {/* 6. Target Users */}
             <TargetUsersSection />
 
-            {/* 7. Clean Conversion CTA Banner */}
-            <section className={`py-20 md:py-28 border-y transition-colors ${
-              isDarkMode ? 'bg-[#0A0A0E] border-[#22222A]' : 'bg-[#F5F5F7] border-[#E5E5EA]'
-            }`}>
-              <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center space-y-6">
-                <span className={`text-xs font-mono font-medium tracking-wide uppercase ${
-                  isDarkMode ? 'text-[#8E8E93]' : 'text-[#6E6E73]'
-                }`}>
-                  Cross-Assistant Continuity
-                </span>
-                <h2 className={`text-3xl sm:text-5xl font-semibold tracking-tight ${
-                  isDarkMode ? 'text-white' : 'text-[#1D1D1F]'
-                }`}>
-                  Stop explaining yourself to AI.
-                </h2>
-                <p className={`text-base sm:text-lg max-w-xl mx-auto leading-relaxed ${
-                  isDarkMode ? 'text-[#A1A1A6]' : 'text-[#515154]'
-                }`}>
-                  Carry useful context across ChatGPT, Claude, and Gemini without repeatedly starting from zero.
-                </p>
-                <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-3">
-                  <button
-                    id="cta-bottom-install-btn"
-                    onClick={() => setIsInstallOpen(true)}
-                    className={`inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full text-sm font-medium transition-colors ${
-                      isDarkMode
-                        ? 'bg-white hover:bg-[#EBEBED] text-[#0A0A0D]'
-                        : 'bg-[#1D1D1F] hover:bg-[#333336] text-white'
-                    }`}
-                  >
-                    <DownloadIcon className="w-4 h-4" />
-                    <span>Add ChatBridge to Chrome</span>
-                  </button>
-                  <button
-                    onClick={() => {
-                      setCurrentView('features');
-                      window.scrollTo({ top: 0, behavior: 'smooth' });
-                    }}
-                    className={`inline-flex items-center justify-center gap-2 px-5 py-3 rounded-full border text-sm font-medium transition-colors ${
-                      isDarkMode
-                        ? 'bg-[#16161D] hover:bg-[#202028] border-[#2C2C38] text-white'
-                        : 'bg-white hover:bg-[#E5E5EA] border-[#D1D1D6] text-[#1D1D1F]'
-                    }`}
-                  >
-                    <span>Explore Engineering Details</span>
-                    <ArrowRightIcon className={`w-3 h-3 ${isDarkMode ? 'text-[#8E8E93]' : 'text-[#6E6E73]'}`} />
-                  </button>
-                </div>
-                <div className={`text-[11px] font-mono pt-2 ${
-                  isDarkMode ? 'text-[#6E6E75]' : 'text-[#86868B]'
-                }`}>
-                  100% Local-First • Encrypted with AES-256-GCM • Zero Cloud Dependencies
-                </div>
-              </div>
-            </section>
+            {/* 7. Conversion CTA Banner with Originkit Prism Film */}
+            <ConversionCTA
+              isDarkMode={isDarkMode}
+              onOpenInstall={() => setIsInstallOpen(true)}
+              onExploreFeatures={() => {
+                setCurrentView('features');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
+            />
 
             {/* 8. Frequently Asked Questions */}
             <FAQSection />

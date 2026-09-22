@@ -76,7 +76,7 @@ Next Step: Create a 3-bullet takeaway slide for tomorrow's team sync.`,
       {/* Originkit Chrome Cells Living WebGL Background */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none z-0 select-none">
         <div className={`w-full h-full transition-opacity duration-700 ${
-          isDarkMode ? 'opacity-55' : 'opacity-40'
+          isDarkMode ? 'opacity-70' : 'opacity-40'
         }`}>
           {isDarkMode ? (
             <ChromeCellsDark
@@ -198,8 +198,8 @@ Next Step: Create a 3-bullet takeaway slide for tomorrow's team sync.`,
           </div>
         </div>
 
-        {/* Product Visual Container: Interactive Live Preview */}
-        <div className="mt-12 max-w-4xl mx-auto">
+        {/* Product Visual Container: Interactive Live Preview (Positioned comfortably below landing hero fold) */}
+        <div className="mt-20 md:mt-28 max-w-4xl mx-auto">
           <div className={`rounded-2xl border shadow-xl overflow-hidden backdrop-blur-md transition-colors ${
             isDarkMode
               ? 'bg-[#0E0E12]/95 border-[#282833]'
