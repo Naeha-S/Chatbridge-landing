@@ -1,0 +1,7 @@
+{
+  "name": "ChatBridge",
+  "description": "Browser-native, local-first conversational continuity tool. Carry useful context across ChatGPT, Claude, and Gemini without starting from zero.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
+

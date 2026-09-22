@@ -1,0 +1,120 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --bg-page: #FBFBFA;
+    --bg-surface: #FFFFFF;
+    --bg-subtle: #F5F5F7;
+    --border-subtle: #E5E5EA;
+    --border-strong: #D1D1D6;
+    --text-primary: #1D1D1F;
+    --text-secondary: #6E6E73;
+    --text-tertiary: #86868B;
+    --accent: #0071E3;
+    --accent-hover: #0077ED;
+    color-scheme: light;
+  }
+
+  html.dark, .dark {
+    --bg-page: #040405;
+    --bg-surface: #0E0E12;
+    --bg-subtle: #14141A;
+    --border-subtle: #22222A;
+    --border-strong: #2D2D38;
+    --text-primary: #F5F5F7;
+    --text-secondary: #8E8E93;
+    --text-tertiary: #6E6E75;
+    --accent: #2997FF;
+    --accent-hover: #0071E3;
+    color-scheme: dark;
+  }
+
+  html {
+    background-color: var(--bg-page);
+    color: var(--text-primary);
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    scroll-behavior: smooth;
+  }
+
+  html.dark body {
+    background-color: #040405;
+    color: #F5F5F7;
+  }
+
+  code, kbd, samp, pre {
+    font-family: "SF Mono", Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+  }
+
+  /* Accessible focus states */
+  *:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+}
+
+/* Dark mode theme overrides for consistent system palette */
+html.dark .bg-\[\#FBFBFA\] {
+  background-color: #040405 !important;
+}
+
+html.dark .bg-white {
+  background-color: #0E0E13 !important;
+}
+
+html.dark .bg-\[\#F5F5F7\] {
+  background-color: #15151C !important;
+}
+
+html.dark .bg-\[\#EBEBED\] {
+  background-color: #1D1D26 !important;
+}
+
+html.dark .border-\[\#E5E5EA\] {
+  border-color: #22222B !important;
+}
+
+html.dark .border-\[\#D1D1D6\] {
+  border-color: #2E2E3A !important;
+}
+
+html.dark .text-\[\#1D1D1F\] {
+  color: #F5F5F7 !important;
+}
+
+html.dark .text-\[\#515154\] {
+  color: #A1A1A6 !important;
+}
+
+html.dark .text-\[\#6E6E73\] {
+  color: #8E8E93 !important;
+}
+
+html.dark .text-\[\#86868B\] {
+  color: #6E6E75 !important;
+}
+
+html.dark .text-\[\#333336\] {
+  color: #E5E5EA !important;
+}
+
+@keyframes dash {
+  to {
+    stroke-dashoffset: -20;
+  }
+}
+
+.animate-\[dash_1s_linear_infinite\] {
+  animation: dash 1s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
