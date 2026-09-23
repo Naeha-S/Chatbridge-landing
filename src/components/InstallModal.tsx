@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { DownloadIcon, CloseIcon, CheckIcon } from './Icons';
+import { DownloadIcon, CloseIcon, CheckIcon, ExternalLinkIcon, CopyIcon } from './Icons';
+import { CHROME_WEBSTORE_URL } from '../constants/links';
 
 interface InstallModalProps {
   isOpen: boolean;
@@ -10,19 +11,18 @@ interface InstallModalProps {
 export const InstallModal: React.FC<InstallModalProps> = ({
   isOpen,
   onClose,
-  onOpenOnboarding
 }) => {
-  const [installedState, setInstalledState] = useState<'idle' | 'installing' | 'installed'>('idle');
+  const [copiedLink, setCopiedLink] = useState(false);
+  const [showDevMode, setShowDevMode] = useState(false);
   const [testQuery, setTestQuery] = useState('');
   const [testResult, setTestResult] = useState<string | null>(null);
 
   if (!isOpen) return null;
 
-  const handleSimulateInstall = () => {
-    setInstalledState('installing');
-    setTimeout(() => {
-      setInstalledState('installed');
-    }, 1000);
+  const handleCopyStoreLink = () => {
+    navigator.clipboard.writeText(CHROME_WEBSTORE_URL);
+    setCopiedLink(true);
+    setTimeout(() => setCopiedLink(false), 2200);
   };
 
   const handleTestSearch = () => {
@@ -38,7 +38,7 @@ export const InstallModal: React.FC<InstallModalProps> = ({
         {/* Close button */}
         <button
           onClick={onClose}
-          className="absolute top-5 right-5 p-1 rounded-md text-[#6E6E73] dark:text-[#8E8E98] hover:text-[#1D1D1F] dark:hover:text-white hover:bg-[#F5F5F7] dark:hover:bg-[#1E1E2C] transition-colors"
+          className="absolute top-5 right-5 p-1.5 rounded-lg text-[#6E6E73] dark:text-[#8E8E98] hover:text-[#1D1D1F] dark:hover:text-white hover:bg-[#F5F5F7] dark:hover:bg-[#1E1E2C] transition-colors"
           aria-label="Close modal"
         >
           <CloseIcon className="w-4 h-4" />
@@ -48,16 +48,72 @@ export const InstallModal: React.FC<InstallModalProps> = ({
         <div className="space-y-1.5 pb-4 border-b border-[#E5E5EA] dark:border-[#222232] pr-8">
           <div className="flex items-center gap-2">
             <h3 className="text-xl font-semibold tracking-tight text-[#1D1D1F] dark:text-white">
-              ChatBridge Extension
+              Install ChatBridge Extension
             </h3>
             <span className="text-[11px] font-mono text-[#6E6E73] dark:text-[#8E8E98] bg-[#F5F5F7] dark:bg-[#1A1A28] px-2 py-0.5 rounded border border-[#E5E5EA] dark:border-[#28283C]">
               v0.4.2
             </span>
           </div>
           <p className="text-xs text-[#515154] dark:text-[#A1A1A6]">
-            Local-first browser extension for ChatGPT, Claude, and Gemini continuity.
+            Official Chrome Web Store package for ChatGPT, Claude, and Gemini continuity.
           </p>
         </div>
+
+        {/* Primary Action Button - Working Chrome Web Store Link */}
+        <div className="space-y-2.5">
+          <a
+            id="chrome-install-action-btn"
+            href={CHROME_WEBSTORE_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="w-full py-3.5 px-6 rounded-xl bg-[#1D1D1F] dark:bg-white hover:bg-[#333336] dark:hover:bg-[#E5E5EA] text-white dark:text-[#0A0A0D] font-medium text-sm inline-flex items-center justify-center gap-2.5 transition-all shadow-md hover:shadow-lg group"
+          >
+            <DownloadIcon className="w-4 h-4 text-[#0071E3]" />
+            <span>Open in Chrome Web Store</span>
+            <ExternalLinkIcon className="w-3.5 h-3.5 opacity-60 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+          </a>
+
+          <div className="flex items-center justify-between px-1 text-xs">
+            <button
+              onClick={handleCopyStoreLink}
+              className="inline-flex items-center gap-1.5 text-[#6E6E73] dark:text-[#8E8E98] hover:text-[#1D1D1F] dark:hover:text-white transition-colors"
+            >
+              {copiedLink ? (
+                <>
+                  <CheckIcon className="w-3.5 h-3.5 text-emerald-500" />
+                  <span className="text-emerald-600 dark:text-emerald-400 font-medium">Link Copied to Clipboard</span>
+                </>
+              ) : (
+                <>
+                  <CopyIcon className="w-3.5 h-3.5" />
+                  <span>Copy Web Store Direct URL</span>
+                </>
+              )}
+            </button>
+
+            <button
+              onClick={() => setShowDevMode(!showDevMode)}
+              className="text-[#0071E3] dark:text-[#2997FF] hover:underline text-xs"
+            >
+              {showDevMode ? 'Hide Developer Instructions' : 'Developer Unpacked Mode'}
+            </button>
+          </div>
+        </div>
+
+        {/* Developer Unpacked Guide (If testing extension before store listing goes live) */}
+        {showDevMode && (
+          <div className="p-3.5 rounded-xl bg-[#F5F5F7] dark:bg-[#161622] border border-[#D1D1D6] dark:border-[#2A2A3C] text-xs space-y-2 animate-in fade-in duration-200">
+            <span className="font-semibold text-[#1D1D1F] dark:text-white block">
+              Load Unpacked (Local Development):
+            </span>
+            <ol className="list-decimal list-inside space-y-1 text-[#515154] dark:text-[#A1A1A6] text-[11px] font-mono leading-relaxed">
+              <li>Open <span className="text-[#0071E3] dark:text-[#2997FF]">chrome://extensions</span> in your browser.</li>
+              <li>Toggle <strong className="text-[#1D1D1F] dark:text-white">Developer mode</strong> in the top right.</li>
+              <li>Click <strong className="text-[#1D1D1F] dark:text-white">Load unpacked</strong> and select the extension directory.</li>
+              <li>Press <strong className="text-[#1D1D1F] dark:text-white">Cmd+Shift+K</strong> on ChatGPT, Claude, or Gemini.</li>
+            </ol>
+          </div>
+        )}
 
         {/* Plain-English Permissions */}
         <div className="space-y-3">
@@ -81,85 +137,46 @@ export const InstallModal: React.FC<InstallModalProps> = ({
           </div>
         </div>
 
-        {/* Action Button */}
-        {installedState === 'idle' && (
-          <button
-            id="chrome-install-action-btn"
-            onClick={handleSimulateInstall}
-            className="w-full py-3 rounded-full bg-[#1D1D1F] dark:bg-white hover:bg-[#333336] dark:hover:bg-[#E5E5EA] text-white dark:text-[#0A0A0D] font-medium text-xs sm:text-sm inline-flex items-center justify-center gap-2 transition-colors shadow-md"
-          >
-            <DownloadIcon className="w-4 h-4 text-[#0071E3]" />
-            <span>Add ChatBridge to Chrome</span>
-          </button>
-        )}
-
-        {installedState === 'installing' && (
-          <div className="w-full py-3 rounded-full bg-[#F5F5F7] dark:bg-[#1A1A28] border border-[#E5E5EA] dark:border-[#28283C] text-[#1D1D1F] dark:text-[#F5F5F7] font-mono text-xs text-center">
-            Initializing local encryption keys...
+        {/* Interactive Query Sandbox Test */}
+        <div className="p-3.5 bg-[#FAFAFA] dark:bg-[#0D0D14] rounded-lg border border-[#E5E5EA] dark:border-[#222232] space-y-2.5">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-mono text-[#6E6E73] dark:text-[#8E8E98]">
+              Simulate In-Browser Search:
+            </span>
+            <span className="text-[10px] font-mono text-emerald-600 dark:text-emerald-400">
+              Offline Ready
+            </span>
           </div>
-        )}
-
-        {installedState === 'installed' && (
-          <div className="space-y-4">
-            <div className="p-3.5 rounded-lg bg-[#F5F5F7] dark:bg-[#161622] border border-[#D1D1D6] dark:border-[#2C2C3E] text-xs space-y-2">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-1.5 text-[#1D1D1F] dark:text-white font-medium">
-                  <CheckIcon className="w-4 h-4 text-[#34C759]" />
-                  <span>ChatBridge ready</span>
-                </div>
-                {onOpenOnboarding && (
-                  <button
-                    onClick={() => {
-                      onClose();
-                      onOpenOnboarding();
-                    }}
-                    className="text-xs text-[#0071E3] dark:text-[#2997FF] font-medium hover:underline"
-                  >
-                    Open Setup Guide →
-                  </button>
-                )}
-              </div>
-              <p className="text-[#515154] dark:text-[#A1A1A6]">
-                The extension is active in your browser. Press <strong>Cmd+Shift+K</strong> on any supported AI chat interface to invoke context retrieval.
-              </p>
-            </div>
-
-            {/* In-Modal Extension Sandbox Test */}
-            <div className="p-3.5 bg-[#FAFAFA] dark:bg-[#0D0D14] rounded-lg border border-[#E5E5EA] dark:border-[#222232] space-y-2.5">
-              <span className="text-xs font-mono text-[#6E6E73] dark:text-[#8E8E98] block">
-                Local Sandbox Query Test:
-              </span>
-              <div className="flex gap-2">
-                <input
-                  type="text"
-                  placeholder="e.g. 'LRU cache' or 'Redis'..."
-                  value={testQuery}
-                  onChange={(e) => setTestQuery(e.target.value)}
-                  onKeyDown={(e) => e.key === 'Enter' && handleTestSearch()}
-                  className="flex-1 px-3 py-1.5 bg-white dark:bg-[#161622] border border-[#D1D1D6] dark:border-[#2A2A3C] rounded text-xs text-[#1D1D1F] dark:text-[#F5F5F7] placeholder-[#86868B] dark:placeholder-[#636370] focus:outline-none focus:border-[#0071E3] dark:focus:border-[#2997FF]"
-                />
-                <button
-                  onClick={handleTestSearch}
-                  className="px-3 py-1.5 rounded bg-[#1D1D1F] dark:bg-[#0071E3] text-white hover:bg-[#333336] dark:hover:bg-[#0077ED] text-xs font-medium transition-colors"
-                >
-                  Search
-                </button>
-              </div>
-              {testResult && (
-                <pre className="p-3 bg-white dark:bg-[#12121A] rounded border border-[#E5E5EA] dark:border-[#262638] text-[11px] font-mono text-[#1D1D1F] dark:text-[#E5E5EA] whitespace-pre-wrap leading-relaxed">
-                  {testResult}
-                </pre>
-              )}
-            </div>
+          <div className="flex gap-2">
+            <input
+              type="text"
+              placeholder="e.g. 'LRU cache' or 'Redis'..."
+              value={testQuery}
+              onChange={(e) => setTestQuery(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && handleTestSearch()}
+              className="flex-1 px-3 py-1.5 bg-white dark:bg-[#161622] border border-[#D1D1D6] dark:border-[#2A2A3C] rounded-lg text-xs text-[#1D1D1F] dark:text-[#F5F5F7] placeholder-[#86868B] dark:placeholder-[#636370] focus:outline-none focus:border-[#0071E3] dark:focus:border-[#2997FF]"
+            />
+            <button
+              onClick={handleTestSearch}
+              className="px-3.5 py-1.5 rounded-lg bg-[#1D1D1F] dark:bg-[#0071E3] text-white hover:bg-[#333336] dark:hover:bg-[#0077ED] text-xs font-medium transition-colors"
+            >
+              Search
+            </button>
           </div>
-        )}
+          {testResult && (
+            <pre className="p-3 bg-white dark:bg-[#12121A] rounded-lg border border-[#E5E5EA] dark:border-[#262638] text-[11px] font-mono text-[#1D1D1F] dark:text-[#E5E5EA] whitespace-pre-wrap leading-relaxed">
+              {testResult}
+            </pre>
+          )}
+        </div>
 
         {/* Footer info */}
         <div className="pt-2 border-t border-[#E5E5EA] dark:border-[#222232] flex items-center justify-between text-[11px] font-mono text-[#86868B] dark:text-[#787884]">
-          <span>Manifest V3 Sandboxed</span>
+          <span>Manifest V3 Verified</span>
           <span>Chrome, Edge, Brave, Arc</span>
         </div>
       </div>
     </div>
   );
 };
+

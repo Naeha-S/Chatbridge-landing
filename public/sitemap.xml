@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <!-- Homepage -->
+  <url>
+    <loc>https://chatbridge.app/</loc>
+    <lastmod>2025-02-23</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+  </url>
+
+  <!-- High-Intent Subpage: ChatGPT to Claude Context Transfer -->
+  <url>
+    <loc>https://chatbridge.app/#chatgpt-to-claude</loc>
+    <lastmod>2025-02-23</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <!-- High-Intent Subpage: ChatGPT to Gemini Context Transfer -->
+  <url>
+    <loc>https://chatbridge.app/#chatgpt-to-gemini</loc>
+    <lastmod>2025-02-23</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <!-- Subpage: How It Works & Architecture -->
+  <url>
+    <loc>https://chatbridge.app/#how-it-works</loc>
+    <lastmod>2025-02-23</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <!-- Subpage: Feature & Engineering Deep Dive -->
+  <url>
+    <loc>https://chatbridge.app/#features</loc>
+    <lastmod>2025-02-23</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- Subpage: Comparison vs Cloud Memory & Manual Copy -->
+  <url>
+    <loc>https://chatbridge.app/#comparison</loc>
+    <lastmod>2025-02-23</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- Subpage: Supported Platforms & Ecosystem -->
+  <url>
+    <loc>https://chatbridge.app/#supported-platforms</loc>
+    <lastmod>2025-02-23</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- Subpage: Comprehensive FAQ -->
+  <url>
+    <loc>https://chatbridge.app/#faq</loc>
+    <lastmod>2025-02-23</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- Subpage: Privacy Architecture & Zero Telemetry Guarantee -->
+  <url>
+    <loc>https://chatbridge.app/#privacy</loc>
+    <lastmod>2025-02-23</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- Subpage: Technical Guides & Documentation -->
+  <url>
+    <loc>https://chatbridge.app/#guides</loc>
+    <lastmod>2025-02-23</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- Deep Guides -->
+  <url>
+    <loc>https://chatbridge.app/#ai-conversation-memory</loc>
+    <lastmod>2025-02-23</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://chatbridge.app/#local-ai-memory</loc>
+    <lastmod>2025-02-23</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://chatbridge.app/#hybrid-retrieval-rrf</loc>
+    <lastmod>2025-02-23</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+</urlset>

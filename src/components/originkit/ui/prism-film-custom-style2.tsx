@@ -3,10 +3,10 @@
 import * as React from "react"
 import { useEffect, useRef } from "react"
 
-const MAX_DPR = 2
+const MAX_DPR = 1.0
 const NAME = "PrismFilm"
 
-const LAYERS = 80
+const LAYERS = 50
 
 const NEAR_SPLIT = 14
 const SMEAR = 0.012
@@ -403,9 +403,25 @@ function __OriginkitBase_PrismFilm(props: PrismFilmProps) {
         let raf = 0
         let last = -1
         let clock = 0
+        let isVisible = true
+        let isDocVisible = typeof document !== 'undefined' ? !document.hidden : true
+        let isRunning = false
+
+        const startLoop = () => {
+            if (isRunning || !isVisible || !isDocVisible) return
+            isRunning = true
+            last = performance.now()
+            raf = requestAnimationFrame(render)
+        }
+
+        const stopLoop = () => {
+            if (!isRunning) return
+            isRunning = false
+            cancelAnimationFrame(raf)
+        }
 
         const render = (now: number) => {
-            raf = requestAnimationFrame(render)
+            if (!isRunning) return
             const dt = last < 0 ? 0 : clampN((now - last) / 1000, 0, 0.05)
             last = now
             const v = vRef.current
@@ -480,11 +496,42 @@ function __OriginkitBase_PrismFilm(props: PrismFilmProps) {
             gl.uniform2f(un.uTilt, tiltX, tiltY)
             gl.uniform1f(un.uSplit, v.split)
             gl.drawArrays(gl.TRIANGLES, 0, 3)
+
+            if (isRunning) {
+                raf = requestAnimationFrame(render)
+            }
         }
 
-        raf = requestAnimationFrame(render)
+        const observer = new IntersectionObserver(
+            (entries) => {
+                const entry = entries[0]
+                isVisible = entry ? entry.isIntersecting : true
+                if (isVisible) {
+                    startLoop()
+                } else {
+                    stopLoop()
+                }
+            },
+            { threshold: 0.02 }
+        )
+        observer.observe(canvas)
+
+        const onVisibilityChange = () => {
+            isDocVisible = !document.hidden
+            if (isDocVisible && isVisible) {
+                startLoop()
+            } else {
+                stopLoop()
+            }
+        }
+        document.addEventListener("visibilitychange", onVisibilityChange)
+
+        startLoop()
+
         return () => {
-            cancelAnimationFrame(raf)
+            stopLoop()
+            observer.disconnect()
+            document.removeEventListener("visibilitychange", onVisibilityChange)
             pointer.dispose()
             target.dispose()
             gl.deleteVertexArray(vao)

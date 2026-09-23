@@ -5,6 +5,7 @@ import ChromeCellsDark from './originkit/ui/chrome-cells-custom-style';
 import ChromeCellsLight from './originkit/ui/chrome-cells-custom-style-2';
 import { MOTION_VARIANTS } from '../theme';
 import { useToast } from '../context/ToastContext';
+import { CHROME_WEBSTORE_URL } from '../constants/links';
 
 interface HeroProps {
   onOpenInstall: () => void;
@@ -138,14 +139,16 @@ Next Step: Create a 3-bullet takeaway slide for tomorrow's team sync.`,
             variants={MOTION_VARIANTS.itemFadeInUp}
             className="pt-4 flex flex-col sm:flex-row items-center justify-center gap-3"
           >
-            <button
+            <a
               id="hero-add-to-chrome-btn"
-              onClick={onOpenInstall}
+              href={CHROME_WEBSTORE_URL}
+              target="_blank"
+              rel="noopener noreferrer"
               className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-7 py-3.5 rounded-full text-sm font-semibold transition-all shadow-md hover:scale-[1.02] active:scale-[0.98] bg-[#1D1D1F] dark:bg-white text-white dark:text-[#0A0A0D] hover:bg-[#333336] dark:hover:bg-[#F2F2F7]"
             >
               <DownloadIcon className="w-4 h-4 text-[#0071E3] dark:text-[#0071E3]" />
               <span>Add to Chrome — It's Free</span>
-            </button>
+            </a>
 
             <button
               id="hero-see-demo-btn"

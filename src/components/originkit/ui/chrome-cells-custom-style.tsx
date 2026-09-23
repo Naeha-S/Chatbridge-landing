@@ -3,7 +3,7 @@
 import * as React from "react"
 import { useEffect, useRef } from "react"
 
-const MAX_DPR = 1.5
+const MAX_DPR = 1.0
 
 const VERT_SRC = `
 attribute vec2 a_pos;
@@ -429,8 +429,25 @@ function __OriginkitBase_ChromeCells(props: ChromeCellsProps) {
         let raf = 0
         let last = performance.now()
         let clock = 0
+        let isVisible = true
+        let isDocVisible = typeof document !== 'undefined' ? !document.hidden : true
+        let isRunning = false
+
+        const startLoop = () => {
+            if (isRunning || !isVisible || !isDocVisible) return
+            isRunning = true
+            last = performance.now()
+            raf = requestAnimationFrame(render)
+        }
+
+        const stopLoop = () => {
+            if (!isRunning) return
+            isRunning = false
+            cancelAnimationFrame(raf)
+        }
 
         const render = (now: number) => {
+            if (!isRunning) return
             const dt = Math.min(0.05, Math.max(0, (now - last) / 1000))
             last = now
             const v = vRef.current
@@ -475,7 +492,9 @@ function __OriginkitBase_ChromeCells(props: ChromeCellsProps) {
             gl.uniform1f(u.light, v.light)
 
             gl.drawArrays(gl.TRIANGLES, 0, 3)
-            raf = requestAnimationFrame(render)
+            if (isRunning) {
+                raf = requestAnimationFrame(render)
+            }
         }
 
         const onMove = (e: PointerEvent) => {
@@ -498,10 +517,37 @@ function __OriginkitBase_ChromeCells(props: ChromeCellsProps) {
         canvas.addEventListener("pointermove", onMove)
         canvas.addEventListener("pointerenter", onEnter)
         canvas.addEventListener("pointerleave", onLeave)
-        raf = requestAnimationFrame(render)
+
+        const observer = new IntersectionObserver(
+            (entries) => {
+                const entry = entries[0]
+                isVisible = entry ? entry.isIntersecting : true
+                if (isVisible) {
+                    startLoop()
+                } else {
+                    stopLoop()
+                }
+            },
+            { threshold: 0.02 }
+        )
+        observer.observe(canvas)
+
+        const onVisibilityChange = () => {
+            isDocVisible = !document.hidden
+            if (isDocVisible && isVisible) {
+                startLoop()
+            } else {
+                stopLoop()
+            }
+        }
+        document.addEventListener("visibilitychange", onVisibilityChange)
+
+        startLoop()
 
         return () => {
-            cancelAnimationFrame(raf)
+            stopLoop()
+            observer.disconnect()
+            document.removeEventListener("visibilitychange", onVisibilityChange)
             canvas.removeEventListener("pointermove", onMove)
             canvas.removeEventListener("pointerenter", onEnter)
             canvas.removeEventListener("pointerleave", onLeave)

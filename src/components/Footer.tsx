@@ -1,29 +1,34 @@
 import React, { useState } from 'react';
 import { PageView } from '../types';
 import { DownloadIcon, CloseIcon } from './Icons';
+import { CHROME_WEBSTORE_URL } from '../constants/links';
+import { smoothScrollTo } from '../hooks/useGsapSmoothScroll';
 
 interface FooterProps {
   setCurrentView: (view: PageView) => void;
   onOpenInstall: () => void;
   onOpenPaper?: () => void;
   onOpenFeedback: () => void;
-  onOpenOnboarding?: () => void;
 }
 
 export const Footer: React.FC<FooterProps> = ({
   setCurrentView,
   onOpenInstall,
   onOpenFeedback,
-  onOpenOnboarding,
 }) => {
   const [showSitemap, setShowSitemap] = useState(false);
 
   const sitemapUrls = [
     { url: 'https://chatbridge.app/', title: 'Overview: Architecture and Product' },
-    { url: 'https://chatbridge.app/features', title: 'Technical Architecture and DOM Resilience' },
-    { url: 'https://chatbridge.app/how-it-works', title: 'Four-Stage Continuity Pipeline' },
-    { url: 'https://chatbridge.app/privacy', title: 'Privacy Architecture and Threat Model' },
-    { url: 'https://chatbridge.app/guides', title: 'Implementation and Migration Guides' },
+    { url: 'https://chatbridge.app/#how-it-works', title: 'How It Works: Five-Stage Continuity Pipeline' },
+    { url: 'https://chatbridge.app/#chatgpt-to-claude', title: 'ChatGPT to Claude: Code & Reasoning Continuity' },
+    { url: 'https://chatbridge.app/#chatgpt-to-gemini', title: 'ChatGPT to Google Gemini 2.0: 1M+ Context Window Handoff' },
+    { url: 'https://chatbridge.app/#comparison', title: 'Comparison: ChatBridge vs Cloud Memory vs Manual Copy' },
+    { url: 'https://chatbridge.app/#supported-platforms', title: 'Supported Platforms: ChatGPT, Claude, Gemini, DeepSeek' },
+    { url: 'https://chatbridge.app/#faq', title: 'Frequently Asked Questions & Security Audits' },
+    { url: 'https://chatbridge.app/#features', title: 'Technical Architecture & Hybrid RRF Retrieval' },
+    { url: 'https://chatbridge.app/#privacy', title: 'Privacy Architecture & Zero-Knowledge Threat Model' },
+    { url: 'https://chatbridge.app/#guides', title: 'Implementation and Migration Technical Guides' },
   ];
 
   return (
@@ -44,19 +49,21 @@ export const Footer: React.FC<FooterProps> = ({
               A browser extension for cross-assistant continuity. Carry useful discussion context between ChatGPT, Claude, and Gemini without repeatedly starting from zero.
             </p>
             <div className="flex items-center gap-2.5 pt-2">
-              <button
+              <a
                 id="footer-install-btn"
-                onClick={onOpenInstall}
+                href={CHROME_WEBSTORE_URL}
+                target="_blank"
+                rel="noopener noreferrer"
                 className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#1D1D1F] dark:bg-white hover:bg-[#333336] dark:hover:bg-[#E5E5EA] text-white dark:text-[#0A0A0D] text-xs font-medium transition-colors"
               >
                 <DownloadIcon className="w-3.5 h-3.5" />
                 <span>Add to Chrome</span>
-              </button>
+              </a>
               <button
                 id="footer-engineering-btn"
                 onClick={() => {
                   setCurrentView('features');
-                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                  smoothScrollTo(document.body, { offset: 0, duration: 0.65 });
                 }}
                 className="inline-flex items-center px-3 py-1.5 rounded-full bg-white dark:bg-[#14141E] hover:bg-[#E5E5EA] dark:hover:bg-[#20202E] border border-[#D1D1D6] dark:border-[#2C2C3E] text-[#1D1D1F] dark:text-[#E5E5EA] text-xs font-medium transition-colors"
               >
@@ -75,7 +82,7 @@ export const Footer: React.FC<FooterProps> = ({
                 <button
                   onClick={() => {
                     setCurrentView('how-it-works');
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                    smoothScrollTo(document.body, { offset: 0, duration: 0.65 });
                   }}
                   className="hover:text-[#1D1D1F] dark:hover:text-white transition-colors"
                 >
@@ -86,7 +93,7 @@ export const Footer: React.FC<FooterProps> = ({
                 <button
                   onClick={() => {
                     setCurrentView('features');
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                    smoothScrollTo(document.body, { offset: 0, duration: 0.65 });
                   }}
                   className="hover:text-[#1D1D1F] dark:hover:text-white transition-colors"
                 >
@@ -96,56 +103,54 @@ export const Footer: React.FC<FooterProps> = ({
               <li>
                 <button
                   onClick={() => {
-                    setCurrentView('features');
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                    setCurrentView('supported-platforms');
+                    smoothScrollTo(document.body, { offset: 0, duration: 0.65 });
                   }}
                   className="hover:text-[#1D1D1F] dark:hover:text-white transition-colors"
                 >
-                  Dynamic Prompt Compression
+                  Supported Platforms
                 </button>
               </li>
               <li>
                 <button
                   onClick={() => {
-                    setCurrentView('features');
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                    setCurrentView('comparison');
+                    smoothScrollTo(document.body, { offset: 0, duration: 0.65 });
                   }}
                   className="hover:text-[#1D1D1F] dark:hover:text-white transition-colors"
                 >
-                  DOM Observation & Fallbacks
+                  ChatBridge vs Alternatives
                 </button>
               </li>
             </ul>
           </div>
 
-          {/* Guides Links */}
+          {/* Solutions & Migration */}
           <div className="space-y-2.5">
             <h4 className="font-mono text-xs font-medium uppercase tracking-wider text-[#1D1D1F] dark:text-[#F5F5F7]">
-              Guides & Use Cases
+              Solutions & Migration
             </h4>
             <ul className="space-y-2">
               <li>
                 <button
                   onClick={() => {
-                    setCurrentView('guides');
-                    window.location.hash = '#chatgpt-to-claude';
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                    setCurrentView('chatgpt-to-claude');
+                    smoothScrollTo(document.body, { offset: 0, duration: 0.65 });
                   }}
-                  className="hover:text-[#1D1D1F] dark:hover:text-white transition-colors"
+                  className="hover:text-[#1D1D1F] dark:hover:text-white transition-colors text-left"
                 >
-                  ChatGPT to Claude Continuity
+                  ChatGPT to Claude Transfer
                 </button>
               </li>
               <li>
                 <button
                   onClick={() => {
-                    setCurrentView('guides');
-                    window.location.hash = '#chatgpt-to-gemini';
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                    setCurrentView('chatgpt-to-gemini');
+                    smoothScrollTo(document.body, { offset: 0, duration: 0.65 });
                   }}
-                  className="hover:text-[#1D1D1F] dark:hover:text-white transition-colors"
+                  className="hover:text-[#1D1D1F] dark:hover:text-white transition-colors text-left"
                 >
-                  ChatGPT to Gemini Research
+                  ChatGPT to Gemini Context
                 </button>
               </li>
               <li>
@@ -153,9 +158,9 @@ export const Footer: React.FC<FooterProps> = ({
                   onClick={() => {
                     setCurrentView('guides');
                     window.location.hash = '#ai-conversation-memory';
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                    smoothScrollTo(document.body, { offset: 0, duration: 0.65 });
                   }}
-                  className="hover:text-[#1D1D1F] dark:hover:text-white transition-colors"
+                  className="hover:text-[#1D1D1F] dark:hover:text-white transition-colors text-left"
                 >
                   Cross-Assistant AI Memory
                 </button>
@@ -165,9 +170,9 @@ export const Footer: React.FC<FooterProps> = ({
                   onClick={() => {
                     setCurrentView('guides');
                     window.location.hash = '#local-ai-memory';
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                    smoothScrollTo(document.body, { offset: 0, duration: 0.65 });
                   }}
-                  className="hover:text-[#1D1D1F] dark:hover:text-white transition-colors"
+                  className="hover:text-[#1D1D1F] dark:hover:text-white transition-colors text-left"
                 >
                   Local Encrypted Storage Model
                 </button>
@@ -184,8 +189,19 @@ export const Footer: React.FC<FooterProps> = ({
               <li>
                 <button
                   onClick={() => {
+                    setCurrentView('faq');
+                    smoothScrollTo(document.body, { offset: 0, duration: 0.65 });
+                  }}
+                  className="hover:text-[#1D1D1F] dark:hover:text-white transition-colors"
+                >
+                  Frequently Asked Questions
+                </button>
+              </li>
+              <li>
+                <button
+                  onClick={() => {
                     setCurrentView('local-privacy');
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                    smoothScrollTo(document.body, { offset: 0, duration: 0.65 });
                   }}
                   className="hover:text-[#1D1D1F] dark:hover:text-white transition-colors"
                 >
@@ -200,16 +216,6 @@ export const Footer: React.FC<FooterProps> = ({
                   Report Issue / Feedback
                 </button>
               </li>
-              {onOpenOnboarding && (
-                <li>
-                  <button
-                    onClick={onOpenOnboarding}
-                    className="hover:text-[#1D1D1F] dark:hover:text-white transition-colors"
-                  >
-                    Quick Tour
-                  </button>
-                </li>
-              )}
               <li>
                 <button
                   onClick={() => setShowSitemap(true)}

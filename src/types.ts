@@ -1,4 +1,16 @@
-export type PageView = 'home' | 'features' | 'how-it-works' | 'privacy' | 'local-privacy' | 'guides' | 'install';
+export type PageView =
+  | 'home'
+  | 'features'
+  | 'how-it-works'
+  | 'chatgpt-to-claude'
+  | 'chatgpt-to-gemini'
+  | 'comparison'
+  | 'supported-platforms'
+  | 'faq'
+  | 'privacy'
+  | 'local-privacy'
+  | 'guides'
+  | 'install';
 
 export type GuideSlug =
   | 'chatgpt-to-claude'

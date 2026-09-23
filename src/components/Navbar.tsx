@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { PageView } from '../types';
 import { DownloadIcon, CloseIcon, SunIcon, MoonIcon } from './Icons';
+import { CHROME_WEBSTORE_URL } from '../constants/links';
+import { smoothScrollTo } from '../hooks/useGsapSmoothScroll';
 
 interface NavbarProps {
   currentView: PageView;
@@ -25,15 +27,18 @@ export const Navbar: React.FC<NavbarProps> = ({
   const navItems: { label: string; view: PageView }[] = [
     { label: 'Overview', view: 'home' },
     { label: 'How It Works', view: 'how-it-works' },
-    { label: 'Features & Architecture', view: 'features' },
-    { label: 'Local Privacy', view: 'local-privacy' },
+    { label: 'ChatGPT → Claude', view: 'chatgpt-to-claude' },
+    { label: 'Platforms', view: 'supported-platforms' },
+    { label: 'Compare', view: 'comparison' },
+    { label: 'FAQ', view: 'faq' },
+    { label: 'Privacy', view: 'local-privacy' },
     { label: 'Guides', view: 'guides' },
   ];
 
   const handleNavClick = (view: PageView) => {
     setCurrentView(view);
     setMobileMenuOpen(false);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    smoothScrollTo(document.body, { offset: 0, duration: 0.65 });
   };
 
   return (
@@ -75,43 +80,47 @@ export const Navbar: React.FC<NavbarProps> = ({
 
         {/* Action Controls */}
         <div className="flex items-center gap-2.5">
-          {/* Light/Dark Mode Switcher */}
+          {/* Light/Dark Mode Segmented Switcher (Clean Monochrome - No Yellow) */}
           {onToggleTheme && (
             <button
               id="theme-toggle-btn"
               onClick={onToggleTheme}
-              aria-label={isDark ? 'Switch to light theme' : 'Switch to dark theme'}
-              className="relative p-2 rounded-xl border transition-all duration-300 border-[#D1D1D6]/80 dark:border-[#2E2E3E]/80 text-[#6E6E73] dark:text-[#A1A1A6] hover:text-[#1D1D1F] dark:hover:text-white hover:bg-[#F0F0F2] dark:hover:bg-[#1C1C2A] shadow-2xs group"
+              aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
               title={isDark ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+              className="relative flex items-center p-0.5 rounded-full border transition-all duration-300 border-[#E5E5EA] dark:border-[#2A2A38] bg-[#F2F2F5]/80 dark:bg-[#12121A]/80 hover:border-[#D1D1D6] dark:hover:border-[#3A3A4C] shadow-2xs backdrop-blur-xs"
             >
-              {isDark ? (
-                <SunIcon className="w-4 h-4 text-amber-400 group-hover:rotate-45 transition-transform duration-300" />
-              ) : (
-                <MoonIcon className="w-4 h-4 text-[#515154] group-hover:-rotate-12 transition-transform duration-300" />
-              )}
+              <span
+                className={`flex items-center justify-center w-6 h-6 rounded-full transition-all duration-300 ${
+                  !isDark
+                    ? 'bg-white text-[#1D1D1F] shadow-xs scale-100 font-semibold'
+                    : 'text-[#8E8E98] hover:text-[#C7C7CC] scale-90 opacity-70'
+                }`}
+              >
+                <SunIcon className="w-3.5 h-3.5 text-current" />
+              </span>
+              <span
+                className={`flex items-center justify-center w-6 h-6 rounded-full transition-all duration-300 ${
+                  isDark
+                    ? 'bg-[#262638] text-white shadow-xs scale-100 font-semibold'
+                    : 'text-[#6E6E73] hover:text-[#1D1D1F] scale-90 opacity-70'
+                }`}
+              >
+                <MoonIcon className="w-3.5 h-3.5 text-current" />
+              </span>
             </button>
           )}
 
-          {/* Quick Tour Launcher */}
-          {onOpenOnboarding && (
-            <button
-              id="nav-tour-btn"
-              onClick={onOpenOnboarding}
-              className="hidden sm:inline-flex items-center text-xs font-medium px-2.5 py-1.5 rounded-md border transition-colors text-[#515154] dark:text-[#A1A1A6] hover:text-[#1D1D1F] dark:hover:text-white border-[#D1D1D6] dark:border-[#2E2E3E] hover:bg-[#F5F5F7] dark:hover:bg-[#181824]"
-            >
-              Quick Tour
-            </button>
-          )}
-
-          {/* Install Primary Action */}
-          <button
+          {/* Install Primary Action - Working Chrome Web Store Link */}
+          <a
             id="nav-install-btn"
-            onClick={onOpenInstall}
+            href={CHROME_WEBSTORE_URL}
+            target="_blank"
+            rel="noopener noreferrer"
             className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-medium transition-all shadow-xs bg-[#1D1D1F] dark:bg-white text-white dark:text-[#0A0A0D] hover:bg-[#333336] dark:hover:bg-[#F2F2F7] dark:font-semibold"
           >
             <DownloadIcon className="w-3.5 h-3.5 text-[#0071E3]" />
             <span>Add to Chrome</span>
-          </button>
+          </a>
 
           {/* Mobile Menu Trigger */}
           <button
@@ -149,17 +158,15 @@ export const Navbar: React.FC<NavbarProps> = ({
               {item.label}
             </button>
           ))}
-          {onOpenOnboarding && (
-            <button
-              onClick={() => {
-                setMobileMenuOpen(false);
-                onOpenOnboarding();
-              }}
-              className="block w-full text-left px-3 py-2 rounded-md text-sm font-medium text-[#6E6E73] dark:text-[#8E8E98] hover:text-[#1D1D1F] dark:hover:text-white"
-            >
-              Take 1-Minute Interactive Tour
-            </button>
-          )}
+          <a
+            href={CHROME_WEBSTORE_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center justify-center gap-2 w-full mt-2 px-4 py-2.5 rounded-xl bg-[#1D1D1F] dark:bg-white text-white dark:text-[#0A0A0D] text-xs font-semibold"
+          >
+            <DownloadIcon className="w-3.5 h-3.5 text-[#0071E3]" />
+            <span>Open in Chrome Web Store</span>
+          </a>
         </div>
       )}
     </header>

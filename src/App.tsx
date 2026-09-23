@@ -17,11 +17,20 @@ import { Footer } from './components/Footer';
 import { InstallModal } from './components/InstallModal';
 import { FeedbackModal } from './components/FeedbackModal';
 import { FeedbackWidget } from './components/FeedbackWidget';
-import { OnboardingCarousel } from './components/OnboardingCarousel';
 import { ConversionCTA } from './components/ConversionCTA';
 import { DownloadIcon, ArrowRightIcon } from './components/Icons';
+import { useGsapSmoothScroll, smoothScrollTo } from './hooks/useGsapSmoothScroll';
+import { usePageSeo } from './hooks/usePageSeo';
+import { ChatGPTToClaudeLanding } from './components/ChatGPTToClaudeLanding';
+import { ChatGPTToGeminiLanding } from './components/ChatGPTToGeminiLanding';
+import { ComparisonPage } from './components/ComparisonPage';
+import { SupportedPlatformsPage } from './components/SupportedPlatformsPage';
+import { FAQPage } from './components/FAQPage';
+import { HowItWorksPage } from './components/HowItWorksPage';
 
 export default function App() {
+  useGsapSmoothScroll();
+
   const [theme, setTheme] = useState<'dark' | 'light'>(() => {
     try {
       const saved = localStorage.getItem('chatbridge_theme');
@@ -33,7 +42,9 @@ export default function App() {
   const [activeGuideSlug, setActiveGuideSlug] = useState<GuideSlug>('chatgpt-to-claude');
   const [isInstallOpen, setIsInstallOpen] = useState(false);
   const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
-  const [isOnboardingOpen, setIsOnboardingOpen] = useState(false);
+
+  // Dynamic SEO metadata, OpenGraph, Canonical, and Schema.org synchronization
+  usePageSeo(currentView, activeGuideSlug);
 
   const toggleTheme = () => {
     setTheme((prev) => {
@@ -58,13 +69,26 @@ export default function App() {
   useEffect(() => {
     const handleHash = () => {
       const hash = window.location.hash.replace('#', '');
-      if (['how-it-works', 'features', 'privacy', 'local-privacy', 'guides'].includes(hash)) {
+      if (
+        [
+          'how-it-works',
+          'chatgpt-to-claude',
+          'chatgpt-to-gemini',
+          'comparison',
+          'supported-platforms',
+          'faq',
+          'features',
+          'privacy',
+          'local-privacy',
+          'guides',
+        ].includes(hash)
+      ) {
         setCurrentView(hash as PageView);
       } else if (hash === 'research') {
         // Graceful redirect away from deprecated research hash to engineering details
         setCurrentView('features');
       } else if (
-        ['chatgpt-to-claude', 'chatgpt-to-gemini', 'ai-conversation-memory', 'local-ai-memory', 'hybrid-retrieval-rrf'].includes(hash)
+        ['ai-conversation-memory', 'local-ai-memory', 'hybrid-retrieval-rrf'].includes(hash)
       ) {
         setCurrentView('guides');
         setActiveGuideSlug(hash as GuideSlug);
@@ -80,16 +104,10 @@ export default function App() {
     if (currentView !== 'home') {
       setCurrentView('home');
       setTimeout(() => {
-        const demoEl = document.getElementById('demo');
-        if (demoEl) {
-          demoEl.scrollIntoView({ behavior: 'smooth' });
-        }
+        smoothScrollTo('#demo', { offset: 70, duration: 0.9 });
       }, 100);
     } else {
-      const demoEl = document.getElementById('demo');
-      if (demoEl) {
-        demoEl.scrollIntoView({ behavior: 'smooth' });
-      }
+      smoothScrollTo('#demo', { offset: 70, duration: 0.9 });
     }
   };
 
@@ -103,7 +121,6 @@ export default function App() {
           currentView={currentView}
           setCurrentView={setCurrentView}
           onOpenInstall={() => setIsInstallOpen(true)}
-          onOpenOnboarding={() => setIsOnboardingOpen(true)}
           theme={theme}
           onToggleTheme={toggleTheme}
         />
@@ -116,7 +133,6 @@ export default function App() {
               <Hero
                 onOpenInstall={() => setIsInstallOpen(true)}
                 onScrollToDemo={handleScrollToDemo}
-                onOpenOnboarding={() => setIsOnboardingOpen(true)}
                 onExploreEngineering={() => setCurrentView('features')}
                 isDarkMode={isDarkMode}
               />
@@ -142,7 +158,7 @@ export default function App() {
                 onOpenInstall={() => setIsInstallOpen(true)}
                 onExploreFeatures={() => {
                   setCurrentView('features');
-                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                  smoothScrollTo(document.body, { offset: 0, duration: 0.65 });
                 }}
               />
 
@@ -152,10 +168,45 @@ export default function App() {
           )}
 
           {currentView === 'how-it-works' && (
-            <div className="space-y-4">
-              <HowItWorks />
-              <InteractiveDemo onOpenInstall={() => setIsInstallOpen(true)} />
-            </div>
+            <HowItWorksPage
+              onOpenInstall={() => setIsInstallOpen(true)}
+              onNavigateHome={() => setCurrentView('home')}
+            />
+          )}
+
+          {currentView === 'chatgpt-to-claude' && (
+            <ChatGPTToClaudeLanding
+              onOpenInstall={() => setIsInstallOpen(true)}
+              onNavigateHome={() => setCurrentView('home')}
+            />
+          )}
+
+          {currentView === 'chatgpt-to-gemini' && (
+            <ChatGPTToGeminiLanding
+              onOpenInstall={() => setIsInstallOpen(true)}
+              onNavigateHome={() => setCurrentView('home')}
+            />
+          )}
+
+          {currentView === 'comparison' && (
+            <ComparisonPage
+              onOpenInstall={() => setIsInstallOpen(true)}
+              onNavigateHome={() => setCurrentView('home')}
+            />
+          )}
+
+          {currentView === 'supported-platforms' && (
+            <SupportedPlatformsPage
+              onOpenInstall={() => setIsInstallOpen(true)}
+              onNavigateHome={() => setCurrentView('home')}
+            />
+          )}
+
+          {currentView === 'faq' && (
+            <FAQPage
+              onOpenInstall={() => setIsInstallOpen(true)}
+              onNavigateHome={() => setCurrentView('home')}
+            />
           )}
 
           {currentView === 'features' && (
@@ -179,7 +230,6 @@ export default function App() {
           setCurrentView={setCurrentView}
           onOpenInstall={() => setIsInstallOpen(true)}
           onOpenFeedback={() => setIsFeedbackOpen(true)}
-          onOpenOnboarding={() => setIsOnboardingOpen(true)}
         />
 
         {/* Unobtrusive Floating Feedback Widget */}
@@ -189,19 +239,12 @@ export default function App() {
         <InstallModal
           isOpen={isInstallOpen}
           onClose={() => setIsInstallOpen(false)}
-          onOpenOnboarding={() => setIsOnboardingOpen(true)}
         />
 
         {/* Contact & Feedback Modal */}
         <FeedbackModal
           isOpen={isFeedbackOpen}
           onClose={() => setIsFeedbackOpen(false)}
-        />
-
-        {/* First-Launch Extension Onboarding Carousel */}
-        <OnboardingCarousel
-          isOpen={isOnboardingOpen}
-          onClose={() => setIsOnboardingOpen(false)}
         />
       </div>
     </ToastProvider>

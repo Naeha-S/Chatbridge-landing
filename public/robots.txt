@@ -1,13 +1,18 @@
 # robots.txt for ChatBridge
 User-agent: *
 Allow: /
-Allow: /features
-Allow: /how-it-works
-Allow: /privacy
-Allow: /local-privacy
-Allow: /guides
+Allow: /#how-it-works
+Allow: /#chatgpt-to-claude
+Allow: /#chatgpt-to-gemini
+Allow: /#features
+Allow: /#comparison
+Allow: /#supported-platforms
+Allow: /#faq
+Allow: /#privacy
+Allow: /#local-privacy
+Allow: /#guides
 
-# Allow dedicated AI crawler access for structured documentation
+# Dedicated AI crawlers for documentation and rich search summaries
 User-agent: GPTBot
 Allow: /
 
@@ -20,5 +25,8 @@ Allow: /
 User-agent: Google-Extended
 Allow: /
 
-# Direct AI agents to technical machine-readable summary
-# LLMs specification file: https://chatbridge.app/llms.txt
+# Direct search bots to XML Sitemap
+Sitemap: https://chatbridge.app/sitemap.xml
+
+# Machine-readable LLM specification
+# Specification file: https://chatbridge.app/llms.txt

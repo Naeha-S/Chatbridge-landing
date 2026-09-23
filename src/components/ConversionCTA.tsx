@@ -2,6 +2,7 @@ import React from 'react';
 import PrismFilmDark from './originkit/ui/prism-film-custom-style1';
 import PrismFilmLight from './originkit/ui/prism-film-custom-style2';
 import { DownloadIcon, ArrowRightIcon, ShieldCheckIcon, ZapIcon, LockIcon } from './Icons';
+import { CHROME_WEBSTORE_URL } from '../constants/links';
 
 interface ConversionCTAProps {
   isDarkMode: boolean;
@@ -11,7 +12,7 @@ interface ConversionCTAProps {
 
 export const ConversionCTA: React.FC<ConversionCTAProps> = ({
   isDarkMode,
-  onOpenInstall,
+  onOpenInstall: _onOpenInstall,
   onExploreFeatures,
 }) => {
   return (
@@ -58,14 +59,16 @@ export const ConversionCTA: React.FC<ConversionCTAProps> = ({
 
         {/* Action Buttons */}
         <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
-          <button
+          <a
             id="cta-prism-install-btn"
-            onClick={onOpenInstall}
+            href={CHROME_WEBSTORE_URL}
+            target="_blank"
+            rel="noopener noreferrer"
             className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-8 py-3.5 rounded-full text-sm font-semibold transition-all duration-200 shadow-lg hover:shadow-xl hover:scale-[1.02] bg-[#1D1D1F] dark:bg-white text-white dark:text-[#0A0A0D] hover:bg-[#333336] dark:hover:bg-[#E5E5EA]"
           >
             <DownloadIcon className="w-4 h-4" />
             <span>Add ChatBridge to Chrome</span>
-          </button>
+          </a>
 
           <button
             onClick={onExploreFeatures}
