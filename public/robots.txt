@@ -2,6 +2,7 @@
 User-agent: *
 Allow: /
 Allow: /#how-it-works
+Allow: /#history
 Allow: /#chatgpt-to-claude
 Allow: /#chatgpt-to-gemini
 Allow: /#features

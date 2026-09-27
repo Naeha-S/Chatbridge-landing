@@ -24,6 +24,14 @@
     <priority>0.9</priority>
   </url>
 
+  <!-- Subpage: Searchable History & Context Injection Vault -->
+  <url>
+    <loc>https://chatbridge.app/#history</loc>
+    <lastmod>2026-09-27</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
   <!-- Subpage: How It Works & Architecture -->
   <url>
     <loc>https://chatbridge.app/#how-it-works</loc>

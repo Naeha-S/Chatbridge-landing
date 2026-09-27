@@ -83,6 +83,17 @@ export const Footer: React.FC<FooterProps> = ({
               <li>
                 <button
                   onClick={() => {
+                    setCurrentView('history');
+                    smoothScrollTo(document.body, { offset: 0, duration: 0.65 });
+                  }}
+                  className="hover:text-[#1D1D1F] dark:hover:text-white transition-colors"
+                >
+                  History Vault & Injection
+                </button>
+              </li>
+              <li>
+                <button
+                  onClick={() => {
                     setCurrentView('how-it-works');
                     smoothScrollTo(document.body, { offset: 0, duration: 0.65 });
                   }}

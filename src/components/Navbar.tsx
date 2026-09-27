@@ -27,6 +27,7 @@ export const Navbar: React.FC<NavbarProps> = ({
 
   const navItems: { label: string; view: PageView }[] = [
     { label: 'Overview', view: 'home' },
+    { label: 'History Vault', view: 'history' },
     { label: 'How It Works', view: 'how-it-works' },
     { label: 'Compare', view: 'comparison' },
     { label: 'FAQ', view: 'faq' },

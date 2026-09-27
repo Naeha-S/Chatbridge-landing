@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { motion } from "motion/react";
+import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 import {
   IconPlayerPlay,
@@ -13,7 +13,9 @@ import {
 export type Tab = {
   title: string;
   value: string;
-  content?: string | React.ReactNode | any;
+  shortTitle?: string;
+  stageNumber?: string;
+  content?: React.ReactNode;
 };
 
 export const Tabs = ({
@@ -23,7 +25,7 @@ export const Tabs = ({
   tabClassName,
   contentClassName,
   autoLoop = true,
-  intervalMs = 4500,
+  intervalMs = 5000,
 }: {
   tabs: Tab[];
   containerClassName?: string;
@@ -33,38 +35,36 @@ export const Tabs = ({
   autoLoop?: boolean;
   intervalMs?: number;
 }) => {
-  const [active, setActive] = useState<Tab>(propTabs[0]);
-  const [tabs, setTabs] = useState<Tab[]>(propTabs);
-  const [hovering, setHovering] = useState(false);
+  const [activeIdx, setActiveIdx] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
+  const [isUserInteracting, setIsUserInteracting] = useState(false);
   const [progress, setProgress] = useState(0);
 
-  const moveSelectedTabToTop = (idx: number) => {
-    const newTabs = [...propTabs];
-    const selectedTab = newTabs.splice(idx, 1);
-    newTabs.unshift(selectedTab[0]);
-    setTabs(newTabs);
-    setActive(newTabs[0]);
+  const activeTab = propTabs[activeIdx] || propTabs[0];
+
+  const handleNext = () => {
+    setActiveIdx((prev) => (prev + 1) % propTabs.length);
     setProgress(0);
   };
 
-  const handleNext = () => {
-    const currentIdx = propTabs.findIndex((t) => t.value === active.value);
-    const nextIdx = (currentIdx + 1) % propTabs.length;
-    moveSelectedTabToTop(nextIdx);
-  };
-
   const handlePrev = () => {
-    const currentIdx = propTabs.findIndex((t) => t.value === active.value);
-    const prevIdx = (currentIdx - 1 + propTabs.length) % propTabs.length;
-    moveSelectedTabToTop(prevIdx);
+    setActiveIdx((prev) => (prev - 1 + propTabs.length) % propTabs.length);
+    setProgress(0);
   };
 
-  // Auto-looping timer cycling images and stages
-  useEffect(() => {
-    if (!autoLoop || isPaused || hovering) return;
+  const handleSelectTab = (idx: number) => {
+    setActiveIdx(idx);
+    setProgress(0);
+    setIsUserInteracting(true);
+    const timeout = setTimeout(() => setIsUserInteracting(false), 12000);
+    return () => clearTimeout(timeout);
+  };
 
-    const intervalStep = 60;
+  // Smooth auto-loop interval
+  useEffect(() => {
+    if (!autoLoop || isPaused || isUserInteracting) return;
+
+    const intervalStep = 50;
     const totalSteps = intervalMs / intervalStep;
     let step = 0;
 
@@ -75,61 +75,54 @@ export const Tabs = ({
       if (step >= totalSteps) {
         step = 0;
         setProgress(0);
-        setActive((currentActive) => {
-          const currentIdx = propTabs.findIndex((t) => t.value === currentActive.value);
-          const nextIdx = (currentIdx + 1) % propTabs.length;
-          const newTabs = [...propTabs];
-          const selectedTab = newTabs.splice(nextIdx, 1);
-          newTabs.unshift(selectedTab[0]);
-          setTabs(newTabs);
-          return newTabs[0];
-        });
+        setActiveIdx((prev) => (prev + 1) % propTabs.length);
       }
     }, intervalStep);
 
     return () => clearInterval(timer);
-  }, [autoLoop, isPaused, hovering, propTabs, intervalMs]);
-
-  const activeIndex = propTabs.findIndex((t) => t.value === active.value);
+  }, [autoLoop, isPaused, isUserInteracting, propTabs.length, intervalMs]);
 
   return (
     <div
       className="relative w-full flex flex-col"
-      onMouseEnter={() => setHovering(true)}
-      onMouseLeave={() => setHovering(false)}
+      onMouseEnter={() => setIsUserInteracting(true)}
+      onMouseLeave={() => setIsUserInteracting(false)}
     >
-      {/* Top Header Row with Tabs and Auto-Loop Controls */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-3 w-full">
-        {/* Tab Buttons */}
+      {/* Controls & Tab Navigation Bar */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 mb-4 w-full">
+        {/* Horizontal Scrollable Tabs */}
         <div
+          role="tablist"
+          aria-label="Continuity Architecture Stages"
           className={cn(
-            "flex flex-row items-center justify-start [perspective:1000px] relative overflow-x-auto no-visible-scrollbar max-w-full gap-1 p-1 rounded-full bg-neutral-200/60 dark:bg-white/5 border border-neutral-300/70 dark:border-white/10 backdrop-blur-md",
+            "flex items-center gap-1.5 p-1.5 rounded-xl sm:rounded-full bg-neutral-100/90 dark:bg-[#12121A] border border-neutral-200/80 dark:border-white/10 backdrop-blur-md overflow-x-auto no-visible-scrollbar w-full md:w-auto shadow-xs",
             containerClassName
           )}
         >
           {propTabs.map((tab, idx) => {
-            const isCurrent = active.value === tab.value;
+            const isCurrent = activeIdx === idx;
             return (
               <button
-                key={tab.title}
-                onClick={() => moveSelectedTabToTop(idx)}
+                key={tab.value}
+                role="tab"
+                id={`arch-tab-${tab.value}`}
+                aria-selected={isCurrent}
+                aria-controls={`arch-tabpanel-${tab.value}`}
+                onClick={() => handleSelectTab(idx)}
                 className={cn(
-                  "relative px-3.5 py-1.5 rounded-full text-xs font-medium transition-colors shrink-0",
+                  "relative px-3 py-1.5 sm:px-3.5 sm:py-1.5 rounded-lg sm:rounded-full text-xs font-medium transition-all duration-200 shrink-0 select-none flex items-center gap-2",
                   isCurrent
-                    ? "text-neutral-900 dark:text-white font-semibold"
-                    : "text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white",
+                    ? "text-[#1D1D1F] dark:text-white font-semibold"
+                    : "text-neutral-500 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/5",
                   tabClassName
                 )}
-                style={{
-                  transformStyle: "preserve-3d",
-                }}
               >
                 {isCurrent && (
                   <motion.div
-                    layoutId="clickedbutton"
-                    transition={{ type: "spring", bounce: 0.25, duration: 0.5 }}
+                    layoutId="activeArchitectureTab"
+                    transition={{ type: "spring", bounce: 0.2, duration: 0.4 }}
                     className={cn(
-                      "absolute inset-0 bg-white dark:bg-neutral-800 rounded-full shadow-sm border border-neutral-200/80 dark:border-white/10",
+                      "absolute inset-0 bg-white dark:bg-[#1E1E2C] rounded-lg sm:rounded-full shadow-xs border border-neutral-200/90 dark:border-white/15",
                       activeTabClassName
                     )}
                   />
@@ -137,116 +130,95 @@ export const Tabs = ({
 
                 <span className="relative z-10 flex items-center gap-1.5">
                   <span
-                    className="w-1.5 h-1.5 rounded-full transition-colors"
-                    style={{
-                      backgroundColor: isCurrent ? "#0071E3" : "transparent",
-                    }}
+                    className={cn(
+                      "w-1.5 h-1.5 rounded-full transition-colors",
+                      isCurrent
+                        ? "bg-[#0071E3] dark:bg-[#2997FF]"
+                        : "bg-neutral-300 dark:bg-neutral-700"
+                    )}
                   />
-                  {tab.title}
+                  <span className="hidden sm:inline">{tab.title}</span>
+                  <span className="sm:hidden">{tab.shortTitle || tab.title}</span>
                 </span>
               </button>
             );
           })}
         </div>
 
-        {/* Auto-Loop Status & Interactive Controls */}
-        <div className="flex items-center gap-2 self-end sm:self-auto shrink-0 px-2.5 py-1 rounded-full bg-neutral-200/60 dark:bg-white/5 border border-neutral-300/70 dark:border-white/10 text-xs font-mono backdrop-blur-md">
-          <div className="flex items-center gap-1 pr-1.5 border-r border-neutral-300 dark:border-white/10">
+        {/* Auto-Loop Status & Step Controls */}
+        <div className="flex items-center justify-between md:justify-end gap-2 shrink-0 px-3 py-1.5 rounded-xl sm:rounded-full bg-neutral-100/90 dark:bg-[#12121A] border border-neutral-200/80 dark:border-white/10 text-xs font-mono backdrop-blur-md self-stretch md:self-auto shadow-xs">
+          {/* Pause / Play Loop */}
+          <div className="flex items-center gap-1.5 pr-2 border-r border-neutral-200 dark:border-white/10">
             <button
               onClick={() => setIsPaused(!isPaused)}
-              className="p-1 rounded-full hover:bg-black/5 dark:hover:bg-white/10 text-neutral-700 dark:text-neutral-300 transition-colors"
+              className="p-1 rounded-md hover:bg-neutral-200 dark:hover:bg-white/10 text-neutral-700 dark:text-neutral-300 transition-colors"
               title={isPaused ? "Resume auto-loop" : "Pause auto-loop"}
               aria-label={isPaused ? "Resume auto-loop" : "Pause auto-loop"}
             >
               {isPaused ? (
                 <IconPlayerPlay className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
               ) : (
-                <IconPlayerPause className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
+                <IconPlayerPause className="w-3.5 h-3.5 text-[#0071E3] dark:text-[#2997FF]" />
               )}
             </button>
-            <span className="text-[11px] text-neutral-600 dark:text-neutral-400 select-none">
-              {isPaused ? "Paused" : hovering ? "Hovered" : "Looping"}
+            <span className="text-[11px] text-neutral-500 dark:text-neutral-400 select-none">
+              {isPaused ? "Paused" : isUserInteracting ? "Interacting" : "Looping"}
             </span>
           </div>
 
-          {/* Quick Prev / Next Step Buttons */}
-          <div className="flex items-center gap-0.5">
+          {/* Stepper Chevrons */}
+          <div className="flex items-center gap-1">
             <button
               onClick={handlePrev}
-              className="p-1 rounded-full hover:bg-black/5 dark:hover:bg-white/10 text-neutral-700 dark:text-neutral-300 transition-colors"
+              className="p-1 rounded-md hover:bg-neutral-200 dark:hover:bg-white/10 text-neutral-700 dark:text-neutral-300 transition-colors active:scale-95"
               title="Previous Architecture Stage"
               aria-label="Previous Architecture Stage"
             >
-              <IconChevronLeft className="w-3.5 h-3.5" />
+              <IconChevronLeft className="w-4 h-4" />
             </button>
             <span className="text-[11px] text-neutral-600 dark:text-neutral-400 px-1 font-mono font-medium">
-              {activeIndex + 1}/{propTabs.length}
+              {activeIdx + 1} / {propTabs.length}
             </span>
             <button
               onClick={handleNext}
-              className="p-1 rounded-full hover:bg-black/5 dark:hover:bg-white/10 text-neutral-700 dark:text-neutral-300 transition-colors"
+              className="p-1 rounded-md hover:bg-neutral-200 dark:hover:bg-white/10 text-neutral-700 dark:text-neutral-300 transition-colors active:scale-95"
               title="Next Architecture Stage"
               aria-label="Next Architecture Stage"
             >
-              <IconChevronRight className="w-3.5 h-3.5" />
+              <IconChevronRight className="w-4 h-4" />
             </button>
           </div>
 
-          {/* Mini Progress Bar Line */}
-          <div className="w-12 h-1 bg-neutral-300/70 dark:bg-white/10 rounded-full overflow-hidden ml-1">
+          {/* Loop Progress Indicator */}
+          <div className="w-14 h-1 bg-neutral-200 dark:bg-white/10 rounded-full overflow-hidden ml-1 hidden sm:block">
             <div
-              className="h-full bg-blue-500 dark:bg-blue-400 rounded-full transition-all duration-75"
+              className="h-full bg-[#0071E3] dark:bg-[#2997FF] rounded-full transition-all duration-75 ease-linear"
               style={{ width: `${progress}%` }}
             />
           </div>
         </div>
       </div>
 
-      <FadeInDiv
-        tabs={tabs}
-        active={active}
-        key={active.value}
-        hovering={hovering}
-        className={cn("mt-2", contentClassName)}
-      />
-    </div>
-  );
-};
-
-export const FadeInDiv = ({
-  className,
-  tabs,
-  hovering,
-}: {
-  className?: string;
-  key?: string;
-  tabs: Tab[];
-  active: Tab;
-  hovering?: boolean;
-}) => {
-  const isActive = (tab: Tab) => {
-    return tab.value === tabs[0].value;
-  };
-  return (
-    <div className="relative w-full h-full">
-      {tabs.map((tab, idx) => (
-        <motion.div
-          key={tab.value}
-          layoutId={tab.value}
-          style={{
-            scale: 1 - idx * 0.1,
-            top: hovering ? idx * -50 : 0,
-            zIndex: -idx,
-            opacity: idx < 3 ? 1 - idx * 0.1 : 0,
-          }}
-          animate={{
-            y: isActive(tab) ? [0, 40, 0] : 0,
-          }}
-          className={cn("w-full h-full absolute top-0 left-0", className)}
-        >
-          {tab.content}
-        </motion.div>
-      ))}
+      {/* Active Tab Panel with Smooth Crossfade & Guaranteed Natural Height */}
+      <div
+        role="tabpanel"
+        id={`arch-tabpanel-${activeTab.value}`}
+        aria-labelledby={`arch-tab-${activeTab.value}`}
+        className={cn("w-full relative min-h-[380px] sm:min-h-[460px] md:min-h-[520px] flex flex-col", contentClassName)}
+      >
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={activeTab.value}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.28, ease: "easeInOut" }}
+            className="w-full flex-1 flex flex-col"
+          >
+            {activeTab.content}
+          </motion.div>
+        </AnimatePresence>
+      </div>
     </div>
   );
 };

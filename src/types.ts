@@ -2,6 +2,7 @@ export type PageView =
   | 'home'
   | 'features'
   | 'how-it-works'
+  | 'history'
   | 'chatgpt-to-claude'
   | 'chatgpt-to-gemini'
   | 'comparison'
@@ -11,6 +12,24 @@ export type PageView =
   | 'local-privacy'
   | 'guides'
   | 'install';
+
+export interface SavedContextSegment {
+  id: string;
+  title: string;
+  originModel: 'ChatGPT' | 'Claude' | 'Gemini' | 'DeepSeek';
+  category: 'architecture' | 'coding' | 'reasoning' | 'database';
+  tags: string[];
+  rawTranscript: string;
+  summary: string;
+  compressedContextPill: string;
+  originalTokens: number;
+  compressedTokens: number;
+  timestamp: string;
+  isPinned?: boolean;
+  rrfScore: number;
+  extractedVariables?: { key: string; value: string }[];
+  suggestedPrompt?: string;
+}
 
 export type GuideSlug =
   | 'chatgpt-to-claude'
