@@ -1,42 +1,37 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" fill="none" width="100%" height="100%">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024" fill="none">
   <defs>
-    <linearGradient id="cb-blue-gradient" x1="4" y1="4" x2="44" y2="44" gradientUnits="userSpaceOnUse">
-      <stop offset="0%" stop-color="#00C7BE" />
-      <stop offset="35%" stop-color="#0071E3" />
-      <stop offset="70%" stop-color="#6366F1" />
-      <stop offset="100%" stop-color="#AF52DE" />
+    <linearGradient id="logoGradient" x1="120" y1="200" x2="900" y2="800" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#00A3FF" />
+      <stop offset="25%" stop-color="#2997FF" />
+      <stop offset="55%" stop-color="#7C3AED" />
+      <stop offset="80%" stop-color="#C026D3" />
+      <stop offset="100%" stop-color="#EC4899" />
     </linearGradient>
-    <linearGradient id="cb-node-left" x1="6" y1="12" x2="22" y2="28" gradientUnits="userSpaceOnUse">
-      <stop offset="0%" stop-color="#38BDF8" />
-      <stop offset="100%" stop-color="#0071E3" />
-    </linearGradient>
-    <linearGradient id="cb-node-right" x1="26" y1="20" x2="42" y2="36" gradientUnits="userSpaceOnUse">
-      <stop offset="0%" stop-color="#818CF8" />
-      <stop offset="100%" stop-color="#A855F7" />
-    </linearGradient>
-    <linearGradient id="cb-bridge" x1="14" y1="14" x2="34" y2="34" gradientUnits="userSpaceOnUse">
-      <stop offset="0%" stop-color="#0071E3" />
-      <stop offset="50%" stop-color="#6366F1" />
-      <stop offset="100%" stop-color="#A855F7" />
-    </linearGradient>
+    <filter id="subtleGlow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="12" stdDeviation="16" flood-color="#7C3AED" flood-opacity="0.25" />
+    </filter>
   </defs>
 
-  <!-- Background Squircle Shield -->
-  <rect x="2.5" y="2.5" width="43" height="43" rx="12" fill="url(#cb-blue-gradient)" fill-opacity="0.12" stroke="url(#cb-blue-gradient)" stroke-width="1.5" stroke-opacity="0.35" />
+  <!-- Left Circular Loop -->
+  <path
+    d="M 520 280 
+       A 260 260 0 1 0 520 680"
+    stroke="url(#logoGradient)"
+    stroke-width="76"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    filter="url(#subtleGlow)"
+  />
 
-  <!-- Bridge Highway Arcs -->
-  <path d="M14 19.5C14 14.8056 17.8056 11 22.5 11H25.5C30.1944 11 34 14.8056 34 19.5" stroke="url(#cb-bridge)" stroke-width="3.5" stroke-linecap="round" />
-  <path d="M34 28.5C34 33.1944 30.1944 37 25.5 37H22.5C17.8056 37 14 33.1944 14 28.5" stroke="url(#cb-bridge)" stroke-width="3.5" stroke-linecap="round" />
-
-  <!-- Left Origin Node (Source Model) -->
-  <circle cx="14" cy="24" r="5" fill="url(#cb-node-left)" />
-  <circle cx="14" cy="24" r="2" fill="#FFFFFF" />
-
-  <!-- Right Target Node (Destination Model) -->
-  <circle cx="34" cy="24" r="5" fill="url(#cb-node-right)" />
-  <circle cx="34" cy="24" r="2" fill="#FFFFFF" />
-
-  <!-- Central Synaptic Pulse / Context Packet Indicator -->
-  <circle cx="24" cy="24" r="2" fill="#FFFFFF" opacity="0.95" />
-  <path d="M20 24H28" stroke="#FFFFFF" stroke-width="1.5" stroke-linecap="round" opacity="0.75" />
+  <!-- Intersecting Right Loop -->
+  <path
+    d="M 440 520 
+       L 560 400 
+       A 210 210 0 1 1 600 740"
+    stroke="url(#logoGradient)"
+    stroke-width="76"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    filter="url(#subtleGlow)"
+  />
 </svg>

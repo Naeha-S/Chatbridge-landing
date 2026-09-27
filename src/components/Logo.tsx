@@ -19,7 +19,7 @@ export const ChatBridgeLogo: React.FC<LogoProps> = ({
     <div className="flex items-center gap-2.5 select-none">
       <div className={`relative flex items-center justify-center shrink-0 ${className}`}>
         <img
-          src="/logo.svg"
+          src="/logo.png"
           alt="ChatBridge Logo"
           width={size}
           height={size}

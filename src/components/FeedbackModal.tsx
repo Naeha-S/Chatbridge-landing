@@ -133,14 +133,14 @@ export const FeedbackModal: React.FC<FeedbackModalProps> = ({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 bg-black/65 backdrop-blur-xs animate-in fade-in duration-200"
+      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 bg-black/65 backdrop-blur-md animate-in fade-in duration-200"
       onClick={handleClose}
       role="dialog"
       aria-modal="true"
       aria-labelledby="feedback-dialog-title"
     >
       <div
-        className="bg-white dark:bg-[#121218] rounded-3xl border border-neutral-200/90 dark:border-white/10 max-w-xl w-full max-h-[90vh] flex flex-col shadow-2xl relative text-[#1D1D1F] dark:text-[#F5F5F7] transition-all overflow-hidden my-auto"
+        className="liquid-glass-panel rounded-3xl max-w-xl w-full max-h-[90vh] flex flex-col relative text-[#1D1D1F] dark:text-[#F5F5F7] transition-all overflow-hidden my-auto"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Fixed Header Bar */}

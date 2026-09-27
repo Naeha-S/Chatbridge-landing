@@ -76,24 +76,32 @@
   }
 
   h1, h2, h3, h4 {
-    letter-spacing: -0.028em;
-    line-height: 1.14;
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Segoe UI", Roboto, sans-serif;
     text-wrap: balance;
   }
 
   h1 {
-    letter-spacing: -0.034em;
+    font-weight: 800;
+    letter-spacing: -0.035em;
     line-height: 1.08;
   }
 
   h2 {
+    font-weight: 700;
     letter-spacing: -0.028em;
     line-height: 1.15;
   }
 
   h3 {
+    font-weight: 600;
     letter-spacing: -0.022em;
     line-height: 1.22;
+  }
+
+  h4 {
+    font-weight: 600;
+    letter-spacing: -0.018em;
+    line-height: 1.28;
   }
 
   code, kbd, samp, pre {

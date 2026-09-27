@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import PrismFilmDark from './originkit/ui/prism-film-custom-style1';
 import PrismFilmLight from './originkit/ui/prism-film-custom-style2';
+import { SpatialContext3D } from './SpatialContext3D';
 import {
   ZapIcon,
   ShieldCheckIcon,
@@ -162,7 +163,7 @@ export const FeaturesSection: React.FC<FeaturesSectionProps> = ({ isDarkMode = t
 
           <motion.h2
             variants={MOTION_VARIANTS.itemFadeInUp}
-            className="text-3xl sm:text-4xl font-semibold tracking-tight text-[#1D1D1F] dark:text-[#F5F5F7]"
+            className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-[#1D1D1F] dark:text-white"
           >
             Built for how you actually use AI today.
           </motion.h2>
@@ -173,6 +174,16 @@ export const FeaturesSection: React.FC<FeaturesSectionProps> = ({ isDarkMode = t
           >
             You shouldn’t have to re-explain your background every time you open a new tab. ChatBridge creates an effortless, private memory layer between all your AI tools.
           </motion.p>
+        </motion.div>
+
+        {/* Interactive Minimalist 3D Spatial Element */}
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: '-40px' }}
+          transition={{ duration: 0.5, ease: 'easeOut' }}
+        >
+          <SpatialContext3D />
         </motion.div>
 
         {/* Category Filter Pills */}
@@ -232,7 +243,7 @@ export const FeaturesSection: React.FC<FeaturesSectionProps> = ({ isDarkMode = t
 
                   {/* Title & Subtitle */}
                   <div>
-                    <h3 className="text-lg font-semibold tracking-tight text-[#1D1D1F] dark:text-[#F5F5F7]">
+                    <h3 className="text-lg font-bold tracking-tight text-[#1D1D1F] dark:text-white">
                       {card.title}
                     </h3>
                     <p className="text-xs mt-0.5 font-medium text-[#0071E3] dark:text-[#2997FF]">

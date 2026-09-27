@@ -51,7 +51,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             className="flex items-center gap-2.5 text-left focus:outline-none group focus-visible:ring-2 focus-visible:ring-[#0071E3] rounded-lg p-0.5"
             aria-label="ChatBridge Homepage"
           >
-            <LiquidLogoCanvas size={26} className="w-6.5 h-6.5" />
+            <img src="/logo.png" alt="ChatBridge" className="w-6.5 h-6.5 object-contain" width={26} height={26} />
             <span className="font-semibold text-sm tracking-tight text-[#1D1D1F] dark:text-white group-hover:opacity-85 transition-opacity">
               ChatBridge
             </span>
@@ -67,10 +67,10 @@ export const Navbar: React.FC<NavbarProps> = ({
                 key={item.view}
                 id={`nav-link-${item.view}`}
                 onClick={() => handleNavClick(item.view)}
-                className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
+                className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-200 cursor-pointer ${
                   isActive
-                    ? 'text-[#0071E3] dark:text-[#2997FF] bg-[#0071E3]/10 dark:bg-[#2997FF]/10 font-semibold'
-                    : 'text-[#6E6E73] dark:text-[#A1A1A6] hover:text-[#1D1D1F] dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/5'
+                    ? 'text-[#0071E3] dark:text-[#2997FF] bg-[#0071E3]/10 dark:bg-[#2997FF]/10 font-semibold shadow-2xs backdrop-blur-md scale-[1.02]'
+                    : 'text-[#6E6E73] dark:text-[#A1A1A6] hover:text-[#1D1D1F] dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/10 hover:scale-105 hover:backdrop-blur-md active:scale-95'
                 }`}
                 aria-current={isActive ? 'page' : undefined}
               >

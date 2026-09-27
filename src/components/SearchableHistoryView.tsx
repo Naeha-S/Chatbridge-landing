@@ -226,21 +226,6 @@ Target Goal: Continue task execution with loaded context.`,
         className="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4"
       >
         <div>
-          <div className="flex items-center gap-2 text-xs font-mono text-neutral-500 mb-1.5">
-            {onNavigateHome && (
-              <button
-                onClick={onNavigateHome}
-                className="hover:text-[#0071E3] dark:hover:text-[#2997FF] transition-colors"
-              >
-                ChatBridge
-              </button>
-            )}
-            <span>/</span>
-            <span className="text-neutral-700 dark:text-neutral-300 font-medium">History Vault</span>
-            <span>/</span>
-            <span className="text-[#0071E3] dark:text-[#2997FF]">Cross-AI Memory Studio</span>
-          </div>
-
           <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-[#1D1D1F] dark:text-white flex items-center gap-3">
             <LiquidLogoCanvas size={32} />
             <span>AI Memory Notebook & Vault</span>
@@ -448,245 +433,250 @@ Target Goal: Continue task execution with loaded context.`,
           </div>
         </motion.div>
       ) : (
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
-          {/* COLUMN 1: Editorial Conversations Grid/Cards (4 Cols on Desktop) */}
-          <div className="lg:col-span-4 space-y-3 max-h-[780px] overflow-y-auto pr-1 custom-scrollbar">
-            <div className="flex items-center justify-between text-xs text-neutral-500 px-1 mb-1">
-              <span className="font-semibold text-neutral-700 dark:text-neutral-300">
-                {filteredSegments.length} {filteredSegments.length === 1 ? 'Note' : 'Notes'} Found
-              </span>
-              <span className="text-[11px] text-neutral-400">Select to inspect</span>
+        <div className="space-y-6">
+          {/* ROW 1: Notes List & Raw Conversation Data (2 equal columns on desktop) */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
+            {/* COLUMN 1: Editorial Conversations Grid/Cards (6 Cols on Desktop) */}
+            <div className="lg:col-span-6 space-y-3 max-h-[780px] overflow-y-auto pr-1 custom-scrollbar">
+              <div className="flex items-center justify-between text-xs text-neutral-500 px-1 mb-1">
+                <span className="font-semibold text-neutral-700 dark:text-neutral-300">
+                  {filteredSegments.length} {filteredSegments.length === 1 ? 'Note' : 'Notes'} Found
+                </span>
+                <span className="text-[11px] text-neutral-400">Select to inspect</span>
+              </div>
+
+              {filteredSegments.length > 0 ? (
+                filteredSegments.map((seg, idx) => {
+                  const isSelected = selectedSegment?.id === seg.id;
+                  const reductionPct = Math.round((1 - seg.compressedTokens / seg.originalTokens) * 100);
+
+                  return (
+                    <motion.div
+                      key={seg.id}
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.3, delay: Math.min(idx * 0.04, 0.2) }}
+                      onClick={() => setSelectedId(seg.id)}
+                      className={`p-4 rounded-2xl border transition-all cursor-pointer relative group ${
+                        isSelected
+                          ? 'bg-blue-50/80 dark:bg-[#141C2B] border-[#0071E3] dark:border-[#2997FF] shadow-xs ring-1 ring-[#0071E3]/20'
+                          : 'bg-white dark:bg-[#111118] border-neutral-200/80 dark:border-white/10 hover:border-neutral-300 dark:hover:border-white/20'
+                      }`}
+                    >
+                      {/* Top Row: Model & Pin/Delete */}
+                      <div className="flex items-center justify-between gap-2 mb-2">
+                        <div className="flex items-center gap-2">
+                          <span className="font-semibold text-[10px] font-mono px-2 py-0.5 rounded-md bg-neutral-100 dark:bg-white/10 text-neutral-700 dark:text-neutral-300 border border-neutral-200/60 dark:border-white/5">
+                            {seg.originModel}
+                          </span>
+                          <span className="text-[10px] text-neutral-400 font-mono">
+                            {seg.timestamp}
+                          </span>
+                        </div>
+
+                        <div className="flex items-center gap-1 opacity-80 group-hover:opacity-100 transition-opacity">
+                          <button
+                            onClick={(e) => handleTogglePin(seg.id, e)}
+                            className={`p-1 rounded-md hover:bg-black/5 dark:hover:bg-white/10 transition-colors ${
+                              seg.isPinned ? 'text-amber-500' : 'text-neutral-400'
+                            }`}
+                            title={seg.isPinned ? 'Unpin note' : 'Star note'}
+                          >
+                            <IconPin className="w-3.5 h-3.5" />
+                          </button>
+                          <button
+                            onClick={(e) => handleDelete(seg.id, e)}
+                            className="p-1 rounded-md hover:bg-rose-500/10 text-neutral-400 hover:text-rose-500 transition-colors"
+                            title="Delete from local storage"
+                          >
+                            <IconTrash className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+                      </div>
+
+                      {/* Title */}
+                      <h4 className="text-xs sm:text-sm font-bold tracking-tight text-[#1D1D1F] dark:text-white line-clamp-1">
+                        {seg.title}
+                      </h4>
+
+                      {/* Summary in Plain English */}
+                      <p className="text-xs text-neutral-500 dark:text-neutral-400 line-clamp-2 mt-1.5 leading-relaxed">
+                        {seg.summary}
+                      </p>
+
+                      {/* Bottom Info: Clean Tags & Savings */}
+                      <div className="flex flex-wrap items-center justify-between gap-2 mt-3 pt-2.5 border-t border-neutral-100 dark:border-white/5 text-[10px]">
+                        <div className="flex items-center gap-1 text-emerald-600 dark:text-emerald-400 font-medium">
+                          <IconCheck className="w-3 h-3" />
+                          <span>{reductionPct}% token compression</span>
+                        </div>
+
+                        <div className="flex items-center gap-1">
+                          {seg.tags.slice(0, 2).map((tag) => (
+                            <span
+                              key={tag}
+                              className="px-1.5 py-0.5 rounded bg-neutral-100 dark:bg-white/5 text-neutral-500 dark:text-neutral-400"
+                            >
+                              #{tag}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    </motion.div>
+                  );
+                })
+              ) : (
+                /* PROFESSIONAL SEARCH EMPTY STATE */
+                <div className="p-6 text-center bg-white dark:bg-[#111118] rounded-2xl border border-neutral-200 dark:border-white/10 text-neutral-400 space-y-3">
+                  <div className="w-10 h-10 rounded-full bg-neutral-100 dark:bg-white/5 flex items-center justify-center mx-auto text-neutral-400">
+                    <IconSearch className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h4 className="text-xs font-bold text-neutral-800 dark:text-neutral-200">
+                      No matching conversations
+                    </h4>
+                    <p className="text-[11px] text-neutral-500 mt-0.5">
+                      Try searching for terms like <span className="font-mono text-[#0071E3] dark:text-[#2997FF]">React</span>, <span className="font-mono text-[#0071E3] dark:text-[#2997FF]">Redis</span>, or <span className="font-mono text-[#0071E3] dark:text-[#2997FF]">Database</span>.
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => {
+                      setSearchQuery('');
+                      setSelectedModelFilter('All');
+                      setSelectedCategoryFilter('All');
+                      setPinnedOnly(false);
+                    }}
+                    className="px-3 py-1.5 rounded-lg bg-neutral-100 hover:bg-neutral-200 dark:bg-white/10 dark:hover:bg-white/15 text-xs font-semibold text-[#0071E3] dark:text-[#2997FF] transition-colors"
+                  >
+                    Clear all filters
+                  </button>
+                </div>
+              )}
             </div>
 
-            {filteredSegments.length > 0 ? (
-              filteredSegments.map((seg, idx) => {
-                const isSelected = selectedSegment?.id === seg.id;
-                const reductionPct = Math.round((1 - seg.compressedTokens / seg.originalTokens) * 100);
-
-                return (
-                  <motion.div
-                    key={seg.id}
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.3, delay: Math.min(idx * 0.04, 0.2) }}
-                    onClick={() => setSelectedId(seg.id)}
-                    className={`p-4 rounded-2xl border transition-all cursor-pointer relative group ${
-                      isSelected
-                        ? 'bg-blue-50/80 dark:bg-[#141C2B] border-[#0071E3] dark:border-[#2997FF] shadow-xs ring-1 ring-[#0071E3]/20'
-                        : 'bg-white dark:bg-[#111118] border-neutral-200/80 dark:border-white/10 hover:border-neutral-300 dark:hover:border-white/20'
-                    }`}
-                  >
-                    {/* Top Row: Model & Pin/Delete */}
-                    <div className="flex items-center justify-between gap-2 mb-2">
-                      <div className="flex items-center gap-2">
-                        <span className="font-semibold text-[10px] font-mono px-2 py-0.5 rounded-md bg-neutral-100 dark:bg-white/10 text-neutral-700 dark:text-neutral-300 border border-neutral-200/60 dark:border-white/5">
-                          {seg.originModel}
-                        </span>
-                        <span className="text-[10px] text-neutral-400 font-mono">
-                          {seg.timestamp}
-                        </span>
-                      </div>
-
-                      <div className="flex items-center gap-1 opacity-80 group-hover:opacity-100 transition-opacity">
-                        <button
-                          onClick={(e) => handleTogglePin(seg.id, e)}
-                          className={`p-1 rounded-md hover:bg-black/5 dark:hover:bg-white/10 transition-colors ${
-                            seg.isPinned ? 'text-amber-500' : 'text-neutral-400'
-                          }`}
-                          title={seg.isPinned ? 'Unpin note' : 'Star note'}
-                        >
-                          <IconPin className="w-3.5 h-3.5" />
-                        </button>
-                        <button
-                          onClick={(e) => handleDelete(seg.id, e)}
-                          className="p-1 rounded-md hover:bg-rose-500/10 text-neutral-400 hover:text-rose-500 transition-colors"
-                          title="Delete from local storage"
-                        >
-                          <IconTrash className="w-3.5 h-3.5" />
-                        </button>
-                      </div>
-                    </div>
-
-                    {/* Title */}
-                    <h4 className="text-xs sm:text-sm font-bold tracking-tight text-[#1D1D1F] dark:text-white line-clamp-1">
-                      {seg.title}
-                    </h4>
-
-                    {/* Summary in Plain English */}
-                    <p className="text-xs text-neutral-500 dark:text-neutral-400 line-clamp-2 mt-1.5 leading-relaxed">
-                      {seg.summary}
-                    </p>
-
-                    {/* Bottom Info: Clean Tags & Savings */}
-                    <div className="flex flex-wrap items-center justify-between gap-2 mt-3 pt-2.5 border-t border-neutral-100 dark:border-white/5 text-[10px]">
-                      <div className="flex items-center gap-1 text-emerald-600 dark:text-emerald-400 font-medium">
-                        <IconCheck className="w-3 h-3" />
-                        <span>{reductionPct}% token compression</span>
-                      </div>
-
-                      <div className="flex items-center gap-1">
-                        {seg.tags.slice(0, 2).map((tag) => (
-                          <span
-                            key={tag}
-                            className="px-1.5 py-0.5 rounded bg-neutral-100 dark:bg-white/5 text-neutral-500 dark:text-neutral-400"
-                          >
-                            #{tag}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-                  </motion.div>
-                );
-              })
-            ) : (
-              /* PROFESSIONAL SEARCH EMPTY STATE */
-              <div className="p-6 text-center bg-white dark:bg-[#111118] rounded-2xl border border-neutral-200 dark:border-white/10 text-neutral-400 space-y-3">
-                <div className="w-10 h-10 rounded-full bg-neutral-100 dark:bg-white/5 flex items-center justify-center mx-auto text-neutral-400">
-                  <IconSearch className="w-5 h-5" />
-                </div>
-                <div>
-                  <h4 className="text-xs font-bold text-neutral-800 dark:text-neutral-200">
-                    No matching conversations
-                  </h4>
-                  <p className="text-[11px] text-neutral-500 mt-0.5">
-                    Try searching for terms like <span className="font-mono text-[#0071E3] dark:text-[#2997FF]">React</span>, <span className="font-mono text-[#0071E3] dark:text-[#2997FF]">Redis</span>, or <span className="font-mono text-[#0071E3] dark:text-[#2997FF]">Database</span>.
-                  </p>
-                </div>
-                <button
-                  onClick={() => {
-                    setSearchQuery('');
-                    setSelectedModelFilter('All');
-                    setSelectedCategoryFilter('All');
-                    setPinnedOnly(false);
-                  }}
-                  className="px-3 py-1.5 rounded-lg bg-neutral-100 hover:bg-neutral-200 dark:bg-white/10 dark:hover:bg-white/15 text-xs font-semibold text-[#0071E3] dark:text-[#2997FF] transition-colors"
+            {/* COLUMN 2: Metadata & Raw Conversation Data (6 Cols on Desktop) */}
+            <AnimatePresence mode="wait">
+              {selectedSegment ? (
+                <motion.div
+                  key={selectedSegment.id + '-meta'}
+                  initial={{ opacity: 0, x: -8 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -8 }}
+                  transition={{ duration: 0.25 }}
+                  className="lg:col-span-6 bg-white dark:bg-[#111118] rounded-2xl border border-neutral-200/90 dark:border-white/10 shadow-sm p-5 flex flex-col justify-between space-y-4"
                 >
-                  Clear all filters
-                </button>
-              </div>
-            )}
+                  <div className="space-y-3.5">
+                    {/* Column Header */}
+                    <div className="flex items-center justify-between border-b border-neutral-200/80 dark:border-white/10 pb-2.5">
+                      <span className="text-xs font-bold text-neutral-900 dark:text-white flex items-center gap-1.5">
+                        <IconFileText className="w-4 h-4 text-[#0071E3] dark:text-[#2997FF]" />
+                        <span>Raw Conversation Data</span>
+                      </span>
+                      <span className="text-[10px] font-mono text-neutral-400">
+                        {selectedSegment.originModel} Excerpt
+                      </span>
+                    </div>
+
+                    {/* Local Storage Concept Explainer Box */}
+                    <div className="p-3 rounded-xl bg-blue-50/70 dark:bg-[#0E1524] border border-blue-200/70 dark:border-blue-500/20 text-[11px] text-neutral-700 dark:text-neutral-300 leading-relaxed space-y-1">
+                      <div className="font-semibold text-[#0071E3] dark:text-[#2997FF] flex items-center gap-1">
+                        <IconInfoCircle className="w-3.5 h-3.5" />
+                        <span>What is Local Storage?</span>
+                      </div>
+                      <p className="text-[10px] text-neutral-600 dark:text-neutral-400">
+                        This text is saved only inside your computer's browser memory (<code className="font-mono bg-white/70 dark:bg-black/40 px-1 py-0.2 rounded">chrome.storage.local</code>). Zero cloud servers have access.
+                      </p>
+                    </div>
+
+                    {/* Title and Summary */}
+                    <div>
+                      <h3 className="text-sm font-bold text-neutral-900 dark:text-white">
+                        {selectedSegment.title}
+                      </h3>
+                      <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-1 leading-relaxed">
+                        {selectedSegment.summary}
+                      </p>
+                    </div>
+
+                    {/* Extracted Key Facts */}
+                    {selectedSegment.extractedVariables && selectedSegment.extractedVariables.length > 0 && (
+                      <div className="space-y-1.5 pt-2 border-t border-neutral-100 dark:border-white/5">
+                        <span className="text-[10px] font-mono uppercase tracking-wider text-neutral-400 block">
+                          Extracted Facts & Variables
+                        </span>
+                        <div className="grid grid-cols-2 gap-1.5 text-xs">
+                          {selectedSegment.extractedVariables.map((v, idx) => (
+                            <div key={idx} className="p-1.5 px-2 rounded-lg bg-neutral-50 dark:bg-white/5 border border-neutral-200/70 dark:border-white/5">
+                              <span className="text-[9px] font-mono text-neutral-400 uppercase block truncate">
+                                {v.key}
+                              </span>
+                              <span className="text-[11px] font-semibold text-neutral-800 dark:text-neutral-200 truncate block">
+                                {v.value}
+                              </span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Raw Transcript Content */}
+                    <div className="space-y-1.5 pt-2 border-t border-neutral-100 dark:border-white/5">
+                      <div className="flex items-center justify-between text-[10px] font-mono text-neutral-400">
+                        <span>Original Text ({selectedSegment.originalTokens} tokens)</span>
+                        <button
+                          onClick={() => {
+                            navigator.clipboard.writeText(selectedSegment.rawTranscript);
+                            setCopiedCodeSnippet(true);
+                            toast.copied('Transcript Copied', 'Original conversation text copied.');
+                            setTimeout(() => setCopiedCodeSnippet(false), 2000);
+                          }}
+                          className="text-[#0071E3] dark:text-[#2997FF] hover:underline flex items-center gap-0.5"
+                        >
+                          <IconCopy className="w-3 h-3" />
+                          <span>{copiedCodeSnippet ? 'Copied' : 'Copy Text'}</span>
+                        </button>
+                      </div>
+                      <div className="p-2.5 rounded-xl bg-neutral-50 dark:bg-black/30 border border-neutral-200 dark:border-white/5 text-[11px] font-mono text-neutral-800 dark:text-neutral-300 max-h-[220px] overflow-y-auto leading-relaxed whitespace-pre-wrap custom-scrollbar">
+                        {selectedSegment.rawTranscript}
+                      </div>
+                    </div>
+                  </div>
+                </motion.div>
+              ) : null}
+            </AnimatePresence>
           </div>
 
-          {/* COLUMN 2: Metadata & Raw Conversation Data (4 Cols on Desktop) */}
-          <AnimatePresence mode="wait">
-            {selectedSegment ? (
-              <motion.div
-                key={selectedSegment.id + '-meta'}
-                initial={{ opacity: 0, x: -8 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -8 }}
-                transition={{ duration: 0.25 }}
-                className="lg:col-span-4 bg-white dark:bg-[#111118] rounded-2xl border border-neutral-200/90 dark:border-white/10 shadow-sm p-5 flex flex-col justify-between space-y-4"
-              >
-                <div className="space-y-3.5">
-                  {/* Column Header */}
-                  <div className="flex items-center justify-between border-b border-neutral-200/80 dark:border-white/10 pb-2.5">
-                    <span className="text-xs font-bold text-neutral-900 dark:text-white flex items-center gap-1.5">
-                      <IconFileText className="w-4 h-4 text-[#0071E3] dark:text-[#2997FF]" />
-                      <span>Raw Conversation Data</span>
-                    </span>
-                    <span className="text-[10px] font-mono text-neutral-400">
-                      {selectedSegment.originModel} Excerpt
-                    </span>
-                  </div>
-
-                  {/* Local Storage Concept Explainer Box */}
-                  <div className="p-3 rounded-xl bg-blue-50/70 dark:bg-[#0E1524] border border-blue-200/70 dark:border-blue-500/20 text-[11px] text-neutral-700 dark:text-neutral-300 leading-relaxed space-y-1">
-                    <div className="font-semibold text-[#0071E3] dark:text-[#2997FF] flex items-center gap-1">
-                      <IconInfoCircle className="w-3.5 h-3.5" />
-                      <span>What is Local Storage?</span>
-                    </div>
-                    <p className="text-[10px] text-neutral-600 dark:text-neutral-400">
-                      This text is saved only inside your computer's browser memory (<code className="font-mono bg-white/70 dark:bg-black/40 px-1 py-0.2 rounded">chrome.storage.local</code>). Zero cloud servers have access.
-                    </p>
-                  </div>
-
-                  {/* Title and Summary */}
-                  <div>
-                    <h3 className="text-sm font-bold text-neutral-900 dark:text-white">
-                      {selectedSegment.title}
-                    </h3>
-                    <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-1 leading-relaxed">
-                      {selectedSegment.summary}
-                    </p>
-                  </div>
-
-                  {/* Extracted Key Facts */}
-                  {selectedSegment.extractedVariables && selectedSegment.extractedVariables.length > 0 && (
-                    <div className="space-y-1.5 pt-2 border-t border-neutral-100 dark:border-white/5">
-                      <span className="text-[10px] font-mono uppercase tracking-wider text-neutral-400 block">
-                        Extracted Facts & Variables
-                      </span>
-                      <div className="grid grid-cols-2 gap-1.5 text-xs">
-                        {selectedSegment.extractedVariables.map((v, idx) => (
-                          <div key={idx} className="p-1.5 px-2 rounded-lg bg-neutral-50 dark:bg-white/5 border border-neutral-200/70 dark:border-white/5">
-                            <span className="text-[9px] font-mono text-neutral-400 uppercase block truncate">
-                              {v.key}
-                            </span>
-                            <span className="text-[11px] font-semibold text-neutral-800 dark:text-neutral-200 truncate block">
-                              {v.value}
-                            </span>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Raw Transcript Content */}
-                  <div className="space-y-1.5 pt-2 border-t border-neutral-100 dark:border-white/5">
-                    <div className="flex items-center justify-between text-[10px] font-mono text-neutral-400">
-                      <span>Original Text ({selectedSegment.originalTokens} tokens)</span>
-                      <button
-                        onClick={() => {
-                          navigator.clipboard.writeText(selectedSegment.rawTranscript);
-                          setCopiedCodeSnippet(true);
-                          toast.copied('Transcript Copied', 'Original conversation text copied.');
-                          setTimeout(() => setCopiedCodeSnippet(false), 2000);
-                        }}
-                        className="text-[#0071E3] dark:text-[#2997FF] hover:underline flex items-center gap-0.5"
-                      >
-                        <IconCopy className="w-3 h-3" />
-                        <span>{copiedCodeSnippet ? 'Copied' : 'Copy Text'}</span>
-                      </button>
-                    </div>
-                    <div className="p-2.5 rounded-xl bg-neutral-50 dark:bg-black/30 border border-neutral-200 dark:border-white/5 text-[11px] font-mono text-neutral-800 dark:text-neutral-300 max-h-[200px] overflow-y-auto leading-relaxed whitespace-pre-wrap custom-scrollbar">
-                      {selectedSegment.rawTranscript}
-                    </div>
-                  </div>
-                </div>
-              </motion.div>
-            ) : null}
-          </AnimatePresence>
-
-          {/* COLUMN 3: Quick-Preview & 1-Click Handoff Studio (4 Cols on Desktop) */}
+          {/* ROW 2: Target AI Preview & Handoff Studio (Full Width Below) */}
           <AnimatePresence mode="wait">
             {selectedSegment ? (
               <motion.div
                 key={selectedSegment.id + '-preview'}
-                initial={{ opacity: 0, x: 8 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: 8 }}
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 12 }}
                 transition={{ duration: 0.25 }}
-                className="lg:col-span-4 bg-white dark:bg-[#111118] rounded-2xl border border-neutral-200/90 dark:border-white/10 shadow-sm p-5 flex flex-col justify-between space-y-4"
+                className="w-full bg-white dark:bg-[#111118] rounded-2xl border border-neutral-200/90 dark:border-white/10 shadow-sm p-5 sm:p-6 space-y-4"
               >
-                <div className="space-y-3.5">
-                  {/* Column Header */}
-                  <div className="flex items-center justify-between border-b border-neutral-200/80 dark:border-white/10 pb-2.5">
-                    <span className="text-xs font-bold text-neutral-900 dark:text-white flex items-center gap-1.5">
-                      <IconEye className="w-4 h-4 text-[#0071E3] dark:text-[#2997FF]" />
-                      <span>Target AI Preview</span>
-                    </span>
-                    <span className="text-[10px] font-mono text-emerald-600 dark:text-emerald-400 font-semibold">
-                      {selectedSegment.compressedTokens} Tokens
+                {/* Column Header */}
+                <div className="flex items-center justify-between border-b border-neutral-200/80 dark:border-white/10 pb-3">
+                  <div className="flex items-center gap-2">
+                    <IconEye className="w-4.5 h-4.5 text-[#0071E3] dark:text-[#2997FF]" />
+                    <span className="text-sm font-bold text-neutral-900 dark:text-white">
+                      Target AI Preview & Handoff Studio
                     </span>
                   </div>
+                  <span className="text-xs font-mono text-emerald-600 dark:text-emerald-400 font-semibold bg-emerald-500/10 px-2.5 py-1 rounded-full border border-emerald-500/20">
+                    Compressed Context: {selectedSegment.compressedTokens} Tokens
+                  </span>
+                </div>
 
-                  {/* Target AI Selection */}
-                  <div className="space-y-1.5">
-                    <label className="text-[11px] font-bold text-neutral-700 dark:text-neutral-300 block">
-                      Choose Destination AI Model:
+                <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-start">
+                  {/* Left Box: Model Selector */}
+                  <div className="md:col-span-4 space-y-3">
+                    <label className="text-xs font-bold text-neutral-800 dark:text-neutral-200 block">
+                      1. Choose Destination AI Model:
                     </label>
-                    <div className="grid grid-cols-2 gap-1.5">
+                    <div className="grid grid-cols-2 gap-2">
                       {[
                         { id: 'Claude' as const, name: 'Claude 3.7' },
                         { id: 'ChatGPT' as const, name: 'ChatGPT-4o' },
@@ -699,7 +689,7 @@ Target Goal: Continue task execution with loaded context.`,
                             key={m.id}
                             type="button"
                             onClick={() => setTargetModel(m.id)}
-                            className={`p-2 rounded-xl border text-left transition-all ${
+                            className={`p-2.5 rounded-xl border text-left transition-all cursor-pointer ${
                               isTarget
                                 ? 'bg-[#0071E3]/10 dark:bg-[#2997FF]/10 border-[#0071E3] dark:border-[#2997FF] shadow-xs'
                                 : 'bg-neutral-50 dark:bg-black/20 border-neutral-200 dark:border-white/10 hover:border-neutral-300 dark:hover:border-white/20'
@@ -713,53 +703,52 @@ Target Goal: Continue task execution with loaded context.`,
                         );
                       })}
                     </div>
+
+                    <div className="pt-2">
+                      <button
+                        type="button"
+                        onClick={() => handleCopyInjectedPayload()}
+                        className="w-full inline-flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-[#0071E3] hover:bg-[#0077ED] text-white text-xs font-bold shadow-md transition-all hover:scale-[1.01] active:scale-[0.98] cursor-pointer"
+                      >
+                        {copiedPrompt ? (
+                          <>
+                            <IconCheck className="w-4 h-4" />
+                            <span>Copied to Clipboard!</span>
+                          </>
+                        ) : (
+                          <>
+                            <IconCopy className="w-4 h-4" />
+                            <span>Copy Capsule for {targetModel}</span>
+                          </>
+                        )}
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={handleSimulateInjection}
+                        disabled={isSimulatingInject}
+                        className="w-full mt-2 inline-flex items-center justify-center gap-1.5 py-2 px-4 rounded-xl bg-neutral-100 hover:bg-neutral-200 dark:bg-white/10 dark:hover:bg-white/15 text-neutral-800 dark:text-neutral-200 text-xs font-semibold transition-colors cursor-pointer"
+                      >
+                        <IconBolt className={`w-3.5 h-3.5 ${isSimulatingInject ? 'animate-spin' : 'text-[#0071E3] dark:text-[#2997FF]'}`} />
+                        <span>{isSimulatingInject ? 'Transferring...' : `Simulate Context Handoff`}</span>
+                      </button>
+                    </div>
                   </div>
 
-                  {/* Formatted Preview Capsule */}
-                  <div className="space-y-1.5">
-                    <span className="text-[10px] font-mono uppercase tracking-wider text-neutral-400 block">
-                      What {targetModel} will read:
+                  {/* Right Box: Formatted Preview Capsule */}
+                  <div className="md:col-span-8 space-y-2">
+                    <span className="text-xs font-mono font-medium uppercase tracking-wider text-neutral-500 block">
+                      2. What {targetModel} will read:
                     </span>
-                    <div className="p-3 rounded-xl bg-neutral-50/90 dark:bg-[#0A0A10] border border-neutral-200 dark:border-white/10 text-xs font-mono space-y-2 max-h-[200px] overflow-y-auto custom-scrollbar">
-                      <p className="text-[11px] italic text-[#0071E3] dark:text-[#2997FF]">
+                    <div className="p-3.5 rounded-xl bg-neutral-50/90 dark:bg-[#0A0A10] border border-neutral-200 dark:border-white/10 text-xs font-mono space-y-2 max-h-[220px] overflow-y-auto custom-scrollbar">
+                      <p className="text-xs font-medium italic text-[#0071E3] dark:text-[#2997FF]">
                         "{selectedSegment.suggestedPrompt}"
                       </p>
-                      <div className="p-2 rounded-lg bg-white dark:bg-[#12121A] border border-neutral-200/70 dark:border-white/5 text-[11px] text-neutral-800 dark:text-neutral-200 whitespace-pre-wrap leading-relaxed">
+                      <div className="p-3 rounded-lg bg-white dark:bg-[#12121A] border border-neutral-200/70 dark:border-white/5 text-[11px] text-neutral-800 dark:text-neutral-200 whitespace-pre-wrap leading-relaxed">
                         {selectedSegment.compressedContextPill}
                       </div>
                     </div>
                   </div>
-                </div>
-
-                {/* Action Buttons */}
-                <div className="pt-3 border-t border-neutral-200/80 dark:border-white/10 flex flex-col gap-2">
-                  <button
-                    type="button"
-                    onClick={() => handleCopyInjectedPayload()}
-                    className="w-full inline-flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-[#0071E3] hover:bg-[#0077ED] text-white text-xs font-bold shadow-md transition-all hover:scale-[1.01] active:scale-[0.98]"
-                  >
-                    {copiedPrompt ? (
-                      <>
-                        <IconCheck className="w-4 h-4" />
-                        <span>Copied to Clipboard!</span>
-                      </>
-                    ) : (
-                      <>
-                        <IconCopy className="w-4 h-4" />
-                        <span>Copy for {targetModel}</span>
-                      </>
-                    )}
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={handleSimulateInjection}
-                    disabled={isSimulatingInject}
-                    className="w-full inline-flex items-center justify-center gap-1.5 py-2 px-4 rounded-xl bg-neutral-100 hover:bg-neutral-200 dark:bg-white/10 dark:hover:bg-white/15 text-neutral-800 dark:text-neutral-200 text-xs font-semibold transition-colors"
-                  >
-                    <IconBolt className={`w-3.5 h-3.5 ${isSimulatingInject ? 'animate-spin' : 'text-[#0071E3] dark:text-[#2997FF]'}`} />
-                    <span>{isSimulatingInject ? 'Transferring...' : `Simulate Context Handoff`}</span>
-                  </button>
                 </div>
               </motion.div>
             ) : null}

@@ -25,6 +25,9 @@ import { SearchableHistoryView } from './components/SearchableHistoryView';
 import { SubpageConnectors } from './components/SubpageConnectors';
 import { TermsOfServiceView } from './components/TermsOfServiceView';
 import { NotFoundView } from './components/NotFoundView';
+import { ViewTransition } from './components/ViewTransition';
+import { BreadcrumbBar } from './components/BreadcrumbBar';
+import { SEOManager } from './components/SEOManager';
 
 function AppContent() {
   useGsapSmoothScroll();
@@ -88,6 +91,9 @@ function AppContent() {
 
   return (
     <div className="min-h-screen flex flex-col font-sans transition-colors duration-200 bg-[#FBFBFA] dark:bg-[#040405] text-[#1D1D1F] dark:text-[#F5F5F7] selection:bg-[#0071E3] selection:text-white">
+      {/* Headless Dynamic SEO Manager */}
+      <SEOManager currentView={currentView} activeGuideSlug={activeGuideSlug} />
+
       {/* Top Global Navigation */}
       <Navbar
         currentView={currentView}
@@ -95,8 +101,16 @@ function AppContent() {
         onOpenInstall={() => setIsInstallOpen(true)}
       />
 
+      {/* Breadcrumb Trail for Subpages */}
+      <BreadcrumbBar
+        currentView={currentView}
+        setCurrentView={setCurrentView}
+        activeGuideSlug={activeGuideSlug}
+      />
+
       {/* Main Views */}
       <main className="flex-1">
+        <ViewTransition viewKey={currentView}>
         {currentView === 'home' && (
           <>
             {/* 1. Hero Section */}
@@ -194,6 +208,7 @@ function AppContent() {
         {currentView === '404' && (
           <NotFoundView onNavigate={(view) => setCurrentView(view)} />
         )}
+        </ViewTransition>
       </main>
 
       {/* Footer */}

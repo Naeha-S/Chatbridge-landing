@@ -69,19 +69,6 @@ export const HowItWorksPage: React.FC<HowItWorksPageProps> = ({
         <HowItWorks />
       </div>
 
-      {/* 3D Spatial Context Conduit Flow (ThreeFiber-inspired) */}
-      <div className="mb-16 space-y-3">
-        <div className="flex items-center justify-between text-xs font-mono text-[#86868B]">
-          <span>QUANTUM CONTEXT CONDUIT (60FPS WEBGL FIELD)</span>
-          <span className="text-[#2997FF]">Zero Remote Telemetry</span>
-        </div>
-        <ThreeSpatialField
-          sourceModel="ChatGPT 4o"
-          targetModel="Claude 3.7 Sonnet"
-          height={180}
-        />
-      </div>
-
       {/* Architecture Deep Dive with Liquid Glass Cards */}
       <section className="mb-20 rounded-3xl bg-[#F8F9FA]/80 dark:bg-[#0A0A0F]/80 border border-[#E5E5EA] dark:border-[#1E1E28] p-6 sm:p-10 backdrop-blur-xl">
         <h2 className="text-2xl font-semibold mb-6 text-center">

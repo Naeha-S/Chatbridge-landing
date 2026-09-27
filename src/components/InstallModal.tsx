@@ -34,8 +34,8 @@ export const InstallModal: React.FC<InstallModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
-      <div className="bg-white dark:bg-[#12121A] rounded-2xl border border-[#E5E5EA] dark:border-[#2A2A3C] max-w-lg w-full p-6 sm:p-7 shadow-2xl relative max-h-[90vh] overflow-y-auto space-y-6 text-[#1D1D1F] dark:text-[#F5F5F7] transition-colors">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-md animate-in fade-in duration-200">
+      <div className="liquid-glass-panel rounded-3xl max-w-lg w-full p-6 sm:p-7 relative max-h-[90vh] overflow-y-auto space-y-6 text-[#1D1D1F] dark:text-[#F5F5F7] transition-colors">
         {/* Close button */}
         <button
           onClick={onClose}
