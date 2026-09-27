@@ -12,7 +12,8 @@ export type PageView =
   | 'local-privacy'
   | 'terms'
   | 'guides'
-  | 'install';
+  | 'install'
+  | '404';
 
 export interface SavedContextSegment {
   id: string;

@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { PageView } from '../types';
 import { DownloadIcon, CloseIcon, SunIcon, MoonIcon } from './Icons';
-import { ChatBridgeLogo } from './Logo';
 import { LiquidLogoCanvas } from './LiquidLogoCanvas';
 import { CHROME_WEBSTORE_URL } from '../constants/links';
 import { smoothScrollTo } from '../hooks/useGsapSmoothScroll';
+import { useTheme } from '../context/ThemeContext';
 
 interface NavbarProps {
   currentView: PageView;
@@ -20,11 +20,9 @@ export const Navbar: React.FC<NavbarProps> = ({
   setCurrentView,
   onOpenInstall,
   onOpenOnboarding,
-  theme = 'dark',
-  onToggleTheme,
 }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const isDark = theme === 'dark';
+  const { theme, isDark, toggleTheme } = useTheme();
 
   const navItems: { label: string; view: PageView }[] = [
     { label: 'Overview', view: 'home' },
@@ -43,7 +41,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   };
 
   return (
-    <header className="sticky top-0 z-40 w-full border-b border-[#E5E5EA]/60 dark:border-[#22222E]/60 bg-[#FBFBFA]/85 dark:bg-[#07070B]/85 backdrop-blur-xl shadow-xs transition-all duration-300 text-[#1D1D1F] dark:text-[#F5F5F7]">
+    <header className="sticky top-0 z-40 w-full liquid-glass-nav transition-colors duration-200 text-[#1D1D1F] dark:text-[#F5F5F7]">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
         {/* Brand */}
         <div className="flex items-center gap-3">
@@ -60,20 +58,21 @@ export const Navbar: React.FC<NavbarProps> = ({
           </button>
         </div>
 
-        {/* Desktop Nav Links */}
-        <nav className="hidden md:flex items-center gap-6" aria-label="Main Navigation">
+        {/* Desktop Navigation Links */}
+        <nav className="hidden md:flex items-center gap-1" aria-label="Main Navigation">
           {navItems.map((item) => {
             const isActive = currentView === item.view;
             return (
               <button
                 key={item.view}
-                id={`nav-${item.view}-btn`}
+                id={`nav-link-${item.view}`}
                 onClick={() => handleNavClick(item.view)}
-                className={`text-xs font-medium transition-colors ${
+                className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
                   isActive
-                    ? 'text-[#1D1D1F] dark:text-white font-semibold'
-                    : 'text-[#6E6E73] dark:text-[#8E8E98] hover:text-[#1D1D1F] dark:hover:text-white'
+                    ? 'text-[#0071E3] dark:text-[#2997FF] bg-[#0071E3]/10 dark:bg-[#2997FF]/10 font-semibold'
+                    : 'text-[#6E6E73] dark:text-[#A1A1A6] hover:text-[#1D1D1F] dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/5'
                 }`}
+                aria-current={isActive ? 'page' : undefined}
               >
                 {item.label}
               </button>
@@ -81,37 +80,35 @@ export const Navbar: React.FC<NavbarProps> = ({
           })}
         </nav>
 
-        {/* Action Controls */}
+        {/* Actions & Theme Toggle */}
         <div className="flex items-center gap-2.5">
-          {/* Light/Dark Mode Segmented Switcher (Clean Monochrome - No Yellow) */}
-          {onToggleTheme && (
-            <button
-              id="theme-toggle-btn"
-              onClick={onToggleTheme}
-              aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
-              title={isDark ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
-              className="relative flex items-center p-0.5 rounded-full border transition-all duration-300 border-[#E5E5EA] dark:border-[#2A2A38] bg-[#F2F2F5]/80 dark:bg-[#12121A]/80 hover:border-[#D1D1D6] dark:hover:border-[#3A3A4C] shadow-2xs backdrop-blur-xs"
+          {/* Global Theme Toggle Button */}
+          <button
+            id="theme-toggle-btn"
+            onClick={toggleTheme}
+            aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
+            title={isDark ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+            className="relative flex items-center p-0.5 rounded-full border transition-all duration-300 border-[#E5E5EA] dark:border-[#2A2A38] bg-[#F2F2F5]/80 dark:bg-[#12121A]/80 hover:border-[#D1D1D6] dark:hover:border-[#3A3A4C] shadow-2xs backdrop-blur-xs cursor-pointer"
+          >
+            <span
+              className={`flex items-center justify-center w-6 h-6 rounded-full transition-all duration-300 ${
+                !isDark
+                  ? 'bg-white text-[#1D1D1F] shadow-xs scale-100 font-semibold'
+                  : 'text-[#8E8E98] hover:text-[#C7C7CC] scale-90 opacity-70'
+              }`}
             >
-              <span
-                className={`flex items-center justify-center w-6 h-6 rounded-full transition-all duration-300 ${
-                  !isDark
-                    ? 'bg-white text-[#1D1D1F] shadow-xs scale-100 font-semibold'
-                    : 'text-[#8E8E98] hover:text-[#C7C7CC] scale-90 opacity-70'
-                }`}
-              >
-                <SunIcon className="w-3.5 h-3.5 text-current" />
-              </span>
-              <span
-                className={`flex items-center justify-center w-6 h-6 rounded-full transition-all duration-300 ${
-                  isDark
-                    ? 'bg-[#262638] text-white shadow-xs scale-100 font-semibold'
-                    : 'text-[#6E6E73] hover:text-[#1D1D1F] scale-90 opacity-70'
-                }`}
-              >
-                <MoonIcon className="w-3.5 h-3.5 text-current" />
-              </span>
-            </button>
-          )}
+              <SunIcon className="w-3.5 h-3.5 text-current" />
+            </span>
+            <span
+              className={`flex items-center justify-center w-6 h-6 rounded-full transition-all duration-300 ${
+                isDark
+                  ? 'bg-[#262638] text-white shadow-xs scale-100 font-semibold'
+                  : 'text-[#6E6E73] hover:text-[#1D1D1F] scale-90 opacity-70'
+              }`}
+            >
+              <MoonIcon className="w-3.5 h-3.5 text-current" />
+            </span>
+          </button>
 
           {/* Install Primary Action - Working Chrome Web Store Link */}
           <a
@@ -138,6 +135,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               <span className="w-4 h-4 flex flex-col justify-center gap-1">
                 <span className="h-0.5 w-full bg-current rounded-full" />
                 <span className="h-0.5 w-full bg-current rounded-full" />
+                <span className="h-0.5 w-full bg-current rounded-full" />
               </span>
             )}
           </button>
@@ -146,30 +144,23 @@ export const Navbar: React.FC<NavbarProps> = ({
 
       {/* Mobile Menu Dropdown */}
       {mobileMenuOpen && (
-        <div className="md:hidden border-b px-4 py-4 space-y-2 backdrop-blur-md bg-[#FBFBFA] dark:bg-[#0E0E16] border-[#E5E5EA] dark:border-[#22222E]">
-          {navItems.map((item) => (
-            <button
-              key={item.view}
-              id={`mobile-nav-${item.view}-btn`}
-              onClick={() => handleNavClick(item.view)}
-              className={`block w-full text-left px-3 py-2 rounded-md text-sm font-medium ${
-                currentView === item.view
-                  ? 'bg-[#F0F0F2] dark:bg-[#1E1E2C] text-[#1D1D1F] dark:text-white font-semibold'
-                  : 'text-[#6E6E73] dark:text-[#8E8E98] hover:text-[#1D1D1F] dark:hover:text-white hover:bg-[#F5F5F7] dark:hover:bg-[#181824]'
-              }`}
-            >
-              {item.label}
-            </button>
-          ))}
-          <a
-            href={CHROME_WEBSTORE_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center justify-center gap-2 w-full mt-2 px-4 py-2.5 rounded-xl bg-[#1D1D1F] hover:bg-neutral-800 dark:bg-white dark:hover:bg-neutral-100 text-white dark:text-neutral-950 text-xs font-semibold"
-          >
-            <DownloadIcon className="w-3.5 h-3.5 text-[#0071E3] dark:text-[#0071E3]" />
-            <span className="text-white dark:text-neutral-950">Open in Chrome Web Store</span>
-          </a>
+        <div className="md:hidden border-t border-[#E5E5EA] dark:border-[#22222E] bg-[#FBFBFA] dark:bg-[#07070B] px-4 py-4 space-y-2 animate-in fade-in slide-in-from-top-2 duration-200">
+          {navItems.map((item) => {
+            const isActive = currentView === item.view;
+            return (
+              <button
+                key={item.view}
+                onClick={() => handleNavClick(item.view)}
+                className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-colors ${
+                  isActive
+                    ? 'text-[#0071E3] dark:text-[#2997FF] bg-[#0071E3]/10 dark:bg-[#2997FF]/10 font-medium'
+                    : 'text-[#6E6E73] dark:text-[#8E8E93] hover:text-[#1D1D1F] dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/5'
+                }`}
+              >
+                {item.label}
+              </button>
+            );
+          })}
         </div>
       )}
     </header>

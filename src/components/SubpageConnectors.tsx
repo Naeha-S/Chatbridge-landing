@@ -1,313 +1,328 @@
 import React, { useState } from 'react';
 import {
-  IconEye,
-  IconCpu,
-  IconShieldLock,
-  IconBrain,
-  IconTerminal,
+  IconFolder,
+  IconFileText,
+  IconWallet,
+  IconLayersLinked,
+  IconDownload,
   IconArrowRight,
-  IconCheck,
-  IconCode,
-  IconLayersLinked
 } from '@tabler/icons-react';
 import { PageView } from '../types';
 import { smoothScrollTo } from '../hooks/useGsapSmoothScroll';
-import { LiquidGlassCard } from './ui/LiquidGlassCard';
 
 interface SubpageConnectorsProps {
   onNavigate: (view: PageView) => void;
 }
 
-interface LayerItem {
-  id: string;
-  layerNumber: string;
-  name: string;
-  subtitle: string;
-  description: string;
-  metricLabel: string;
-  metricValue: string;
-  view: PageView;
-  ctaText: string;
-  icon: React.ComponentType<{ className?: string }>;
-  accentColor: string;
-  gradient: string;
-  pipelineSpec: {
-    input: string;
-    processing: string;
-    output: string;
-  };
-}
-
+/**
+ * SubpageConnectors ("The Layers of ChatBridge")
+ * Uses consistent system sans-serif typography and compact viewport-fitted proportions.
+ */
 export const SubpageConnectors: React.FC<SubpageConnectorsProps> = ({ onNavigate }) => {
-  const [activeLayerIndex, setActiveLayerIndex] = useState(3); // Default to Memory & History Vault
-
-  const layers: LayerItem[] = [
-    {
-      id: 'layer-observe',
-      layerNumber: 'Layer 01',
-      name: 'DOM Observation & Turn Interception',
-      subtitle: 'Universal Zero-Injection Sensor',
-      description:
-        'A sandboxed Chromium MutationObserver monitors assistant streaming turns inside ChatGPT, Claude, and Gemini tabs, extracting completed message blocks into isolated memory without keystroke capture.',
-      metricLabel: 'Observation Latency',
-      metricValue: '< 2ms on CPU',
-      view: 'how-it-works',
-      ctaText: 'Explore 4-Stage Architecture',
-      icon: IconEye,
-      accentColor: 'text-[#0071E3] dark:text-[#2997FF]',
-      gradient: 'from-[#0071E3]/20 via-[#2997FF]/10 to-transparent',
-      pipelineSpec: {
-        input: 'Streaming DOM Mutation Nodes',
-        processing: 'Semantic Role Filtering',
-        output: 'Raw Markdown Turns'
-      }
-    },
-    {
-      id: 'layer-index',
-      layerNumber: 'Layer 02',
-      name: 'Hybrid Normalization & Vector Fusion',
-      subtitle: 'Reciprocal Rank Fusion (RRF)',
-      description:
-        'Merges BM25 sparse lexical tokens (function identifiers, UUIDs, stack traces) with 384-dimensional dense semantic vectors using RRF (k=60) for balanced precision and high recall.',
-      metricLabel: 'Retrieval Recall@5',
-      metricValue: '76.8% (+3.9pp gain)',
-      view: 'comparison',
-      ctaText: 'View RRF Comparison Matrix',
-      icon: IconCpu,
-      accentColor: 'text-purple-600 dark:text-purple-400',
-      gradient: 'from-purple-500/20 via-indigo-500/10 to-transparent',
-      pipelineSpec: {
-        input: 'Lexical + Dense Embeddings',
-        processing: 'RRF Rank Fusion (k=60)',
-        output: 'Unified Candidate Ranked Vector'
-      }
-    },
-    {
-      id: 'layer-encrypt',
-      layerNumber: 'Layer 03',
-      name: 'WebCrypto Hardware Airgap Vault',
-      subtitle: 'Local AES-256-GCM Non-Extractable',
-      description:
-        'Military-grade symmetric encryption runs on-device via Chromium window.crypto.subtle. Symmetric keys remain non-extractable in memory, while 12-byte IV nonces prevent replay or storage inspection.',
-      metricLabel: 'Remote Exfiltration',
-      metricValue: '0 Bytes (Strict Local)',
-      view: 'local-privacy',
-      ctaText: 'Inspect Formal Threat Model',
-      icon: IconShieldLock,
-      accentColor: 'text-emerald-600 dark:text-emerald-400',
-      gradient: 'from-emerald-500/20 via-teal-500/10 to-transparent',
-      pipelineSpec: {
-        input: 'Plaintext Conversation Chunks',
-        processing: 'SubtleCrypto Hardware AES-256-GCM',
-        output: 'Encrypted chrome.storage.local'
-      }
-    },
-    {
-      id: 'layer-memory',
-      layerNumber: 'Layer 04',
-      name: 'Searchable Context History & Markdown Beautifier',
-      subtitle: 'Token Capsule Synthesis Engine',
-      description:
-        'Distills lengthy conversational transcripts into concise ~120-token context capsules. Search by keyword, inspect formatted markdown previews, and curate project context before model handoff.',
-      metricLabel: 'Token Compression',
-      metricValue: '-95.1% Token Overhead',
-      view: 'history',
-      ctaText: 'Open Searchable History Vault',
-      icon: IconBrain,
-      accentColor: 'text-[#0071E3] dark:text-[#38BDF8]',
-      gradient: 'from-sky-500/20 via-blue-500/10 to-transparent',
-      pipelineSpec: {
-        input: '2,500+ Dialogue Tokens',
-        processing: 'Discourse AST Distillation',
-        output: '118-Token Context Capsule'
-      }
-    },
-    {
-      id: 'layer-inject',
-      layerNumber: 'Layer 05',
-      name: 'Cross-Model Injection & ⌘+Shift+K HUD',
-      subtitle: 'Universal Prompt Synthesis Buffer',
-      description:
-        'Press ⌘+Shift+K in any browser tab to summon the floating command HUD. Select candidate context capsules and inject them into Claude, ChatGPT, Gemini, or DeepSeek prompt buffers with one keystroke.',
-      metricLabel: 'Injection Delay',
-      metricValue: '< 30ms Across Tabs',
-      view: 'faq',
-      ctaText: 'View Keybinds & Platform FAQ',
-      icon: IconTerminal,
-      accentColor: 'text-amber-600 dark:text-amber-400',
-      gradient: 'from-amber-500/20 via-orange-500/10 to-transparent',
-      pipelineSpec: {
-        input: 'Compressed Context Capsule',
-        processing: 'Target Model Prompt Preamble',
-        output: 'Input Chat Field Injected'
-      }
-    }
-  ];
-
-  const activeLayer = layers[activeLayerIndex];
-  const ActiveIcon = activeLayer.icon;
+  const [selectedTag, setSelectedTag] = useState<string>('AI Summarize');
 
   const handleNavigate = (view: PageView) => {
     onNavigate(view);
-    smoothScrollTo(document.body, { offset: 0 });
+    smoothScrollTo(document.body, { offset: 0, duration: 0.65 });
   };
 
   return (
-    <section id="layers-of-chatbridge" className="py-20 md:py-28 border-b border-neutral-200/80 dark:border-white/10 bg-neutral-50/60 dark:bg-[#07070B] transition-colors relative overflow-hidden">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 relative z-10">
+    <section
+      id="layers-of-chatbridge"
+      className="py-10 md:py-14 border-b border-[#E2DFD7] dark:border-white/10 bg-[#EFECE6] dark:bg-[#07070A] text-[#1E1C1A] dark:text-[#F2EFE9] transition-colors duration-200"
+    >
+      <div className="max-w-6xl mx-auto px-4 sm:px-6">
         {/* Section Header */}
-        <div className="max-w-3xl mx-auto text-center mb-12 sm:mb-16 space-y-3">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#0071E3]/10 dark:bg-[#2997FF]/10 text-[#0071E3] dark:text-[#2997FF] border border-[#0071E3]/20 dark:border-[#2997FF]/20 text-xs font-mono font-medium">
-            <IconLayersLinked className="w-3.5 h-3.5" />
-            <span>Interactive Architectural Stack</span>
-          </div>
-
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-[#1D1D1F] dark:text-white">
-            The 5 Layers of ChatBridge
+        <div className="max-w-2xl mx-auto text-center mb-8 sm:mb-10 space-y-2">
+          <span className="text-[11px] font-mono uppercase tracking-widest text-[#7C776D] dark:text-[#A6A195]">
+            Layered System Architecture
+          </span>
+          <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-[#1E1C1A] dark:text-white">
+            The Layers of ChatBridge
           </h2>
-          <p className="text-sm sm:text-base text-neutral-600 dark:text-neutral-400 max-w-2xl mx-auto leading-relaxed">
-            From sandboxed DOM observers to hybrid RRF vector ranking and WebCrypto AES-256 vaults, explore how context moves safely between your AI models.
+          <p className="text-xs sm:text-sm text-[#6B665C] dark:text-[#9E988D] leading-relaxed max-w-xl mx-auto">
+            Five coordinated on-device layers that capture, encrypt, rank, distill, and inject cross-model conversational context without cloud dependencies.
           </p>
         </div>
 
-        {/* Bespoke Interactive Layer Stack Interface */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-          {/* Left Column: Vertical Layer Stratum (5 Cols on Desktop) */}
-          <div className="lg:col-span-5 space-y-2.5">
-            <div className="flex items-center justify-between text-xs font-mono text-neutral-500 dark:text-neutral-400 px-1 mb-2">
-              <span>SYSTEM STRATA (CLIENT-SIDE)</span>
-              <span>TAP TO INSPECT</span>
+        {/* Top Grid: 3 Distinct Cards */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 mb-4">
+          {/* Card 1: Top Left 2-Tier Stack (4 Cols) */}
+          <div className="lg:col-span-4 rounded-2xl bg-[#181816] dark:bg-[#111116] text-white overflow-hidden shadow-sm flex flex-col border border-black/10 dark:border-white/10">
+            {/* Top Compartment: Warm Bone Inset with Stacked Pill Chips */}
+            <div className="p-4 bg-[#ECEAE4] dark:bg-[#1A1A22] text-[#1E1C1A] dark:text-[#F2EFE9] flex flex-col items-center justify-center gap-2">
+              <button
+                type="button"
+                onClick={() => setSelectedTag('Legal Law Benefits')}
+                className={`w-full max-w-[210px] py-1.5 px-3 rounded-lg text-center text-xs font-medium transition-all shadow-xs ${
+                  selectedTag === 'Legal Law Benefits'
+                    ? 'bg-[#181816] dark:bg-white text-white dark:text-[#181816]'
+                    : 'bg-white/80 dark:bg-white/5 text-[#5A554C] dark:text-[#CCC7BC] hover:bg-white dark:hover:bg-white/10'
+                }`}
+              >
+                ChatGPT Dialogue Turn
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setSelectedTag('Sales Management.pdf')}
+                className={`w-full max-w-[210px] py-1.5 px-3 rounded-lg text-center text-xs font-medium transition-all shadow-xs ${
+                  selectedTag === 'Sales Management.pdf'
+                    ? 'bg-[#181816] dark:bg-white text-white dark:text-[#181816]'
+                    : 'bg-white/80 dark:bg-white/5 text-[#5A554C] dark:text-[#CCC7BC] hover:bg-white dark:hover:bg-white/10'
+                }`}
+              >
+                FastAPI Backend Schema.py
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setSelectedTag('AI Summarize')}
+                className={`w-full max-w-[210px] py-1.5 px-3 rounded-lg text-center text-xs font-semibold transition-all shadow-xs ${
+                  selectedTag === 'AI Summarize'
+                    ? 'bg-[#181816] dark:bg-white text-white dark:text-[#181816]'
+                    : 'bg-white/80 dark:bg-white/5 text-[#5A554C] dark:text-[#CCC7BC] hover:bg-white'
+                }`}
+              >
+                Context Capsule (Active)
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setSelectedTag('Transcript.docx')}
+                className={`w-full max-w-[210px] py-1.5 px-3 rounded-lg text-center text-xs font-medium transition-all shadow-xs ${
+                  selectedTag === 'Transcript.docx'
+                    ? 'bg-[#181816] dark:bg-white text-white dark:text-[#181816]'
+                    : 'bg-white/80 dark:bg-white/5 text-[#5A554C] dark:text-[#CCC7BC] hover:bg-white dark:hover:bg-white/10'
+                }`}
+              >
+                Claude Artifacts Prompt.tsx
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setSelectedTag('Memos.pdf')}
+                className={`w-full max-w-[210px] py-1.5 px-3 rounded-lg text-center text-xs font-medium transition-all shadow-xs ${
+                  selectedTag === 'Memos.pdf'
+                    ? 'bg-[#181816] dark:bg-white text-white dark:text-[#181816]'
+                    : 'bg-white/80 dark:bg-white/5 text-[#5A554C] dark:text-[#CCC7BC] hover:bg-white dark:hover:bg-white/10'
+                }`}
+              >
+                Gemini Reasoning Chain
+              </button>
             </div>
 
-            {layers.map((layer, idx) => {
-              const isSelected = activeLayerIndex === idx;
-              const Icon = layer.icon;
+            {/* Bottom Compartment: Deep Charcoal */}
+            <div className="p-4 sm:p-5 flex-1 flex flex-col justify-between space-y-3">
+              <div className="space-y-1.5">
+                <h3 className="text-lg sm:text-xl font-bold tracking-tight text-white">
+                  Proven Context, Rapid Results
+                </h3>
+                <p className="text-xs text-[#A6A195] leading-relaxed">
+                  Get structured context across law, code, and project specs with verifiable local integrity.
+                </p>
+              </div>
 
-              return (
+              <div>
                 <button
-                  key={layer.id}
                   type="button"
-                  onClick={() => setActiveLayerIndex(idx)}
-                  className={`w-full text-left p-4 rounded-2xl border transition-all duration-200 relative group flex items-center justify-between ${
-                    isSelected
-                      ? 'bg-white dark:bg-[#14141E] border-[#0071E3] dark:border-[#2997FF] shadow-md ring-1 ring-[#0071E3]/20 dark:ring-[#2997FF]/30 scale-[1.01]'
-                      : 'bg-white/70 dark:bg-[#0E0E14]/80 border-neutral-200/80 dark:border-white/10 hover:bg-white dark:hover:bg-[#12121A] hover:border-neutral-300 dark:hover:border-white/20'
-                  }`}
+                  onClick={() => handleNavigate('how-it-works')}
+                  className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-white hover:bg-[#ECEAE4] text-[#181816] text-xs font-semibold shadow-xs transition-colors"
                 >
-                  <div className="flex items-center gap-3.5 min-w-0">
-                    {/* Layer Number & Icon Badge */}
-                    <div
-                      className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 border transition-colors ${
-                        isSelected
-                          ? 'bg-[#0071E3] text-white border-[#0071E3]'
-                          : 'bg-neutral-100 dark:bg-white/5 border-neutral-200 dark:border-white/10 text-neutral-500 dark:text-neutral-400 group-hover:text-neutral-900 dark:group-hover:text-white'
-                      }`}
-                    >
-                      <Icon className="w-5 h-5" />
-                    </div>
-
-                    <div className="min-w-0">
-                      <div className="flex items-center gap-2">
-                        <span className={`text-[11px] font-mono font-semibold ${isSelected ? 'text-[#0071E3] dark:text-[#2997FF]' : 'text-neutral-400'}`}>
-                          {layer.layerNumber}
-                        </span>
-                        <span className="text-[10px] font-mono text-neutral-400 dark:text-neutral-500 truncate">
-                          {layer.subtitle}
-                        </span>
-                      </div>
-                      <h4 className="text-sm font-semibold text-[#1D1D1F] dark:text-white tracking-tight truncate mt-0.5">
-                        {layer.name}
-                      </h4>
-                    </div>
-                  </div>
-
-                  {/* Active Indicator Chevron */}
-                  <div className={`p-1.5 rounded-lg shrink-0 transition-transform ${isSelected ? 'text-[#0071E3] dark:text-[#2997FF] translate-x-0.5' : 'text-neutral-400 opacity-40 group-hover:opacity-100'}`}>
-                    <IconArrowRight className="w-4 h-4" />
-                  </div>
+                  <span>Learn more</span>
+                  <IconArrowRight className="w-3.5 h-3.5" />
                 </button>
-              );
-            })}
+              </div>
+            </div>
           </div>
 
-          {/* Right Column: Layer Architectural Blueprint & Subpage Gateway (7 Cols on Desktop) */}
-          <LiquidGlassCard className="lg:col-span-7 overflow-hidden flex flex-col p-0 shadow-xl border-neutral-200/90 dark:border-white/10" glowColor="rgba(0, 113, 227, 0.15)">
-            {/* Header Banner */}
-            <div className={`p-6 sm:p-7 border-b border-neutral-200/80 dark:border-white/10 bg-gradient-to-r ${activeLayer.gradient}`}>
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-2">
-                <div className="flex items-center gap-2.5">
-                  <div className={`w-9 h-9 rounded-xl bg-white dark:bg-black/40 border border-neutral-200/80 dark:border-white/10 flex items-center justify-center ${activeLayer.accentColor} shadow-2xs`}>
-                    <ActiveIcon className="w-5 h-5" />
+          {/* Card 2: Top Middle Floating Feature Tiles (4 Cols) */}
+          <div className="lg:col-span-4 rounded-2xl bg-[#ECEAE4] dark:bg-[#15151B] p-4 sm:p-5 border border-[#DBD7CE] dark:border-white/10 shadow-sm flex flex-col justify-between">
+            <div className="space-y-2.5">
+              <span className="text-[10px] font-mono uppercase tracking-wider text-[#7C776D] dark:text-[#9E988D]">
+                Layer 02 • On-Device Storage
+              </span>
+              <div className="grid grid-cols-2 gap-2 pt-1">
+                <div className="p-3 rounded-xl bg-white/90 dark:bg-[#1D1D26] border border-white/60 dark:border-white/5 shadow-2xs flex flex-col items-start gap-1.5">
+                  <div className="w-7 h-7 rounded-lg bg-[#EFECE6] dark:bg-white/5 flex items-center justify-center text-[#1E1C1A] dark:text-white">
+                    <IconFolder className="w-3.5 h-3.5" />
                   </div>
-                  <div>
-                    <span className="text-xs font-mono font-semibold uppercase tracking-wider text-neutral-500 dark:text-neutral-400">
-                      {activeLayer.layerNumber} • {activeLayer.subtitle}
-                    </span>
-                    <h3 className="text-xl sm:text-2xl font-bold tracking-tight text-[#1D1D1F] dark:text-white mt-0.5">
-                      {activeLayer.name}
-                    </h3>
-                  </div>
+                  <span className="text-xs font-semibold text-[#1E1C1A] dark:text-white leading-tight">
+                    On-Device Capture
+                  </span>
                 </div>
 
-                <div className="self-start sm:self-auto shrink-0 px-3 py-1 rounded-full bg-white/80 dark:bg-white/10 border border-neutral-200 dark:border-white/10 text-xs font-mono font-medium text-neutral-800 dark:text-neutral-200 shadow-2xs">
-                  {activeLayer.metricValue}
+                <div className="p-3 rounded-xl bg-white/90 dark:bg-[#1D1D26] border border-white/60 dark:border-white/5 shadow-2xs flex flex-col items-start gap-1.5">
+                  <div className="w-7 h-7 rounded-lg bg-[#EFECE6] dark:bg-white/5 flex items-center justify-center text-[#1E1C1A] dark:text-white">
+                    <IconFileText className="w-3.5 h-3.5" />
+                  </div>
+                  <span className="text-xs font-semibold text-[#1E1C1A] dark:text-white leading-tight">
+                    Zero Egress
+                  </span>
+                </div>
+
+                <div className="p-3 rounded-xl bg-white/90 dark:bg-[#1D1D26] border border-white/60 dark:border-white/5 shadow-2xs flex flex-col items-start gap-1.5">
+                  <div className="w-7 h-7 rounded-lg bg-[#EFECE6] dark:bg-white/5 flex items-center justify-center text-[#1E1C1A] dark:text-white">
+                    <IconWallet className="w-3.5 h-3.5" />
+                  </div>
+                  <span className="text-xs font-semibold text-[#1E1C1A] dark:text-white leading-tight">
+                    AES-256 GCM
+                  </span>
+                </div>
+
+                <div className="p-3 rounded-xl bg-white/90 dark:bg-[#1D1D26] border border-white/60 dark:border-white/5 shadow-2xs flex flex-col items-start gap-1.5">
+                  <div className="w-7 h-7 rounded-lg bg-[#EFECE6] dark:bg-white/5 flex items-center justify-center text-[#1E1C1A] dark:text-white">
+                    <IconLayersLinked className="w-3.5 h-3.5" />
+                  </div>
+                  <span className="text-xs font-semibold text-[#1E1C1A] dark:text-white leading-tight">
+                    Local Storage
+                  </span>
                 </div>
               </div>
-
-              <p className="text-xs sm:text-sm text-neutral-600 dark:text-neutral-300 leading-relaxed mt-3">
-                {activeLayer.description}
-              </p>
             </div>
 
-            {/* Data Flow Conduit Schematic */}
-            <div className="p-6 sm:p-7 space-y-6">
-              <div>
-                <span className="text-xs font-mono uppercase tracking-wider text-neutral-400 block mb-3">
-                  Architectural Data Pipeline
-                </span>
+            <div className="pt-3 border-t border-[#DBD7CE] dark:border-white/10 flex items-center justify-between text-xs">
+              <span className="text-[11px] text-[#6B665C] dark:text-[#9E988D]">12-Byte Nonce Table</span>
+              <button
+                type="button"
+                onClick={() => handleNavigate('local-privacy')}
+                className="font-semibold text-[#181816] dark:text-white hover:underline flex items-center gap-1 text-[11px]"
+              >
+                <span>Threat Model</span>
+                <IconArrowRight className="w-3 h-3" />
+              </button>
+            </div>
+          </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 text-xs font-mono">
-                  <div className="p-3 rounded-xl bg-neutral-50 dark:bg-[#14141E] border border-neutral-200/80 dark:border-white/10 space-y-1">
-                    <span className="text-[10px] text-neutral-400 uppercase tracking-wider">Input</span>
-                    <div className="font-semibold text-neutral-800 dark:text-neutral-200 break-words">
-                      {activeLayer.pipelineSpec.input}
-                    </div>
-                  </div>
-
-                  <div className="p-3 rounded-xl bg-neutral-50 dark:bg-[#14141E] border border-neutral-200/80 dark:border-white/10 space-y-1 relative">
-                    <span className="text-[10px] text-[#0071E3] dark:text-[#2997FF] uppercase tracking-wider">Processing</span>
-                    <div className="font-semibold text-neutral-800 dark:text-neutral-200 break-words">
-                      {activeLayer.pipelineSpec.processing}
-                    </div>
-                  </div>
-
-                  <div className="p-3 rounded-xl bg-neutral-50 dark:bg-[#14141E] border border-neutral-200/80 dark:border-white/10 space-y-1">
-                    <span className="text-[10px] text-emerald-600 dark:text-emerald-400 uppercase tracking-wider">Output</span>
-                    <div className="font-semibold text-neutral-800 dark:text-neutral-200 break-words">
-                      {activeLayer.pipelineSpec.output}
-                    </div>
-                  </div>
-                </div>
+          {/* Card 3: Top Right Split Card (4 Cols) */}
+          <div className="lg:col-span-4 rounded-2xl bg-[#181816] dark:bg-[#111116] text-white p-4 sm:p-5 border border-black/10 dark:border-white/10 shadow-sm flex flex-col justify-between">
+            <div className="space-y-3">
+              <div className="space-y-1">
+                <h3 className="text-lg sm:text-xl font-bold tracking-tight">
+                  Privatised & Project-Ready
+                </h3>
+                <p className="text-xs text-[#A6A195] leading-relaxed">
+                  Turn multi-turn prompt chaos into structured context clarity.
+                </p>
               </div>
 
-              {/* Subpage Deep Dive Action Bar */}
-              <div className="pt-4 border-t border-neutral-200/80 dark:border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4">
-                <div className="text-xs text-neutral-500 font-mono self-start sm:self-auto flex items-center gap-1.5">
-                  <IconLayersLinked className="w-4 h-4 text-[#0071E3] dark:text-[#2997FF]" />
-                  <span>Dedicated interactive subpage available</span>
+              {/* Inset Light Panel */}
+              <div className="p-3 rounded-xl bg-[#ECEAE4] dark:bg-[#1D1D26] text-[#1E1C1A] dark:text-[#F2EFE9] space-y-2 shadow-inner">
+                <p className="text-[11px] text-[#5A554C] dark:text-[#CCC7BC] leading-relaxed">
+                  Zero deviation from local security standards before context handoff.
+                </p>
+
+                <div className="flex items-center justify-between gap-2 p-2 rounded-lg bg-white dark:bg-[#13131A] border border-[#DBD7CE] dark:border-white/5 text-xs font-mono">
+                  <span>Capsule (55 Tokens)</span>
+                  <IconDownload className="w-3.5 h-3.5 text-[#7C776D]" />
                 </div>
 
                 <button
                   type="button"
-                  onClick={() => handleNavigate(activeLayer.view)}
-                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-[#0071E3] hover:bg-[#0077ED] text-white text-xs font-semibold shadow-xs transition-colors group"
+                  onClick={() => handleNavigate('history')}
+                  className="w-full py-1.5 px-3 rounded-lg bg-[#181816] dark:bg-white text-white dark:text-[#181816] text-xs font-semibold shadow-xs hover:opacity-90 transition-opacity text-center block"
                 >
-                  <span>{activeLayer.ctaText}</span>
-                  <IconArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+                  Inspect In Vault
                 </button>
               </div>
             </div>
-          </LiquidGlassCard>
+          </div>
+        </div>
+
+        {/* Bottom Grid: 2 Distinct Cards */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
+          {/* Card 4: Bottom Left / Center Wide Card (7 Cols) */}
+          <div className="lg:col-span-7 rounded-2xl bg-[#ECEAE4] dark:bg-[#15151B] p-4 sm:p-5 border border-[#DBD7CE] dark:border-white/10 shadow-sm flex flex-col justify-between space-y-4">
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-4 relative overflow-hidden">
+              <div className="space-y-2 max-w-sm relative z-10">
+                <span className="text-[10px] font-mono uppercase tracking-wider text-[#7C776D] dark:text-[#9E988D]">
+                  Layer 04 • AST Token Distillation
+                </span>
+                <h3 className="text-lg sm:text-xl font-bold tracking-tight text-[#1E1C1A] dark:text-white">
+                  Aligned With Your Workflow
+                </h3>
+                <p className="text-xs text-[#6B665C] dark:text-[#A6A195] leading-relaxed">
+                  Effortlessly hand off complex tasks with simple natural language commands and keyboard shortcuts.
+                </p>
+              </div>
+
+              {/* Simulated Tooltip & Dialogue Layer */}
+              <div className="relative w-full sm:w-[220px] p-3 rounded-xl bg-white/70 dark:bg-[#1D1D26]/70 border border-white/80 dark:border-white/5 text-[11px] text-[#868177] dark:text-[#7A756D] select-none leading-relaxed">
+                <p className="line-clamp-3">
+                  The covenants that govern context transfer ensure complete operational integrity throughout the interim handoff.
+                </p>
+
+                {/* Floating Dark Tooltip Badge */}
+                <button
+                  type="button"
+                  onClick={() => handleNavigate('how-it-works')}
+                  className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 px-2.5 py-1 rounded-md bg-[#181816] text-white text-[10px] font-semibold shadow-lg border border-white/20 flex items-center gap-1 whitespace-nowrap hover:scale-105 transition-transform cursor-pointer"
+                >
+                  <span>Inject Context Capsule</span>
+                  <IconArrowRight className="w-3 h-3" />
+                </button>
+              </div>
+            </div>
+
+            <div className="pt-2.5 border-t border-[#DBD7CE] dark:border-white/10 flex items-center justify-between text-[11px]">
+              <span className="text-[#7C776D] dark:text-[#9E988D]">AST Pruning Pipeline</span>
+              <button
+                type="button"
+                onClick={() => handleNavigate('how-it-works')}
+                className="font-semibold text-[#181816] dark:text-white hover:underline flex items-center gap-1"
+              >
+                <span>Explore Token Distillation</span>
+                <IconArrowRight className="w-3 h-3" />
+              </button>
+            </div>
+          </div>
+
+          {/* Card 5: Bottom Right Project Tree Card (5 Cols) */}
+          <div className="lg:col-span-5 rounded-2xl bg-[#ECEAE4] dark:bg-[#15151B] p-4 sm:p-5 border border-[#DBD7CE] dark:border-white/10 shadow-sm flex flex-col justify-between space-y-3">
+            <div className="space-y-2">
+              <p className="text-[11px] text-[#5A554C] dark:text-[#CCC7BC] leading-relaxed">
+                The target assistant maintains normal operations and avoids redundant explanations.
+              </p>
+
+              <button
+                type="button"
+                onClick={() => handleNavigate('comparison')}
+                className="w-full py-2 px-3 rounded-lg bg-[#181816] dark:bg-white text-white dark:text-[#181816] text-xs font-semibold shadow-xs hover:opacity-90 transition-opacity text-center block"
+              >
+                Inject into Claude / Gemini
+              </button>
+
+              <div className="space-y-1 text-xs font-mono">
+                <div className="p-1.5 px-2 rounded-md bg-white/80 dark:bg-[#1D1D26] border border-[#DBD7CE] dark:border-white/5 flex items-center justify-between text-[#1E1C1A] dark:text-[#E2DFD7]">
+                  <div className="flex items-center gap-1.5 truncate">
+                    <IconFileText className="w-3.5 h-3.5 text-[#7C776D] shrink-0" />
+                    <span className="truncate text-[11px]">Legal agreement.doc</span>
+                  </div>
+                  <IconDownload className="w-3 h-3 text-[#7C776D] shrink-0" />
+                </div>
+
+                <div className="p-1.5 px-2 rounded-md bg-white/80 dark:bg-[#1D1D26] border border-[#DBD7CE] dark:border-white/5 flex items-center justify-between text-[#1E1C1A] dark:text-[#E2DFD7]">
+                  <div className="flex items-center gap-1.5 truncate">
+                    <IconFileText className="w-3.5 h-3.5 text-[#7C776D] shrink-0" />
+                    <span className="truncate text-[11px]">Research & Solutions.pdf</span>
+                  </div>
+                  <IconDownload className="w-3 h-3 text-[#7C776D] shrink-0" />
+                </div>
+              </div>
+            </div>
+
+            <div className="pt-2 border-t border-[#DBD7CE] dark:border-white/10 flex items-center justify-between text-[11px]">
+              <span className="text-[#7C776D] dark:text-[#9E988D]">Keybind: ⌘+Shift+K</span>
+              <button
+                type="button"
+                onClick={() => handleNavigate('faq')}
+                className="font-semibold text-[#181816] dark:text-white hover:underline flex items-center gap-1"
+              >
+                <span>Keybinds</span>
+                <IconArrowRight className="w-3 h-3" />
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     </section>

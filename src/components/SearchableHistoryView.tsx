@@ -1,4 +1,5 @@
 import React, { useState, useMemo, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
   IconSearch,
   IconPin,
@@ -8,23 +9,21 @@ import {
   IconPlus,
   IconDownload,
   IconArrowRight,
-  IconSparkles,
-  IconTerminal,
-  IconKey,
-  IconClock,
   IconX,
   IconEye,
   IconCode,
-  IconMessageCircle,
   IconFileText,
-  IconGitCompare
+  IconShieldCheck,
+  IconBolt,
+  IconRefresh,
+  IconInfoCircle,
+  IconDatabase,
+  IconLayersLinked
 } from '@tabler/icons-react';
 import { SavedContextSegment, PageView } from '../types';
-import { getSavedContextSegments, saveContextSegments } from '../data/historyData';
+import { getSavedContextSegments, saveContextSegments, INITIAL_CONTEXT_SEGMENTS } from '../data/historyData';
 import { useToast } from '../context/ToastContext';
-import { DiffViewer } from './DiffViewer';
 import { LiquidLogoCanvas } from './LiquidLogoCanvas';
-import { LiquidGlassCard } from './ui/LiquidGlassCard';
 
 interface SearchableHistoryViewProps {
   onOpenInstall?: () => void;
@@ -43,26 +42,31 @@ export const SearchableHistoryView: React.FC<SearchableHistoryViewProps> = ({
   const [selectedCategoryFilter, setSelectedCategoryFilter] = useState<string>('All');
   const [pinnedOnly, setPinnedOnly] = useState(false);
   const [targetModel, setTargetModel] = useState<'Claude' | 'ChatGPT' | 'Gemini' | 'DeepSeek'>('Claude');
-  const [previewTab, setPreviewTab] = useState<'beautified' | 'diff' | 'raw' | 'transcript'>('beautified');
   const [copiedPrompt, setCopiedPrompt] = useState(false);
   const [copiedCodeSnippet, setCopiedCodeSnippet] = useState(false);
   const [isSimulatingInject, setIsSimulatingInject] = useState(false);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   // New segment form state
   const [newTitle, setNewTitle] = useState('');
   const [newModel, setNewModel] = useState<'ChatGPT' | 'Claude' | 'Gemini' | 'DeepSeek'>('ChatGPT');
   const [newCategory, setNewCategory] = useState<'architecture' | 'coding' | 'reasoning' | 'database'>('architecture');
   const [newTranscript, setNewTranscript] = useState('');
-  const [newTags, setNewTags] = useState('React, TypeScript, Context');
+  const [newTags, setNewTags] = useState('React, TypeScript, State');
 
   // Load from localStorage on mount
   useEffect(() => {
-    const data = getSavedContextSegments();
-    setSegments(data);
-    if (data.length > 0) {
-      setSelectedId(data[0].id);
-    }
+    setIsLoading(true);
+    const timer = setTimeout(() => {
+      const data = getSavedContextSegments();
+      setSegments(data);
+      if (data.length > 0) {
+        setSelectedId(data[0].id);
+      }
+      setIsLoading(false);
+    }, 200);
+    return () => clearTimeout(timer);
   }, []);
 
   // Sync to localStorage on segments update
@@ -107,41 +111,55 @@ export const SearchableHistoryView: React.FC<SearchableHistoryViewProps> = ({
       s.id === id ? { ...s, isPinned: !s.isPinned } : s
     );
     updateSegments(updated);
-    toast.info('Status updated', 'Context segment pin state changed.');
+    toast.info('Updated', 'Note pin status toggled.');
   };
 
   const handleDelete = (id: string, e: React.MouseEvent) => {
     e.stopPropagation();
-    if (!window.confirm('Delete this encrypted context segment from local browser storage?')) return;
+    if (!window.confirm('Delete this saved conversation from your browser storage?')) return;
     const updated = segments.filter((s) => s.id !== id);
     updateSegments(updated);
     if (selectedId === id && updated.length > 0) {
       setSelectedId(updated[0].id);
     }
-    toast.info('Deleted', 'Segment removed from local encrypted database.');
+    toast.info('Deleted', 'Note removed from local storage.');
   };
 
-  const handleCopyInjectedPayload = () => {
+  const handleRestoreSampleData = () => {
+    setIsLoading(true);
+    setTimeout(() => {
+      updateSegments(INITIAL_CONTEXT_SEGMENTS);
+      if (INITIAL_CONTEXT_SEGMENTS.length > 0) {
+        setSelectedId(INITIAL_CONTEXT_SEGMENTS[0].id);
+      }
+      setIsLoading(false);
+      toast.saved('Sample Vault Loaded', 'Restored sample cross-AI conversation notes.');
+    }, 250);
+  };
+
+  const handleCopyInjectedPayload = (modelName?: string) => {
     if (!selectedSegment) return;
-    const fullPayload = `${selectedSegment.suggestedPrompt || 'Context handoff from previous session:'}\n\n${selectedSegment.compressedContextPill}`;
+    const dest = modelName || targetModel;
+    const fullPayload = `${selectedSegment.suggestedPrompt || 'Context from previous session:'}\n\n${selectedSegment.compressedContextPill}`;
     navigator.clipboard.writeText(fullPayload);
     setCopiedPrompt(true);
     toast.copied(
-      `Injected into ${targetModel} format!`,
-      `Context compressed to ${selectedSegment.compressedTokens} tokens (${Math.round((1 - selectedSegment.compressedTokens / selectedSegment.originalTokens) * 100)}% reduction).`
+      `Copied for ${dest}!`,
+      `Ready to paste into ${dest} to continue your session seamlessly.`
     );
-    setTimeout(() => setCopiedPrompt(false), 2200);
+    setTimeout(() => setCopiedPrompt(false), 2400);
   };
 
   const handleSimulateInjection = () => {
     if (!selectedSegment) return;
     setIsSimulatingInject(true);
+
     setTimeout(() => {
       setIsSimulatingInject(false);
       handleCopyInjectedPayload();
       toast.saved(
-        `Summoned with ⌘+Shift+K to ${targetModel}`,
-        `Context capsule ready in active tab's input prompt buffer.`
+        `Transferred to ${targetModel}`,
+        `Context capsule is ready in the active input prompt.`
       );
     }, 600);
   };
@@ -150,11 +168,11 @@ export const SearchableHistoryView: React.FC<SearchableHistoryViewProps> = ({
     const dataStr = 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(segments, null, 2));
     const downloadAnchor = document.createElement('a');
     downloadAnchor.setAttribute('href', dataStr);
-    downloadAnchor.setAttribute('download', `chatbridge-context-history-${new Date().toISOString().slice(0, 10)}.json`);
+    downloadAnchor.setAttribute('download', `chatbridge-vault-backup-${new Date().toISOString().slice(0, 10)}.json`);
     document.body.appendChild(downloadAnchor);
     downloadAnchor.click();
     downloadAnchor.remove();
-    toast.saved('History Exported', 'Local context history downloaded as JSON.');
+    toast.saved('Export Complete', 'Encrypted local history downloaded as JSON.');
   };
 
   const handleCreateSegment = (e: React.FormEvent) => {
@@ -173,7 +191,7 @@ export const SearchableHistoryView: React.FC<SearchableHistoryViewProps> = ({
       title: newTitle.trim(),
       originModel: newModel,
       category: newCategory,
-      tags: tagArray.length > 0 ? tagArray : ['Custom Context'],
+      tags: tagArray.length > 0 ? tagArray : ['Custom Note'],
       rawTranscript: newTranscript.trim(),
       summary: newTranscript.slice(0, 140) + '...',
       compressedContextPill: `[ChatBridge Context • ${newTitle.trim()}]
@@ -195,15 +213,20 @@ Target Goal: Continue task execution with loaded context.`,
     setIsAddModalOpen(false);
     setNewTitle('');
     setNewTranscript('');
-    toast.saved('Segment Saved', 'New context segment encrypted and stored in local memory.');
+    toast.saved('Saved to Vault', 'New conversation note added to your local notebook.');
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 text-[#1D1D1F] dark:text-[#F5F5F7]">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10 text-[#1D1D1F] dark:text-[#F5F5F7] transition-colors duration-200">
       {/* Top Breadcrumb & Heading */}
-      <div className="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <motion.div
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4 }}
+        className="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4"
+      >
         <div>
-          <div className="flex items-center gap-2 text-xs font-mono text-neutral-500 mb-1">
+          <div className="flex items-center gap-2 text-xs font-mono text-neutral-500 mb-1.5">
             {onNavigateHome && (
               <button
                 onClick={onNavigateHome}
@@ -215,17 +238,20 @@ Target Goal: Continue task execution with loaded context.`,
             <span>/</span>
             <span className="text-neutral-700 dark:text-neutral-300 font-medium">History Vault</span>
             <span>/</span>
-            <span className="text-[#0071E3] dark:text-[#2997FF]">Context Search & Injection</span>
+            <span className="text-[#0071E3] dark:text-[#2997FF]">Cross-AI Memory Studio</span>
           </div>
+
           <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-[#1D1D1F] dark:text-white flex items-center gap-3">
-            <LiquidLogoCanvas size={34} />
-            <span>Saved Context Segments</span>
-            <span className="text-xs font-mono font-medium px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
-              AES-256 Sandboxed
+            <LiquidLogoCanvas size={32} />
+            <span>AI Memory Notebook & Vault</span>
+            <span className="text-xs font-mono font-medium px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 flex items-center gap-1">
+              <IconShieldCheck className="w-3.5 h-3.5" />
+              <span>100% Local Device Storage</span>
             </span>
           </h1>
-          <p className="text-xs sm:text-sm text-neutral-500 dark:text-neutral-400 mt-1 max-w-2xl">
-            Quickly search, inspect with markdown quick-preview, and format conversational memory segments before injecting them into target models like Claude, ChatGPT, Gemini, or DeepSeek.
+
+          <p className="text-xs sm:text-sm text-neutral-600 dark:text-neutral-400 mt-1 max-w-2xl leading-relaxed">
+            Your private browser-based memory notebook. Switch between ChatGPT, Claude, and Gemini without losing your conversation context.
           </p>
         </div>
 
@@ -233,24 +259,29 @@ Target Goal: Continue task execution with loaded context.`,
         <div className="flex items-center gap-2 self-start sm:self-auto shrink-0">
           <button
             onClick={() => setIsAddModalOpen(true)}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#0071E3] hover:bg-[#0077ED] text-white text-xs font-semibold shadow-xs transition-colors"
+            className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-[#0071E3] hover:bg-[#0077ED] text-white text-xs font-semibold shadow-xs transition-colors"
           >
             <IconPlus className="w-4 h-4" />
-            <span>Add Segment</span>
+            <span>Add Note</span>
           </button>
           <button
             onClick={handleExportJson}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-neutral-100 hover:bg-neutral-200 dark:bg-white/10 dark:hover:bg-white/15 text-neutral-700 dark:text-neutral-200 text-xs font-medium border border-neutral-200 dark:border-white/10 transition-colors"
-            title="Export local history as JSON"
+            className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-neutral-100 hover:bg-neutral-200 dark:bg-white/10 dark:hover:bg-white/15 text-neutral-700 dark:text-neutral-200 text-xs font-medium border border-neutral-200 dark:border-white/10 transition-colors"
+            title="Download your private saved memories as JSON"
           >
             <IconDownload className="w-3.5 h-3.5" />
-            <span className="hidden sm:inline">Export</span>
+            <span className="hidden sm:inline">Backup</span>
           </button>
         </div>
-      </div>
+      </motion.div>
 
       {/* Main Search & Filter Control Bar */}
-      <div className="p-3 sm:p-4 rounded-2xl bg-white dark:bg-[#111118] border border-neutral-200/90 dark:border-white/10 shadow-xs mb-6 space-y-3">
+      <motion.div
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, delay: 0.05 }}
+        className="p-3 sm:p-4 rounded-2xl bg-white dark:bg-[#111118] border border-neutral-200/90 dark:border-white/10 shadow-xs mb-6 space-y-3"
+      >
         {/* Search Input */}
         <div className="relative w-full">
           <IconSearch className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-neutral-400" />
@@ -258,7 +289,7 @@ Target Goal: Continue task execution with loaded context.`,
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Search saved context by keywords, code tokens, tags, or source model (e.g. 'Redis', 'Next.js', 'PostgreSQL', 'Auth')..."
+            placeholder="Search saved chats by topic, keyword, or language (e.g. 'React', 'Redis', 'Auth', 'PostgreSQL')..."
             className="w-full pl-10 pr-9 py-2 rounded-xl text-xs sm:text-sm bg-neutral-50 dark:bg-black/30 border border-neutral-200 dark:border-white/10 text-neutral-900 dark:text-neutral-100 placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-[#0071E3]/20 focus:border-[#0071E3] dark:focus:border-[#2997FF] transition-all"
           />
           {searchQuery && (
@@ -277,19 +308,19 @@ Target Goal: Continue task execution with loaded context.`,
           {/* Origin Model Filters */}
           <div className="flex items-center gap-1 overflow-x-auto no-visible-scrollbar py-0.5">
             <span className="text-[11px] font-mono text-neutral-400 uppercase tracking-wider mr-1">
-              Origin:
+              Source AI:
             </span>
             {['All', 'ChatGPT', 'Claude', 'Gemini', 'DeepSeek'].map((model) => (
               <button
                 key={model}
                 onClick={() => setSelectedModelFilter(model)}
-                className={`px-2.5 py-1 rounded-lg text-xs font-medium transition-all ${
+                className={`px-3 py-1 rounded-lg text-xs font-medium transition-all ${
                   selectedModelFilter === model
                     ? 'bg-[#1D1D1F] text-white dark:bg-white dark:text-black font-semibold shadow-xs'
                     : 'text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-white/5'
                 }`}
               >
-                {model}
+                {model === 'All' ? 'All Models' : model}
               </button>
             ))}
           </div>
@@ -303,449 +334,444 @@ Target Goal: Continue task execution with loaded context.`,
               aria-label="Filter by Topic"
             >
               <option value="All">All Topics</option>
-              <option value="architecture">Architecture</option>
-              <option value="coding">Coding & Dev</option>
-              <option value="database">Database & Schema</option>
-              <option value="reasoning">Reasoning & Prompts</option>
+              <option value="architecture">Architecture & Systems</option>
+              <option value="coding">Coding & Bugs</option>
+              <option value="database">Database & Schemas</option>
+              <option value="reasoning">Brainstorming & Prompts</option>
             </select>
 
             <button
               onClick={() => setPinnedOnly(!pinnedOnly)}
-              className={`flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-medium border transition-colors ${
+              className={`flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-medium border transition-colors ${
                 pinnedOnly
                   ? 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/30 font-semibold'
                   : 'bg-neutral-100 dark:bg-[#1E1E2C] text-neutral-600 dark:text-neutral-400 border-neutral-200 dark:border-white/10 hover:text-neutral-900 dark:hover:text-white'
               }`}
             >
               <IconPin className="w-3.5 h-3.5" />
-              <span>Pinned ({segments.filter((s) => s.isPinned).length})</span>
+              <span>Favorites ({segments.filter((s) => s.isPinned).length})</span>
             </button>
           </div>
         </div>
-      </div>
+      </motion.div>
 
-      {/* Main Dual-Pane Layout: Left List, Right Inspector & Injection Studio */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-        {/* Left Column: Segments List (5 Cols on Desktop) */}
-        <div className="lg:col-span-5 space-y-2.5 max-h-[780px] overflow-y-auto pr-1 scrollbar-none">
-          <div className="flex items-center justify-between text-xs text-neutral-500 px-1 mb-1">
-            <span>{filteredSegments.length} segments found</span>
-            <span className="font-mono text-[11px]">Ranked by RRF</span>
+      {/* 3-COLUMN EDITORIAL GRID LAYOUT */}
+      {isLoading ? (
+        /* LOW-PROFILE THEME-ADAPTIVE SKELETON LOADING STATE */
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
+          {/* Column 1 Skeleton */}
+          <div className="lg:col-span-4 space-y-3">
+            {[1, 2, 3].map((i) => (
+              <div
+                key={i}
+                className="p-4 rounded-2xl border border-neutral-200/60 dark:border-white/5 bg-white dark:bg-[#111118] space-y-2.5"
+              >
+                <div className="flex items-center justify-between">
+                  <div className="w-16 h-4 rounded-md skeleton-shimmer" />
+                  <div className="w-12 h-3 rounded-md skeleton-shimmer" />
+                </div>
+                <div className="w-3/4 h-4 rounded-md skeleton-shimmer" />
+                <div className="w-full h-3 rounded-md skeleton-shimmer" />
+                <div className="w-2/3 h-3 rounded-md skeleton-shimmer" />
+                <div className="pt-2 flex justify-between">
+                  <div className="w-24 h-3 rounded-md skeleton-shimmer" />
+                  <div className="w-12 h-3 rounded-md skeleton-shimmer" />
+                </div>
+              </div>
+            ))}
           </div>
 
-          {filteredSegments.length > 0 ? (
-            filteredSegments.map((seg) => {
-              const isSelected = selectedSegment?.id === seg.id;
-              const reductionPct = Math.round((1 - seg.compressedTokens / seg.originalTokens) * 100);
-
-              return (
-                <div
-                  key={seg.id}
-                  onClick={() => setSelectedId(seg.id)}
-                  className={`p-3.5 sm:p-4 rounded-xl border transition-all cursor-pointer relative group ${
-                    isSelected
-                      ? 'bg-blue-50/60 dark:bg-[#151D2A] border-[#0071E3] dark:border-[#2997FF] shadow-sm'
-                      : 'bg-white dark:bg-[#111118] border-neutral-200/80 dark:border-white/10 hover:border-neutral-300 dark:hover:border-white/20'
-                  }`}
-                >
-                  {/* Top Row: Model & Pin Button */}
-                  <div className="flex items-center justify-between gap-2 mb-1.5">
-                    <div className="flex items-center gap-2 text-xs">
-                      <span className="font-semibold text-[11px] font-mono px-1.5 py-0.5 rounded bg-neutral-100 dark:bg-white/10 text-neutral-700 dark:text-neutral-300">
-                        {seg.originModel}
-                      </span>
-                      <span className="text-[11px] text-neutral-400 font-mono">
-                        {seg.timestamp}
-                      </span>
-                    </div>
-
-                    <div className="flex items-center gap-1 opacity-75 group-hover:opacity-100 transition-opacity">
-                      <button
-                        onClick={(e) => handleTogglePin(seg.id, e)}
-                        className={`p-1 rounded-md hover:bg-black/5 dark:hover:bg-white/10 transition-colors ${
-                          seg.isPinned ? 'text-amber-500' : 'text-neutral-400'
-                        }`}
-                        title={seg.isPinned ? 'Unpin context' : 'Pin context to top'}
-                      >
-                        <IconPin className="w-3.5 h-3.5" />
-                      </button>
-                      <button
-                        onClick={(e) => handleDelete(seg.id, e)}
-                        className="p-1 rounded-md hover:bg-rose-500/10 text-neutral-400 hover:text-rose-500 transition-colors"
-                        title="Delete from local encrypted index"
-                      >
-                        <IconTrash className="w-3.5 h-3.5" />
-                      </button>
-                    </div>
-                  </div>
-
-                  {/* Title */}
-                  <h4 className="text-sm font-semibold tracking-tight text-[#1D1D1F] dark:text-white line-clamp-1">
-                    {seg.title}
-                  </h4>
-
-                  {/* Summary */}
-                  <p className="text-xs text-neutral-500 dark:text-neutral-400 line-clamp-2 mt-1 leading-relaxed">
-                    {seg.summary}
-                  </p>
-
-                  {/* Bottom Stats: Tokens, Savings, Tags */}
-                  <div className="flex flex-wrap items-center justify-between gap-2 mt-3 pt-2.5 border-t border-neutral-100 dark:border-white/5 text-[11px] font-mono">
-                    <div className="flex items-center gap-1.5 text-neutral-600 dark:text-neutral-300">
-                      <span className="text-[#0071E3] dark:text-[#2997FF] font-medium">
-                        {seg.compressedTokens}t
-                      </span>
-                      <span className="text-neutral-400">/</span>
-                      <span className="text-neutral-400 line-through">
-                        {seg.originalTokens}t
-                      </span>
-                      <span className="text-emerald-600 dark:text-emerald-400 font-semibold ml-0.5">
-                        (-{reductionPct}%)
-                      </span>
-                    </div>
-
-                    <div className="flex items-center gap-1">
-                      {seg.tags.slice(0, 2).map((tag) => (
-                        <span
-                          key={tag}
-                          className="px-1.5 py-0.2 rounded bg-neutral-100 dark:bg-white/5 text-neutral-500 dark:text-neutral-400 text-[10px]"
-                        >
-                          #{tag}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              );
-            })
-          ) : (
-            <div className="p-8 text-center bg-white dark:bg-[#111118] rounded-2xl border border-neutral-200 dark:border-white/10 text-neutral-400">
-              <IconSearch className="w-8 h-8 mx-auto mb-2 opacity-40" />
-              <p className="text-xs font-medium">No matching context segments found.</p>
-              <button
-                onClick={() => {
-                  setSearchQuery('');
-                  setSelectedModelFilter('All');
-                  setSelectedCategoryFilter('All');
-                  setPinnedOnly(false);
-                }}
-                className="text-xs text-[#0071E3] dark:text-[#2997FF] hover:underline mt-2 inline-block"
-              >
-                Clear all filters
-              </button>
+          {/* Column 2 Skeleton */}
+          <div className="lg:col-span-4 p-5 rounded-2xl border border-neutral-200/60 dark:border-white/5 bg-white dark:bg-[#111118] space-y-4">
+            <div className="flex justify-between border-b border-neutral-200/60 dark:border-white/5 pb-2.5">
+              <div className="w-32 h-4 rounded-md skeleton-shimmer" />
+              <div className="w-16 h-3 rounded-md skeleton-shimmer" />
             </div>
-          )}
+            <div className="w-full h-16 rounded-xl skeleton-shimmer" />
+            <div className="w-48 h-5 rounded-md skeleton-shimmer" />
+            <div className="w-full h-12 rounded-md skeleton-shimmer" />
+            <div className="grid grid-cols-2 gap-2">
+              <div className="h-12 rounded-lg skeleton-shimmer" />
+              <div className="h-12 rounded-lg skeleton-shimmer" />
+            </div>
+            <div className="w-full h-36 rounded-xl skeleton-shimmer" />
+          </div>
+
+          {/* Column 3 Skeleton */}
+          <div className="lg:col-span-4 p-5 rounded-2xl border border-neutral-200/60 dark:border-white/5 bg-white dark:bg-[#111118] space-y-4">
+            <div className="flex justify-between border-b border-neutral-200/60 dark:border-white/5 pb-2.5">
+              <div className="w-28 h-4 rounded-md skeleton-shimmer" />
+              <div className="w-14 h-3 rounded-md skeleton-shimmer" />
+            </div>
+            <div className="grid grid-cols-2 gap-1.5">
+              <div className="h-10 rounded-xl skeleton-shimmer" />
+              <div className="h-10 rounded-xl skeleton-shimmer" />
+              <div className="h-10 rounded-xl skeleton-shimmer" />
+              <div className="h-10 rounded-xl skeleton-shimmer" />
+            </div>
+            <div className="w-full h-40 rounded-xl skeleton-shimmer" />
+            <div className="w-full h-10 rounded-xl skeleton-shimmer" />
+          </div>
         </div>
-
-        {/* Right Column: Preview & Injection Studio (7 Cols on Desktop) */}
-        {selectedSegment ? (
-          <div className="lg:col-span-7 bg-white dark:bg-[#111118] rounded-2xl border border-neutral-200/90 dark:border-white/10 shadow-lg overflow-hidden flex flex-col transition-colors">
-            {/* Inspector Header */}
-            <div className="p-4 sm:p-6 border-b border-neutral-200/80 dark:border-white/10 bg-neutral-50/50 dark:bg-white/[0.02]">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-2">
-                <div>
-                  <div className="flex items-center gap-2 text-xs font-mono text-neutral-500">
-                    <span className="text-[#0071E3] dark:text-[#2997FF] font-semibold">
-                      {selectedSegment.originModel} Origin
-                    </span>
-                    <span>·</span>
-                    <span>Captured {selectedSegment.timestamp}</span>
-                    <span>·</span>
-                    <span>RRF: {selectedSegment.rrfScore.toFixed(4)}</span>
-                  </div>
-                  <h3 className="text-lg sm:text-xl font-bold tracking-tight text-[#1D1D1F] dark:text-white mt-1">
-                    {selectedSegment.title}
-                  </h3>
-                </div>
-
-                <div className="flex items-center gap-1.5 self-start sm:self-auto shrink-0">
-                  <span className="text-[11px] font-mono px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
-                    95% Token Compression
-                  </span>
-                </div>
-              </div>
-
-              <p className="text-xs sm:text-sm text-neutral-600 dark:text-neutral-300 leading-relaxed">
-                {selectedSegment.summary}
-              </p>
-
-              {/* Extracted Structured Variables */}
-              {selectedSegment.extractedVariables && selectedSegment.extractedVariables.length > 0 && (
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mt-4 pt-3 border-t border-neutral-200/60 dark:border-white/5 text-xs font-mono">
-                  {selectedSegment.extractedVariables.map((v, idx) => (
-                    <div key={idx} className="flex flex-col">
-                      <span className="text-[10px] text-neutral-400 uppercase tracking-wider">
-                        {v.key}
-                      </span>
-                      <span className="text-xs font-semibold text-neutral-900 dark:text-neutral-200 truncate mt-0.5">
-                        {v.value}
-                      </span>
-                    </div>
-                  ))}
-                </div>
-              )}
+      ) : segments.length === 0 ? (
+        /* PROFESSIONAL EMPTY VAULT STATE */
+        <motion.div
+          initial={{ opacity: 0, scale: 0.98 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.35 }}
+          className="rounded-3xl border border-neutral-200/90 dark:border-white/10 bg-white dark:bg-[#111118] p-10 sm:p-14 text-center max-w-2xl mx-auto shadow-sm"
+        >
+          <div className="w-14 h-14 rounded-2xl bg-blue-50 dark:bg-white/5 border border-blue-100 dark:border-white/10 flex items-center justify-center text-[#0071E3] dark:text-[#2997FF] mx-auto mb-4">
+            <IconDatabase className="w-7 h-7" />
+          </div>
+          <h3 className="text-lg font-bold text-neutral-900 dark:text-white mb-2">
+            Your Memory Vault is Empty
+          </h3>
+          <p className="text-xs sm:text-sm text-neutral-500 dark:text-neutral-400 max-w-md mx-auto mb-6 leading-relaxed">
+            As you chat with ChatGPT, Claude, or Gemini in your browser, ChatBridge will automatically capture key turns and code here without sending anything to the cloud.
+          </p>
+          <div className="flex flex-wrap items-center justify-center gap-3">
+            <button
+              onClick={handleRestoreSampleData}
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#0071E3] hover:bg-[#0077ED] text-white text-xs font-semibold shadow-xs transition-colors"
+            >
+              <IconRefresh className="w-4 h-4" />
+              <span>Load Sample AI Notes</span>
+            </button>
+            <button
+              onClick={() => setIsAddModalOpen(true)}
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-neutral-100 hover:bg-neutral-200 dark:bg-white/10 dark:hover:bg-white/15 text-neutral-800 dark:text-neutral-200 text-xs font-medium border border-neutral-200 dark:border-white/10 transition-colors"
+            >
+              <IconPlus className="w-4 h-4" />
+              <span>Create First Note</span>
+            </button>
+          </div>
+        </motion.div>
+      ) : (
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
+          {/* COLUMN 1: Editorial Conversations Grid/Cards (4 Cols on Desktop) */}
+          <div className="lg:col-span-4 space-y-3 max-h-[780px] overflow-y-auto pr-1 custom-scrollbar">
+            <div className="flex items-center justify-between text-xs text-neutral-500 px-1 mb-1">
+              <span className="font-semibold text-neutral-700 dark:text-neutral-300">
+                {filteredSegments.length} {filteredSegments.length === 1 ? 'Note' : 'Notes'} Found
+              </span>
+              <span className="text-[11px] text-neutral-400">Select to inspect</span>
             </div>
 
-            {/* Target Model Selector & Injection Studio */}
-            <div className="p-4 sm:p-6 space-y-5">
-              {/* Target Model Chooser */}
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <label className="text-xs font-semibold tracking-tight text-[#1D1D1F] dark:text-white flex items-center gap-1.5">
-                    <IconArrowRight className="w-4 h-4 text-[#0071E3] dark:text-[#2997FF]" />
-                    <span>Choose Target Model to Inject Context:</span>
-                  </label>
-                  <span className="text-[11px] font-mono text-neutral-400">
-                    One-click context handoff
-                  </span>
-                </div>
+            {filteredSegments.length > 0 ? (
+              filteredSegments.map((seg, idx) => {
+                const isSelected = selectedSegment?.id === seg.id;
+                const reductionPct = Math.round((1 - seg.compressedTokens / seg.originalTokens) * 100);
 
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                  {[
-                    { id: 'Claude' as const, name: 'Claude 3.7', desc: 'Anthropic' },
-                    { id: 'ChatGPT' as const, name: 'ChatGPT-4o', desc: 'OpenAI' },
-                    { id: 'Gemini' as const, name: 'Gemini 2.0', desc: 'Google' },
-                    { id: 'DeepSeek' as const, name: 'DeepSeek R1', desc: 'Reasoning' }
-                  ].map((m) => {
-                    const isTarget = targetModel === m.id;
-                    return (
-                      <button
-                        key={m.id}
-                        type="button"
-                        onClick={() => setTargetModel(m.id)}
-                        className={`p-2.5 rounded-xl border text-left transition-all relative ${
-                          isTarget
-                            ? 'bg-[#0071E3]/10 dark:bg-[#2997FF]/10 border-[#0071E3] dark:border-[#2997FF] shadow-xs'
-                            : 'bg-neutral-50/70 dark:bg-black/20 border-neutral-200/80 dark:border-white/10 hover:border-neutral-300 dark:hover:border-white/20'
-                        }`}
-                      >
-                        <div className="flex items-center justify-between">
-                          <span className="text-xs font-semibold text-neutral-900 dark:text-white">
-                            {m.name}
-                          </span>
-                          {isTarget && (
-                            <IconCheck className="w-3.5 h-3.5 text-[#0071E3] dark:text-[#2997FF]" />
-                          )}
-                        </div>
-                        <span className="text-[10px] text-neutral-400 font-mono block mt-0.5">
-                          {m.desc}
-                        </span>
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-
-              {/* QUICK-PREVIEW PANE WITH BEAUTIFIED MARKDOWN */}
-              <div className="space-y-2">
-                {/* View Mode Segmented Controls */}
-                <div className="flex items-center justify-between border-b border-neutral-200 dark:border-white/10 pb-2">
-                  <div className="flex items-center gap-1 bg-neutral-100 dark:bg-white/5 p-0.5 rounded-lg border border-neutral-200/80 dark:border-white/5 text-xs font-mono">
-                    <button
-                      type="button"
-                      onClick={() => setPreviewTab('beautified')}
-                      className={`flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] transition-colors ${
-                        previewTab === 'beautified'
-                          ? 'bg-white dark:bg-[#1E1E2C] text-[#0071E3] dark:text-[#2997FF] font-semibold shadow-xs'
-                          : 'text-neutral-500 hover:text-neutral-900 dark:hover:text-white'
-                      }`}
-                    >
-                      <IconEye className="w-3.5 h-3.5" />
-                      <span>Quick Preview (Beautified)</span>
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setPreviewTab('diff')}
-                      className={`flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] transition-colors ${
-                        previewTab === 'diff'
-                          ? 'bg-white dark:bg-[#1E1E2C] text-emerald-600 dark:text-emerald-400 font-semibold shadow-xs'
-                          : 'text-neutral-500 hover:text-neutral-900 dark:hover:text-white'
-                      }`}
-                    >
-                      <IconGitCompare className="w-3.5 h-3.5 text-emerald-500" />
-                      <span>Show Changes</span>
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setPreviewTab('raw')}
-                      className={`flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] transition-colors ${
-                        previewTab === 'raw'
-                          ? 'bg-white dark:bg-[#1E1E2C] text-[#0071E3] dark:text-[#2997FF] font-semibold shadow-xs'
-                          : 'text-neutral-500 hover:text-neutral-900 dark:hover:text-white'
-                      }`}
-                    >
-                      <IconCode className="w-3.5 h-3.5" />
-                      <span>Raw Payload</span>
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setPreviewTab('transcript')}
-                      className={`flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] transition-colors ${
-                        previewTab === 'transcript'
-                          ? 'bg-white dark:bg-[#1E1E2C] text-[#0071E3] dark:text-[#2997FF] font-semibold shadow-xs'
-                          : 'text-neutral-500 hover:text-neutral-900 dark:hover:text-white'
-                      }`}
-                    >
-                      <IconMessageCircle className="w-3.5 h-3.5" />
-                      <span>Original Turn</span>
-                    </button>
-                  </div>
-
-                  <span className="text-[11px] font-mono text-emerald-600 dark:text-emerald-400 font-medium hidden sm:inline">
-                    {selectedSegment.compressedTokens} Tokens (Reduced from {selectedSegment.originalTokens})
-                  </span>
-                </div>
-
-                {/* Pane Content based on previewTab */}
-                {previewTab === 'beautified' && (
-                  <div className="rounded-xl border border-neutral-200 dark:border-white/10 bg-neutral-50/70 dark:bg-[#07070B] p-4 sm:p-5 text-xs overflow-y-auto max-h-[340px] space-y-3.5 shadow-inner">
-                    {/* Header Banner with Show Changes Action */}
-                    <div className="p-3 rounded-lg bg-[#0071E3]/10 dark:bg-[#2997FF]/10 border border-[#0071E3]/20 dark:border-[#2997FF]/20 flex items-center justify-between">
+                return (
+                  <motion.div
+                    key={seg.id}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.3, delay: Math.min(idx * 0.04, 0.2) }}
+                    onClick={() => setSelectedId(seg.id)}
+                    className={`p-4 rounded-2xl border transition-all cursor-pointer relative group ${
+                      isSelected
+                        ? 'bg-blue-50/80 dark:bg-[#141C2B] border-[#0071E3] dark:border-[#2997FF] shadow-xs ring-1 ring-[#0071E3]/20'
+                        : 'bg-white dark:bg-[#111118] border-neutral-200/80 dark:border-white/10 hover:border-neutral-300 dark:hover:border-white/20'
+                    }`}
+                  >
+                    {/* Top Row: Model & Pin/Delete */}
+                    <div className="flex items-center justify-between gap-2 mb-2">
                       <div className="flex items-center gap-2">
-                        <IconSparkles className="w-4 h-4 text-[#0071E3] dark:text-[#2997FF]" />
-                        <span className="font-mono font-semibold text-[#0071E3] dark:text-[#2997FF]">
-                          ChatBridge Injected Context Capsule
+                        <span className="font-semibold text-[10px] font-mono px-2 py-0.5 rounded-md bg-neutral-100 dark:bg-white/10 text-neutral-700 dark:text-neutral-300 border border-neutral-200/60 dark:border-white/5">
+                          {seg.originModel}
+                        </span>
+                        <span className="text-[10px] text-neutral-400 font-mono">
+                          {seg.timestamp}
                         </span>
                       </div>
-                      <div className="flex items-center gap-2">
+
+                      <div className="flex items-center gap-1 opacity-80 group-hover:opacity-100 transition-opacity">
                         <button
-                          type="button"
-                          onClick={() => setPreviewTab('diff')}
-                          className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-emerald-500 hover:bg-emerald-600 text-white text-[10px] font-semibold transition-colors"
-                          title="Show diff of what is being appended"
+                          onClick={(e) => handleTogglePin(seg.id, e)}
+                          className={`p-1 rounded-md hover:bg-black/5 dark:hover:bg-white/10 transition-colors ${
+                            seg.isPinned ? 'text-amber-500' : 'text-neutral-400'
+                          }`}
+                          title={seg.isPinned ? 'Unpin note' : 'Star note'}
                         >
-                          <IconGitCompare className="w-3 h-3" />
-                          <span>Show Changes</span>
+                          <IconPin className="w-3.5 h-3.5" />
                         </button>
-                        <span className="text-[10px] font-mono text-neutral-500">
-                          Target: {targetModel}
-                        </span>
+                        <button
+                          onClick={(e) => handleDelete(seg.id, e)}
+                          className="p-1 rounded-md hover:bg-rose-500/10 text-neutral-400 hover:text-rose-500 transition-colors"
+                          title="Delete from local storage"
+                        >
+                          <IconTrash className="w-3.5 h-3.5" />
+                        </button>
                       </div>
                     </div>
 
-                    {/* Suggested Prompt Kicker */}
-                    <div className="space-y-1">
-                      <span className="text-[10px] font-mono uppercase tracking-wider text-neutral-400">
-                        Prompt Preamble
-                      </span>
-                      <p className="text-xs font-medium text-neutral-800 dark:text-neutral-200 italic bg-white dark:bg-[#12121A] p-2.5 rounded-lg border border-neutral-200/80 dark:border-white/5">
-                        "{selectedSegment.suggestedPrompt}"
-                      </p>
-                    </div>
+                    {/* Title */}
+                    <h4 className="text-xs sm:text-sm font-bold tracking-tight text-[#1D1D1F] dark:text-white line-clamp-1">
+                      {seg.title}
+                    </h4>
 
-                    {/* Beautified Markdown Breakdown */}
-                    <div className="space-y-2 pt-1">
-                      <span className="text-[10px] font-mono uppercase tracking-wider text-neutral-400">
-                        Structured Context Breakdown
-                      </span>
-                      <div className="space-y-2 bg-white dark:bg-[#101018] p-3.5 rounded-xl border border-neutral-200/80 dark:border-white/10 font-sans text-xs">
-                        <BeautifiedMarkdownContent content={selectedSegment.compressedContextPill} />
+                    {/* Summary in Plain English */}
+                    <p className="text-xs text-neutral-500 dark:text-neutral-400 line-clamp-2 mt-1.5 leading-relaxed">
+                      {seg.summary}
+                    </p>
+
+                    {/* Bottom Info: Clean Tags & Savings */}
+                    <div className="flex flex-wrap items-center justify-between gap-2 mt-3 pt-2.5 border-t border-neutral-100 dark:border-white/5 text-[10px]">
+                      <div className="flex items-center gap-1 text-emerald-600 dark:text-emerald-400 font-medium">
+                        <IconCheck className="w-3 h-3" />
+                        <span>{reductionPct}% token compression</span>
+                      </div>
+
+                      <div className="flex items-center gap-1">
+                        {seg.tags.slice(0, 2).map((tag) => (
+                          <span
+                            key={tag}
+                            className="px-1.5 py-0.5 rounded bg-neutral-100 dark:bg-white/5 text-neutral-500 dark:text-neutral-400"
+                          >
+                            #{tag}
+                          </span>
+                        ))}
                       </div>
                     </div>
-                  </div>
-                )}
+                  </motion.div>
+                );
+              })
+            ) : (
+              /* PROFESSIONAL SEARCH EMPTY STATE */
+              <div className="p-6 text-center bg-white dark:bg-[#111118] rounded-2xl border border-neutral-200 dark:border-white/10 text-neutral-400 space-y-3">
+                <div className="w-10 h-10 rounded-full bg-neutral-100 dark:bg-white/5 flex items-center justify-center mx-auto text-neutral-400">
+                  <IconSearch className="w-5 h-5" />
+                </div>
+                <div>
+                  <h4 className="text-xs font-bold text-neutral-800 dark:text-neutral-200">
+                    No matching conversations
+                  </h4>
+                  <p className="text-[11px] text-neutral-500 mt-0.5">
+                    Try searching for terms like <span className="font-mono text-[#0071E3] dark:text-[#2997FF]">React</span>, <span className="font-mono text-[#0071E3] dark:text-[#2997FF]">Redis</span>, or <span className="font-mono text-[#0071E3] dark:text-[#2997FF]">Database</span>.
+                  </p>
+                </div>
+                <button
+                  onClick={() => {
+                    setSearchQuery('');
+                    setSelectedModelFilter('All');
+                    setSelectedCategoryFilter('All');
+                    setPinnedOnly(false);
+                  }}
+                  className="px-3 py-1.5 rounded-lg bg-neutral-100 hover:bg-neutral-200 dark:bg-white/10 dark:hover:bg-white/15 text-xs font-semibold text-[#0071E3] dark:text-[#2997FF] transition-colors"
+                >
+                  Clear all filters
+                </button>
+              </div>
+            )}
+          </div>
 
-                {previewTab === 'diff' && (
-                  <div className="space-y-2">
-                    <DiffViewer
-                      oldText={selectedSegment.rawTranscript}
-                      newText={`${selectedSegment.suggestedPrompt || 'Context handoff from previous session:'}\n\n${selectedSegment.compressedContextPill}`}
-                      oldLabel={`Historical Context (${selectedSegment.originModel})`}
-                      newLabel={`Appended Target Buffer (${targetModel})`}
-                    />
+          {/* COLUMN 2: Metadata & Raw Conversation Data (4 Cols on Desktop) */}
+          <AnimatePresence mode="wait">
+            {selectedSegment ? (
+              <motion.div
+                key={selectedSegment.id + '-meta'}
+                initial={{ opacity: 0, x: -8 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -8 }}
+                transition={{ duration: 0.25 }}
+                className="lg:col-span-4 bg-white dark:bg-[#111118] rounded-2xl border border-neutral-200/90 dark:border-white/10 shadow-sm p-5 flex flex-col justify-between space-y-4"
+              >
+                <div className="space-y-3.5">
+                  {/* Column Header */}
+                  <div className="flex items-center justify-between border-b border-neutral-200/80 dark:border-white/10 pb-2.5">
+                    <span className="text-xs font-bold text-neutral-900 dark:text-white flex items-center gap-1.5">
+                      <IconFileText className="w-4 h-4 text-[#0071E3] dark:text-[#2997FF]" />
+                      <span>Raw Conversation Data</span>
+                    </span>
+                    <span className="text-[10px] font-mono text-neutral-400">
+                      {selectedSegment.originModel} Excerpt
+                    </span>
                   </div>
-                )}
 
-                {previewTab === 'raw' && (
-                  <div className="relative rounded-xl border border-neutral-200 dark:border-white/10 bg-neutral-950 p-4 text-xs font-mono text-neutral-200 overflow-x-auto shadow-inner leading-relaxed max-h-[340px]">
-                    <div className="text-[#38BDF8] select-none mb-2 pb-2 border-b border-neutral-800 flex items-center justify-between">
-                      <span>// Formatted Injection Payload for {targetModel}</span>
+                  {/* Local Storage Concept Explainer Box */}
+                  <div className="p-3 rounded-xl bg-blue-50/70 dark:bg-[#0E1524] border border-blue-200/70 dark:border-blue-500/20 text-[11px] text-neutral-700 dark:text-neutral-300 leading-relaxed space-y-1">
+                    <div className="font-semibold text-[#0071E3] dark:text-[#2997FF] flex items-center gap-1">
+                      <IconInfoCircle className="w-3.5 h-3.5" />
+                      <span>What is Local Storage?</span>
+                    </div>
+                    <p className="text-[10px] text-neutral-600 dark:text-neutral-400">
+                      This text is saved only inside your computer's browser memory (<code className="font-mono bg-white/70 dark:bg-black/40 px-1 py-0.2 rounded">chrome.storage.local</code>). Zero cloud servers have access.
+                    </p>
+                  </div>
+
+                  {/* Title and Summary */}
+                  <div>
+                    <h3 className="text-sm font-bold text-neutral-900 dark:text-white">
+                      {selectedSegment.title}
+                    </h3>
+                    <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-1 leading-relaxed">
+                      {selectedSegment.summary}
+                    </p>
+                  </div>
+
+                  {/* Extracted Key Facts */}
+                  {selectedSegment.extractedVariables && selectedSegment.extractedVariables.length > 0 && (
+                    <div className="space-y-1.5 pt-2 border-t border-neutral-100 dark:border-white/5">
+                      <span className="text-[10px] font-mono uppercase tracking-wider text-neutral-400 block">
+                        Extracted Facts & Variables
+                      </span>
+                      <div className="grid grid-cols-2 gap-1.5 text-xs">
+                        {selectedSegment.extractedVariables.map((v, idx) => (
+                          <div key={idx} className="p-1.5 px-2 rounded-lg bg-neutral-50 dark:bg-white/5 border border-neutral-200/70 dark:border-white/5">
+                            <span className="text-[9px] font-mono text-neutral-400 uppercase block truncate">
+                              {v.key}
+                            </span>
+                            <span className="text-[11px] font-semibold text-neutral-800 dark:text-neutral-200 truncate block">
+                              {v.value}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Raw Transcript Content */}
+                  <div className="space-y-1.5 pt-2 border-t border-neutral-100 dark:border-white/5">
+                    <div className="flex items-center justify-between text-[10px] font-mono text-neutral-400">
+                      <span>Original Text ({selectedSegment.originalTokens} tokens)</span>
                       <button
-                        onClick={handleCopyInjectedPayload}
-                        className="text-[11px] text-neutral-400 hover:text-white flex items-center gap-1"
+                        onClick={() => {
+                          navigator.clipboard.writeText(selectedSegment.rawTranscript);
+                          setCopiedCodeSnippet(true);
+                          toast.copied('Transcript Copied', 'Original conversation text copied.');
+                          setTimeout(() => setCopiedCodeSnippet(false), 2000);
+                        }}
+                        className="text-[#0071E3] dark:text-[#2997FF] hover:underline flex items-center gap-0.5"
                       >
                         <IconCopy className="w-3 h-3" />
-                        <span>Copy</span>
+                        <span>{copiedCodeSnippet ? 'Copied' : 'Copy Text'}</span>
                       </button>
                     </div>
-                    <pre className="whitespace-pre-wrap font-mono text-neutral-300">
-                      {selectedSegment.suggestedPrompt || 'Context payload from past dialogue:'}
-                      {'\n\n'}
-                      {selectedSegment.compressedContextPill}
-                    </pre>
-                  </div>
-                )}
-
-                {previewTab === 'transcript' && (
-                  <div className="rounded-xl border border-neutral-200 dark:border-white/10 bg-white dark:bg-[#07070B] p-4 text-xs font-mono text-neutral-700 dark:text-neutral-300 overflow-y-auto max-h-[340px] leading-relaxed">
-                    <div className="text-neutral-400 select-none mb-2 pb-2 border-b border-neutral-200 dark:border-white/10 flex items-center justify-between">
-                      <span>Original Dialogue Turn ({selectedSegment.originalTokens} tokens uncompressed)</span>
-                      <span className="text-[10px]">{selectedSegment.originModel}</span>
-                    </div>
-                    <pre className="whitespace-pre-wrap font-mono text-[11px] text-neutral-800 dark:text-neutral-200">
+                    <div className="p-2.5 rounded-xl bg-neutral-50 dark:bg-black/30 border border-neutral-200 dark:border-white/5 text-[11px] font-mono text-neutral-800 dark:text-neutral-300 max-h-[200px] overflow-y-auto leading-relaxed whitespace-pre-wrap custom-scrollbar">
                       {selectedSegment.rawTranscript}
-                    </pre>
+                    </div>
                   </div>
-                )}
-              </div>
+                </div>
+              </motion.div>
+            ) : null}
+          </AnimatePresence>
 
-              {/* Primary Injected Actions */}
-              <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-3 border-t border-neutral-200/80 dark:border-white/10">
-                <div className="flex items-center gap-2 text-xs text-neutral-500 font-mono self-start sm:self-auto">
-                  <IconKey className="w-3.5 h-3.5 text-neutral-400" />
-                  <span>Shortcut: ⌘+Shift+K to summon in any tab</span>
+          {/* COLUMN 3: Quick-Preview & 1-Click Handoff Studio (4 Cols on Desktop) */}
+          <AnimatePresence mode="wait">
+            {selectedSegment ? (
+              <motion.div
+                key={selectedSegment.id + '-preview'}
+                initial={{ opacity: 0, x: 8 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: 8 }}
+                transition={{ duration: 0.25 }}
+                className="lg:col-span-4 bg-white dark:bg-[#111118] rounded-2xl border border-neutral-200/90 dark:border-white/10 shadow-sm p-5 flex flex-col justify-between space-y-4"
+              >
+                <div className="space-y-3.5">
+                  {/* Column Header */}
+                  <div className="flex items-center justify-between border-b border-neutral-200/80 dark:border-white/10 pb-2.5">
+                    <span className="text-xs font-bold text-neutral-900 dark:text-white flex items-center gap-1.5">
+                      <IconEye className="w-4 h-4 text-[#0071E3] dark:text-[#2997FF]" />
+                      <span>Target AI Preview</span>
+                    </span>
+                    <span className="text-[10px] font-mono text-emerald-600 dark:text-emerald-400 font-semibold">
+                      {selectedSegment.compressedTokens} Tokens
+                    </span>
+                  </div>
+
+                  {/* Target AI Selection */}
+                  <div className="space-y-1.5">
+                    <label className="text-[11px] font-bold text-neutral-700 dark:text-neutral-300 block">
+                      Choose Destination AI Model:
+                    </label>
+                    <div className="grid grid-cols-2 gap-1.5">
+                      {[
+                        { id: 'Claude' as const, name: 'Claude 3.7' },
+                        { id: 'ChatGPT' as const, name: 'ChatGPT-4o' },
+                        { id: 'Gemini' as const, name: 'Gemini 2.0' },
+                        { id: 'DeepSeek' as const, name: 'DeepSeek R1' }
+                      ].map((m) => {
+                        const isTarget = targetModel === m.id;
+                        return (
+                          <button
+                            key={m.id}
+                            type="button"
+                            onClick={() => setTargetModel(m.id)}
+                            className={`p-2 rounded-xl border text-left transition-all ${
+                              isTarget
+                                ? 'bg-[#0071E3]/10 dark:bg-[#2997FF]/10 border-[#0071E3] dark:border-[#2997FF] shadow-xs'
+                                : 'bg-neutral-50 dark:bg-black/20 border-neutral-200 dark:border-white/10 hover:border-neutral-300 dark:hover:border-white/20'
+                            }`}
+                          >
+                            <div className="flex items-center justify-between text-xs font-bold text-neutral-900 dark:text-white">
+                              <span>{m.name}</span>
+                              {isTarget && <IconCheck className="w-3.5 h-3.5 text-[#0071E3] dark:text-[#2997FF]" />}
+                            </div>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  {/* Formatted Preview Capsule */}
+                  <div className="space-y-1.5">
+                    <span className="text-[10px] font-mono uppercase tracking-wider text-neutral-400 block">
+                      What {targetModel} will read:
+                    </span>
+                    <div className="p-3 rounded-xl bg-neutral-50/90 dark:bg-[#0A0A10] border border-neutral-200 dark:border-white/10 text-xs font-mono space-y-2 max-h-[200px] overflow-y-auto custom-scrollbar">
+                      <p className="text-[11px] italic text-[#0071E3] dark:text-[#2997FF]">
+                        "{selectedSegment.suggestedPrompt}"
+                      </p>
+                      <div className="p-2 rounded-lg bg-white dark:bg-[#12121A] border border-neutral-200/70 dark:border-white/5 text-[11px] text-neutral-800 dark:text-neutral-200 whitespace-pre-wrap leading-relaxed">
+                        {selectedSegment.compressedContextPill}
+                      </div>
+                    </div>
+                  </div>
                 </div>
 
-                <div className="flex items-center gap-2.5 w-full sm:w-auto justify-end">
+                {/* Action Buttons */}
+                <div className="pt-3 border-t border-neutral-200/80 dark:border-white/10 flex flex-col gap-2">
                   <button
-                    onClick={handleCopyInjectedPayload}
-                    className="flex-1 sm:flex-none inline-flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-xl bg-neutral-100 hover:bg-neutral-200 dark:bg-white/10 dark:hover:bg-white/15 text-neutral-800 dark:text-neutral-200 text-xs font-medium border border-neutral-200 dark:border-white/10 transition-colors shadow-2xs"
+                    type="button"
+                    onClick={() => handleCopyInjectedPayload()}
+                    className="w-full inline-flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-[#0071E3] hover:bg-[#0077ED] text-white text-xs font-bold shadow-md transition-all hover:scale-[1.01] active:scale-[0.98]"
                   >
                     {copiedPrompt ? (
                       <>
-                        <IconCheck className="w-4 h-4 text-emerald-500" />
-                        <span className="text-emerald-600 dark:text-emerald-400">Copied!</span>
+                        <IconCheck className="w-4 h-4" />
+                        <span>Copied to Clipboard!</span>
                       </>
                     ) : (
                       <>
                         <IconCopy className="w-4 h-4" />
-                        <span>Copy Capsule</span>
+                        <span>Copy for {targetModel}</span>
                       </>
                     )}
                   </button>
 
                   <button
+                    type="button"
                     onClick={handleSimulateInjection}
                     disabled={isSimulatingInject}
-                    className="flex-1 sm:flex-none inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl bg-[#0071E3] hover:bg-[#0077ED] text-white text-xs font-semibold shadow-xs disabled:opacity-50 transition-all"
+                    className="w-full inline-flex items-center justify-center gap-1.5 py-2 px-4 rounded-xl bg-neutral-100 hover:bg-neutral-200 dark:bg-white/10 dark:hover:bg-white/15 text-neutral-800 dark:text-neutral-200 text-xs font-semibold transition-colors"
                   >
-                    {isSimulatingInject ? (
-                      <>
-                        <div className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                        <span>Injecting...</span>
-                      </>
-                    ) : (
-                      <>
-                        <IconSparkles className="w-4 h-4" />
-                        <span>Inject into {targetModel}</span>
-                      </>
-                    )}
+                    <IconBolt className={`w-3.5 h-3.5 ${isSimulatingInject ? 'animate-spin' : 'text-[#0071E3] dark:text-[#2997FF]'}`} />
+                    <span>{isSimulatingInject ? 'Transferring...' : `Simulate Context Handoff`}</span>
                   </button>
                 </div>
-              </div>
-            </div>
-          </div>
-        ) : null}
-      </div>
+              </motion.div>
+            ) : null}
+          </AnimatePresence>
+        </div>
+      )}
 
-      {/* Modal: Add New Context Segment to Local Sandbox */}
+      {/* MANUAL ADD MODAL */}
       {isAddModalOpen && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in"
-          onClick={() => setIsAddModalOpen(false)}
-        >
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
           <div
-            className="bg-white dark:bg-[#111118] rounded-2xl border border-neutral-200 dark:border-white/10 max-w-lg w-full p-6 shadow-2xl relative text-[#1D1D1F] dark:text-[#F5F5F7]"
+            className="w-full max-w-lg rounded-3xl bg-white dark:bg-[#12121A] border border-neutral-200 dark:border-white/10 p-6 sm:p-7 shadow-2xl relative"
             onClick={(e) => e.stopPropagation()}
           >
             <button
@@ -758,22 +784,22 @@ Target Goal: Continue task execution with loaded context.`,
             <form onSubmit={handleCreateSegment} className="space-y-4">
               <div>
                 <h3 className="text-lg font-bold text-[#1D1D1F] dark:text-white">
-                  Add Context Segment
+                  Add Conversation Note
                 </h3>
                 <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-0.5">
-                  Save active discussion parameters to your local encrypted memory index.
+                  Save a chat excerpt to your private on-device memory notebook.
                 </p>
               </div>
 
               <div className="space-y-1">
-                <label className="text-xs font-medium text-neutral-700 dark:text-neutral-300">
-                  Segment Title
+                <label className="text-xs font-semibold text-neutral-700 dark:text-neutral-300">
+                  Topic / Title
                 </label>
                 <input
                   type="text"
                   value={newTitle}
                   onChange={(e) => setNewTitle(e.target.value)}
-                  placeholder="e.g. Stripe Webhook Signature Verification Flow"
+                  placeholder="e.g. Next.js Auth Flow Setup"
                   required
                   className="w-full text-xs rounded-xl border border-neutral-300 dark:border-white/10 bg-neutral-50 dark:bg-black/30 p-2.5 text-neutral-900 dark:text-white focus:outline-none focus:border-[#0071E3]"
                 />
@@ -781,8 +807,8 @@ Target Goal: Continue task execution with loaded context.`,
 
               <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-1">
-                  <label className="text-xs font-medium text-neutral-700 dark:text-neutral-300">
-                    Origin Model
+                  <label className="text-xs font-semibold text-neutral-700 dark:text-neutral-300">
+                    Source AI
                   </label>
                   <select
                     value={newModel}
@@ -797,8 +823,8 @@ Target Goal: Continue task execution with loaded context.`,
                 </div>
 
                 <div className="space-y-1">
-                  <label className="text-xs font-medium text-neutral-700 dark:text-neutral-300">
-                    Topic Category
+                  <label className="text-xs font-semibold text-neutral-700 dark:text-neutral-300">
+                    Category
                   </label>
                   <select
                     value={newCategory}
@@ -807,20 +833,20 @@ Target Goal: Continue task execution with loaded context.`,
                   >
                     <option value="architecture">Architecture</option>
                     <option value="coding">Coding & Dev</option>
-                    <option value="database">Database & Schema</option>
-                    <option value="reasoning">Reasoning</option>
+                    <option value="database">Database</option>
+                    <option value="reasoning">Brainstorming</option>
                   </select>
                 </div>
               </div>
 
               <div className="space-y-1">
-                <label className="text-xs font-medium text-neutral-700 dark:text-neutral-300">
-                  Raw Dialogue / Reasoning Excerpt
+                <label className="text-xs font-semibold text-neutral-700 dark:text-neutral-300">
+                  Notes / Chat Transcript
                 </label>
                 <textarea
                   value={newTranscript}
                   onChange={(e) => setNewTranscript(e.target.value)}
-                  placeholder="Paste discussion turn or technical decision notes here..."
+                  placeholder="Paste your conversation excerpt or bullet points here..."
                   rows={4}
                   required
                   className="w-full text-xs rounded-xl border border-neutral-300 dark:border-white/10 bg-neutral-50 dark:bg-black/30 p-2.5 text-neutral-900 dark:text-white resize-none"
@@ -828,14 +854,14 @@ Target Goal: Continue task execution with loaded context.`,
               </div>
 
               <div className="space-y-1">
-                <label className="text-xs font-medium text-neutral-700 dark:text-neutral-300">
+                <label className="text-xs font-semibold text-neutral-700 dark:text-neutral-300">
                   Tags (comma separated)
                 </label>
                 <input
                   type="text"
                   value={newTags}
                   onChange={(e) => setNewTags(e.target.value)}
-                  placeholder="Stripe, Webhooks, Security, Next.js"
+                  placeholder="React, Next.js, Auth, Security"
                   className="w-full text-xs rounded-xl border border-neutral-300 dark:border-white/10 bg-neutral-50 dark:bg-black/30 p-2 text-neutral-900 dark:text-white"
                 />
               </div>
@@ -844,7 +870,7 @@ Target Goal: Continue task execution with loaded context.`,
                 <button
                   type="button"
                   onClick={() => setIsAddModalOpen(false)}
-                  className="px-3.5 py-1.5 text-xs text-neutral-500 hover:text-neutral-800 dark:hover:text-white"
+                  className="px-3.5 py-2 text-xs text-neutral-500 hover:text-neutral-800 dark:hover:text-white"
                 >
                   Cancel
                 </button>
@@ -852,7 +878,7 @@ Target Goal: Continue task execution with loaded context.`,
                   type="submit"
                   className="px-4 py-2 rounded-xl bg-[#0071E3] hover:bg-[#0077ED] text-white text-xs font-semibold"
                 >
-                  Save & Encrypt
+                  Save Locally
                 </button>
               </div>
             </form>
@@ -862,68 +888,3 @@ Target Goal: Continue task execution with loaded context.`,
     </div>
   );
 };
-
-/**
- * Beautified Markdown Content Parser and Renderer
- * Parses key-values, bullet points, headers, inline code, and highlights.
- */
-function BeautifiedMarkdownContent({ content }: { content: string }) {
-  const lines = content.split('\n').filter((l) => l.trim().length > 0);
-
-  return (
-    <div className="space-y-2 leading-relaxed">
-      {lines.map((line, idx) => {
-        const trimmed = line.trim();
-
-        // Title or bracketed banner
-        if (trimmed.startsWith('[') && trimmed.endsWith(']')) {
-          return (
-            <div
-              key={idx}
-              className="text-xs font-mono font-semibold text-[#0071E3] dark:text-[#2997FF] pb-1 border-b border-neutral-200 dark:border-white/10"
-            >
-              {trimmed.replace(/[\[\]]/g, '')}
-            </div>
-          );
-        }
-
-        // Key-Value pattern: "Key: Value" or "- Key: Value"
-        const kvMatch = trimmed.match(/^[-•*]?\s*([A-Za-z0-9\s_-]+):\s*(.+)$/);
-        if (kvMatch) {
-          const key = kvMatch[1].trim();
-          const val = kvMatch[2].trim();
-          return (
-            <div key={idx} className="flex flex-col sm:flex-row sm:items-baseline gap-1 sm:gap-2">
-              <span className="font-mono text-[11px] font-semibold text-neutral-700 dark:text-neutral-300 min-w-[130px] shrink-0">
-                {key}:
-              </span>
-              <span className="text-neutral-600 dark:text-neutral-300 font-mono text-[11px] bg-neutral-100 dark:bg-white/5 px-2 py-0.5 rounded-md border border-neutral-200/60 dark:border-white/5 break-all">
-                {val}
-              </span>
-            </div>
-          );
-        }
-
-        // Bullet point
-        if (trimmed.startsWith('-') || trimmed.startsWith('•') || trimmed.startsWith('*')) {
-          const text = trimmed.replace(/^[-•*]\s*/, '');
-          return (
-            <div key={idx} className="flex items-start gap-2 pl-1">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#0071E3] dark:bg-[#2997FF] mt-1.5 shrink-0" />
-              <span className="text-neutral-700 dark:text-neutral-200 text-xs">
-                {text}
-              </span>
-            </div>
-          );
-        }
-
-        // Standard text line
-        return (
-          <p key={idx} className="text-neutral-600 dark:text-neutral-300 text-xs">
-            {trimmed}
-          </p>
-        );
-      })}
-    </div>
-  );
-}
