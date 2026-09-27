@@ -63,13 +63,25 @@ export const Carousel = ({ items, initialScroll = 0 }: CarouselProps) => {
 
   const scrollLeft = () => {
     if (carouselRef.current) {
-      carouselRef.current.scrollBy({ left: -300, behavior: "smooth" });
+      if (carouselRef.current.scrollLeft <= 10) {
+        carouselRef.current.scrollTo({
+          left: carouselRef.current.scrollWidth,
+          behavior: "smooth",
+        });
+      } else {
+        carouselRef.current.scrollBy({ left: -320, behavior: "smooth" });
+      }
     }
   };
 
   const scrollRight = () => {
     if (carouselRef.current) {
-      carouselRef.current.scrollBy({ left: 300, behavior: "smooth" });
+      const { scrollLeft, scrollWidth, clientWidth } = carouselRef.current;
+      if (scrollLeft + clientWidth >= scrollWidth - 20) {
+        carouselRef.current.scrollTo({ left: 0, behavior: "smooth" });
+      } else {
+        carouselRef.current.scrollBy({ left: 320, behavior: "smooth" });
+      }
     }
   };
 
@@ -137,17 +149,15 @@ export const Carousel = ({ items, initialScroll = 0 }: CarouselProps) => {
         </div>
         <div className="mr-10 flex justify-end gap-2">
           <button
-            className="relative z-40 flex h-10 w-10 items-center justify-center rounded-full bg-white/80 dark:bg-black/60 backdrop-blur-md border border-neutral-200/80 dark:border-white/10 disabled:opacity-50 hover:scale-105 active:scale-95 transition-all text-neutral-800 dark:text-neutral-200 shadow-sm"
+            className="relative z-40 flex h-10 w-10 items-center justify-center rounded-full bg-white/80 dark:bg-black/60 backdrop-blur-md border border-neutral-200/80 dark:border-white/10 hover:scale-105 active:scale-95 transition-all text-neutral-800 dark:text-neutral-200 shadow-sm cursor-pointer"
             onClick={scrollLeft}
-            disabled={!canScrollLeft}
             aria-label="Scroll left"
           >
             <IconArrowNarrowLeft className="h-6 w-6" />
           </button>
           <button
-            className="relative z-40 flex h-10 w-10 items-center justify-center rounded-full bg-white/80 dark:bg-black/60 backdrop-blur-md border border-neutral-200/80 dark:border-white/10 disabled:opacity-50 hover:scale-105 active:scale-95 transition-all text-neutral-800 dark:text-neutral-200 shadow-sm"
+            className="relative z-40 flex h-10 w-10 items-center justify-center rounded-full bg-white/80 dark:bg-black/60 backdrop-blur-md border border-neutral-200/80 dark:border-white/10 hover:scale-105 active:scale-95 transition-all text-neutral-800 dark:text-neutral-200 shadow-sm cursor-pointer"
             onClick={scrollRight}
-            disabled={!canScrollRight}
             aria-label="Scroll right"
           >
             <IconArrowNarrowRight className="h-6 w-6" />

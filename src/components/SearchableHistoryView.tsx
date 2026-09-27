@@ -466,9 +466,32 @@ Target Goal: Continue task execution with loaded context.`,
                       {/* Top Row: Model & Pin/Delete */}
                       <div className="flex items-center justify-between gap-2 mb-2">
                         <div className="flex items-center gap-2">
-                          <span className="font-semibold text-[10px] font-mono px-2 py-0.5 rounded-md bg-neutral-100 dark:bg-white/10 text-neutral-700 dark:text-neutral-300 border border-neutral-200/60 dark:border-white/5">
-                            {seg.originModel}
+                          {/* Liquid-Glass Source Tag Badge */}
+                          <span
+                            className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-mono font-semibold tracking-tight backdrop-blur-md border shadow-2xs transition-all ${
+                              seg.originModel === 'ChatGPT'
+                                ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/25'
+                                : seg.originModel === 'Claude'
+                                ? 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/25'
+                                : seg.originModel === 'Gemini'
+                                ? 'bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/25'
+                                : 'bg-purple-500/10 text-purple-600 dark:text-purple-400 border-purple-500/25'
+                            }`}
+                          >
+                            <span
+                              className={`w-1.5 h-1.5 rounded-full ${
+                                seg.originModel === 'ChatGPT'
+                                  ? 'bg-emerald-500'
+                                  : seg.originModel === 'Claude'
+                                  ? 'bg-amber-500'
+                                  : seg.originModel === 'Gemini'
+                                  ? 'bg-blue-500'
+                                  : 'bg-purple-500'
+                              }`}
+                            />
+                            <span>{seg.originModel}</span>
                           </span>
+
                           <span className="text-[10px] text-neutral-400 font-mono">
                             {seg.timestamp}
                           </span>

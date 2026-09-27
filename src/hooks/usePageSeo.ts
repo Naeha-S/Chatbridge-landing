@@ -15,6 +15,25 @@ const BASE_URL = 'https://chatbridge.app';
 
 export function getSeoForView(view: PageView, guideSlug?: GuideSlug): SeoMetadata {
   switch (view) {
+    case 'history':
+      return {
+        title: 'AI Memory Vault & Local Notebook | ChatBridge',
+        description:
+          'Search, filter, and inspect your private browser-encrypted AI conversation history across ChatGPT, Claude, and Gemini with zero server upload.',
+        keywords:
+          'ai memory vault, local ai notebook, search chatgpt history, encrypted prompt storage, webcrypto chrome storage local, cross assistant memory',
+        canonical: `${BASE_URL}/#history`,
+        ogTitle: 'AI Memory Vault & Local Notebook: ChatBridge',
+        ogDescription:
+          'Private on-device WebCrypto encrypted conversation notebook with hybrid search and 1-click context injection.',
+        jsonLd: {
+          '@context': 'https://schema.org',
+          '@type': 'WebPage',
+          name: 'ChatBridge AI Memory Vault',
+          url: `${BASE_URL}/#history`
+        }
+      };
+
     case 'how-it-works':
       return {
         title: 'How It Works: Cross-Model Context Transfer & Architecture | ChatBridge',

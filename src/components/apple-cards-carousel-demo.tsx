@@ -4,16 +4,16 @@ import React from "react";
 import { Carousel, Card } from "@/components/ui/apple-cards-carousel";
 
 export default function AppleCardsCarouselDemo() {
-  const cards = specializedWorkflowsData.map((card, index) => (
-    <Card key={card.title} card={card} index={index} />
+  // Duplicate specialized workflows data to enable seamless continuous looping
+  const duplicatedWorkflows = [...specializedWorkflowsData, ...specializedWorkflowsData];
+
+  const cards = duplicatedWorkflows.map((card, index) => (
+    <Card key={`${card.title}-${index}`} card={card} index={index} />
   ));
 
   return (
     <section className="w-full py-10 md:py-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
       <div className="text-center max-w-3xl mx-auto mb-4">
-        <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-[#2997FF]/10 text-[#2997FF] border border-[#2997FF]/25 text-xs font-mono mb-3">
-          <span>Domain-Specific Acceleration</span>
-        </div>
         <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight text-neutral-900 dark:text-neutral-100 font-sans">
           Specialized Workflows
         </h2>
