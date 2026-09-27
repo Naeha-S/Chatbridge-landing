@@ -29,7 +29,7 @@ export const InstallModal: React.FC<InstallModalProps> = ({
   const handleTestSearch = () => {
     if (!testQuery) return;
     setTestResult(
-      `Found in local encrypted index (18ms):\n• Origin: ChatGPT [Turn 2] – Redis LRU Cache Architecture\n• Matches: "${testQuery}" (RRF Score: 0.0319)`
+      `Found in local encrypted index (18ms):\n• Origin: ChatGPT [Turn 2]: Redis LRU Cache Architecture\n• Matches: "${testQuery}" (RRF Score: 0.0319)`
     );
   };
 

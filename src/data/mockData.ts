@@ -262,7 +262,7 @@ export const GUIDE_ARTICLES: GuideArticle[] = [
       {
         heading: 'Why Dense Vector Search Alone Is Not Enough',
         body: [
-          'Dense semantic embeddings are great at finding general topical matches, but they frequently fail on precise conversational anchors—such as specific function names, ticket numbers, or uncommon error codes (`ERR_CONN_RESET_0x4F`).',
+          'Dense semantic embeddings are great at finding general topical matches, but they frequently fail on precise conversational anchors (such as specific function names, ticket numbers, or uncommon error codes like `ERR_CONN_RESET_0x4F`).',
           'Conversely, pure lexical keyword matching (BM25) fails when the user paraphrases their prior thoughts or changes terminology.'
         ]
       },

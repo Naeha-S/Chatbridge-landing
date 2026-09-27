@@ -1,14 +1,14 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
   DownloadIcon,
-  ArrowRightIcon,
-  CheckIcon,
   LockIcon,
   TerminalIcon,
-  SparklesIcon,
   SearchIcon
 } from './Icons';
 import { HowItWorks } from './HowItWorks';
+import { ThreeSpatialField } from './ThreeSpatialField';
+import { LiquidGlassCard } from './ui/LiquidGlassCard';
+import { LiquidLogoCanvas } from './LiquidLogoCanvas';
 import { CHROME_WEBSTORE_URL } from '../constants/links';
 
 interface HowItWorksPageProps {
@@ -35,9 +35,9 @@ export const HowItWorksPage: React.FC<HowItWorksPageProps> = ({
 
       {/* Hero Header */}
       <header className="text-center max-w-3xl mx-auto mb-14">
-        <div className="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-[#2997FF]/10 text-[#2997FF] border border-[#2997FF]/25 text-xs font-mono mb-6">
-          <SparklesIcon className="w-3.5 h-3.5" />
-          <span>Local-First End-to-End Pipeline</span>
+        {/* Spatial spacer preserving vertical hierarchy */}
+        <div aria-hidden="true" className="h-7 mb-4 pointer-events-none select-none flex justify-center">
+          <LiquidLogoCanvas size={36} />
         </div>
 
         <h1 className="text-3xl sm:text-5xl font-semibold tracking-tight leading-tight mb-5">
@@ -47,7 +47,7 @@ export const HowItWorksPage: React.FC<HowItWorksPageProps> = ({
           </span>
         </h1>
 
-        <p className="text-lg text-[#86868B] leading-relaxed mb-8">
+        <p className="text-base sm:text-lg text-[#86868B] leading-relaxed mb-8">
           A zero-knowledge, client-side architecture that captures, encrypts with AES-256-GCM, and fuses
           conversational turns into high-relevance prompt context across your AI tabs in under 30 milliseconds.
         </p>
@@ -64,20 +64,33 @@ export const HowItWorksPage: React.FC<HowItWorksPageProps> = ({
         </a>
       </header>
 
-      {/* 5-Stage Interactive Pipeline */}
-      <div className="mb-20">
+      {/* 4-Stage Interactive Pipeline */}
+      <div className="mb-16">
         <HowItWorks />
       </div>
 
-      {/* Architecture Deep Dive */}
-      <section className="mb-20 rounded-2xl bg-[#F8F9FA] dark:bg-[#0A0A0F] border border-[#E5E5EA] dark:border-[#1E1E28] p-8">
+      {/* 3D Spatial Context Conduit Flow (ThreeFiber-inspired) */}
+      <div className="mb-16 space-y-3">
+        <div className="flex items-center justify-between text-xs font-mono text-[#86868B]">
+          <span>QUANTUM CONTEXT CONDUIT (60FPS WEBGL FIELD)</span>
+          <span className="text-[#2997FF]">Zero Remote Telemetry</span>
+        </div>
+        <ThreeSpatialField
+          sourceModel="ChatGPT 4o"
+          targetModel="Claude 3.7 Sonnet"
+          height={180}
+        />
+      </div>
+
+      {/* Architecture Deep Dive with Liquid Glass Cards */}
+      <section className="mb-20 rounded-3xl bg-[#F8F9FA]/80 dark:bg-[#0A0A0F]/80 border border-[#E5E5EA] dark:border-[#1E1E28] p-6 sm:p-10 backdrop-blur-xl">
         <h2 className="text-2xl font-semibold mb-6 text-center">
           The 3 Pillars of ChatBridge Architecture
         </h2>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="p-5 rounded-xl bg-white dark:bg-[#14141C] border border-[#E5E5EA] dark:border-[#222230]">
-            <div className="w-10 h-10 rounded-lg bg-[#2997FF]/10 text-[#2997FF] flex items-center justify-center mb-4">
+          <LiquidGlassCard className="p-6" glowColor="rgba(41, 151, 255, 0.2)">
+            <div className="w-10 h-10 rounded-xl bg-[#2997FF]/10 text-[#2997FF] flex items-center justify-center mb-4 border border-[#2997FF]/20">
               <SearchIcon className="w-5 h-5" />
             </div>
             <h3 className="font-semibold text-base mb-2">Hybrid RRF Retrieval</h3>
@@ -85,10 +98,10 @@ export const HowItWorksPage: React.FC<HowItWorksPageProps> = ({
               Standard vector databases struggle with exact identifiers (variable names, git hashes, package versions).
               ChatBridge pairs BM25 sparse lexical search with dense embeddings for 76.8% Recall@5.
             </p>
-          </div>
+          </LiquidGlassCard>
 
-          <div className="p-5 rounded-xl bg-white dark:bg-[#14141C] border border-[#E5E5EA] dark:border-[#222230]">
-            <div className="w-10 h-10 rounded-lg bg-[#30D158]/10 text-[#30D158] flex items-center justify-center mb-4">
+          <LiquidGlassCard className="p-6" glowColor="rgba(48, 209, 88, 0.2)">
+            <div className="w-10 h-10 rounded-xl bg-[#30D158]/10 text-[#30D158] flex items-center justify-center mb-4 border border-[#30D158]/20">
               <LockIcon className="w-5 h-5" />
             </div>
             <h3 className="font-semibold text-base mb-2">WebCrypto AES-256-GCM</h3>
@@ -96,10 +109,10 @@ export const HowItWorksPage: React.FC<HowItWorksPageProps> = ({
               Conversations written to chrome.storage.local are encrypted with a 256-bit key generated directly in your
               Chromium sandbox. Data is unreadable to other extensions and third-party scripts.
             </p>
-          </div>
+          </LiquidGlassCard>
 
-          <div className="p-5 rounded-xl bg-white dark:bg-[#14141C] border border-[#E5E5EA] dark:border-[#222230]">
-            <div className="w-10 h-10 rounded-lg bg-[#AF52DE]/10 text-[#AF52DE] flex items-center justify-center mb-4">
+          <LiquidGlassCard className="p-6" glowColor="rgba(175, 82, 222, 0.2)">
+            <div className="w-10 h-10 rounded-xl bg-[#AF52DE]/10 text-[#AF52DE] flex items-center justify-center mb-4 border border-[#AF52DE]/20">
               <TerminalIcon className="w-5 h-5" />
             </div>
             <h3 className="font-semibold text-base mb-2">Prompt Token Compression</h3>
@@ -107,12 +120,12 @@ export const HowItWorksPage: React.FC<HowItWorksPageProps> = ({
               Instead of dumping 8,000 raw transcript tokens, ChatBridge synthesizes technical parameters into compact
               pills, saving up to 95% of destination model prompt tokens.
             </p>
-          </div>
+          </LiquidGlassCard>
         </div>
       </section>
 
       {/* Bottom CTA */}
-      <footer className="text-center p-8 sm:p-12 rounded-2xl bg-gradient-to-br from-[#2997FF]/10 via-[#1C1C26] to-[#0A0A0F] border border-[#2997FF]/20">
+      <footer className="text-center p-8 sm:p-12 rounded-3xl bg-gradient-to-br from-[#2997FF]/10 via-[#1C1C26] to-[#0A0A0F] border border-[#2997FF]/20 shadow-xl">
         <h2 className="text-2xl sm:text-3xl font-semibold mb-3">
           Experience local-first AI memory for yourself
         </h2>
@@ -127,7 +140,7 @@ export const HowItWorksPage: React.FC<HowItWorksPageProps> = ({
           className="inline-flex items-center px-6 py-3 rounded-xl bg-[#2997FF] hover:bg-[#1E76D2] text-white font-medium shadow-lg transition-transform hover:scale-105"
         >
           <DownloadIcon className="w-4 h-4 mr-2" />
-          <span>Add to Chrome — Free</span>
+          <span>Add to Chrome (Free)</span>
         </a>
       </footer>
     </article>

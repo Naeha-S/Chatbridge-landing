@@ -10,6 +10,7 @@ export type PageView =
   | 'faq'
   | 'privacy'
   | 'local-privacy'
+  | 'terms'
   | 'guides'
   | 'install';
 

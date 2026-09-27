@@ -74,7 +74,7 @@ export const ChatGPTToGeminiLanding: React.FC<ChatGPTToGeminiLandingProps> = ({
             className="w-full sm:w-auto inline-flex items-center justify-center px-6 py-3.5 rounded-xl bg-[#2997FF] hover:bg-[#1E76D2] text-white font-medium shadow-lg shadow-[#2997FF]/20 transition-all hover:scale-[1.02] active:scale-[0.98]"
           >
             <DownloadIcon className="w-4 h-4 mr-2" />
-            <span>Install Extension — 100% Free</span>
+            <span>Install Extension (100% Free)</span>
           </a>
           <button
             onClick={() => {
@@ -217,7 +217,7 @@ export const ChatGPTToGeminiLanding: React.FC<ChatGPTToGeminiLandingProps> = ({
           className="inline-flex items-center px-6 py-3 rounded-xl bg-[#2997FF] hover:bg-[#1E76D2] text-white font-medium shadow-lg transition-transform hover:scale-105"
         >
           <DownloadIcon className="w-4 h-4 mr-2" />
-          <span>Add to Chrome — It's Free</span>
+          <span>Add to Chrome (Free)</span>
         </a>
       </footer>
     </article>

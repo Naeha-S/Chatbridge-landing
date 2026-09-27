@@ -96,7 +96,7 @@ export const ChatGPTToClaudeLanding: React.FC<ChatGPTToClaudeLandingProps> = ({
             className="w-full sm:w-auto inline-flex items-center justify-center px-6 py-3.5 rounded-xl bg-[#2997FF] hover:bg-[#1E76D2] text-white font-medium shadow-lg shadow-[#2997FF]/20 transition-all hover:scale-[1.02] active:scale-[0.98]"
           >
             <DownloadIcon className="w-4 h-4 mr-2" />
-            <span>Add to Chrome — Free Extension</span>
+            <span>Add to Chrome (Free Extension)</span>
           </a>
           <button
             onClick={() => {

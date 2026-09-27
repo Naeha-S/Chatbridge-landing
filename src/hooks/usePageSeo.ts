@@ -17,7 +17,7 @@ export function getSeoForView(view: PageView, guideSlug?: GuideSlug): SeoMetadat
   switch (view) {
     case 'how-it-works':
       return {
-        title: 'How It Works — Cross-Model Context Transfer & Architecture | ChatBridge',
+        title: 'How It Works: Cross-Model Context Transfer & Architecture | ChatBridge',
         description:
           'Explore how ChatBridge captures, encrypts with AES-256-GCM, and fuses conversational memory across ChatGPT, Claude, and Gemini with 15ms hybrid RRF retrieval.',
         keywords:
@@ -44,11 +44,11 @@ export function getSeoForView(view: PageView, guideSlug?: GuideSlug): SeoMetadat
       return {
         title: 'How to Transfer ChatGPT Conversations to Claude (Free Chrome Extension) | ChatBridge',
         description:
-          'Seamlessly move active ChatGPT brainstorms, code schemas, and system reasoning directly into Anthropic Claude. Zero re-typing, zero cloud storage, free & open.',
+          'Move active ChatGPT brainstorms, code schemas, and system reasoning directly into Anthropic Claude. Zero re-typing, zero cloud storage, free and open.',
         keywords:
           'transfer chatgpt to claude, export chatgpt to claude, chatgpt claude chrome extension, move chatgpt memory to claude, claude artifacts import chatgpt, ai context transfer',
         canonical: `${BASE_URL}/#chatgpt-to-claude`,
-        ogTitle: 'Transfer ChatGPT to Claude Without Losing Context — ChatBridge',
+        ogTitle: 'Transfer ChatGPT to Claude Without Losing Context: ChatBridge',
         ogDescription:
           'Press Cmd+Shift+K to import relevant ChatGPT turns into Claude Sonnet. Preserve code, reasoning, and context pills instantly.',
         jsonLd: {
@@ -244,7 +244,7 @@ export function getSeoForView(view: PageView, guideSlug?: GuideSlug): SeoMetadat
         keywords:
           'chatbridge privacy policy, zero telemetry ai extension, local aes-256-gcm storage, client side ai memory, confidential prompt storage',
         canonical: `${BASE_URL}/#privacy`,
-        ogTitle: 'Zero-Knowledge, Zero-Telemetry Privacy Policy — ChatBridge',
+        ogTitle: 'Zero-Knowledge, Zero-Telemetry Privacy Policy: ChatBridge',
         ogDescription:
           'Your prompts never touch our servers because we operate zero servers. Full cryptographic audit and local storage verification.',
         jsonLd: {
@@ -252,6 +252,25 @@ export function getSeoForView(view: PageView, guideSlug?: GuideSlug): SeoMetadat
           '@type': 'SecurityPolicy',
           name: 'ChatBridge Privacy & Security Architecture',
           url: `${BASE_URL}/#privacy`
+        }
+      };
+
+    case 'terms':
+      return {
+        title: 'Terms of Service | ChatBridge',
+        description:
+          'Read the ChatBridge Terms of Service. Client-side browser extension license, data ownership, and terms of use.',
+        keywords:
+          'chatbridge terms of service, extension terms, local ai software license',
+        canonical: `${BASE_URL}/#terms`,
+        ogTitle: 'Terms of Service: ChatBridge',
+        ogDescription:
+          'Review our client-side software terms and data ownership guarantees.',
+        jsonLd: {
+          '@context': 'https://schema.org',
+          '@type': 'DigitalDocument',
+          name: 'ChatBridge Terms of Service',
+          url: `${BASE_URL}/#terms`
         }
       };
 

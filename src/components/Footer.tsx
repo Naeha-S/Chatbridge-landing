@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { PageView } from '../types';
 import { DownloadIcon, CloseIcon } from './Icons';
 import { ChatBridgeLogo } from './Logo';
+import { GooglePreferredSourceCard } from './GooglePreferredSourceCard';
 import { CHROME_WEBSTORE_URL } from '../constants/links';
 import { smoothScrollTo } from '../hooks/useGsapSmoothScroll';
 
@@ -196,7 +197,18 @@ export const Footer: React.FC<FooterProps> = ({
                   }}
                   className="hover:text-[#1D1D1F] dark:hover:text-white transition-colors"
                 >
-                  Local Privacy Model
+                  Privacy Policy & Threat Model
+                </button>
+              </li>
+              <li>
+                <button
+                  onClick={() => {
+                    setCurrentView('terms');
+                    smoothScrollTo(document.body, { offset: 0, duration: 0.65 });
+                  }}
+                  className="hover:text-[#1D1D1F] dark:hover:text-white transition-colors"
+                >
+                  Terms of Service
                 </button>
               </li>
               <li>
@@ -219,6 +231,9 @@ export const Footer: React.FC<FooterProps> = ({
           </div>
         </div>
 
+        {/* Google Preferred Sources Integration Ribbon */}
+        <GooglePreferredSourceCard className="mt-12" />
+
         {/* Bottom Bar */}
         <div className="mt-12 pt-6 border-t border-[#E5E5EA] dark:border-[#22222E] flex flex-col sm:flex-row items-center justify-between gap-4 text-[11px] text-[#86868B] dark:text-[#787884]">
           <div>
@@ -233,6 +248,16 @@ export const Footer: React.FC<FooterProps> = ({
               className="hover:text-[#1D1D1F] dark:hover:text-white"
             >
               Privacy Policy
+            </button>
+            <span>•</span>
+            <button
+              onClick={() => {
+                setCurrentView('terms');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
+              className="hover:text-[#1D1D1F] dark:hover:text-white"
+            >
+              Terms of Service
             </button>
             <span>•</span>
             <button

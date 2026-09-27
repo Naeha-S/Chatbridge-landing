@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { PageView } from '../types';
 import { DownloadIcon, CloseIcon, SunIcon, MoonIcon } from './Icons';
 import { ChatBridgeLogo } from './Logo';
+import { LiquidLogoCanvas } from './LiquidLogoCanvas';
 import { CHROME_WEBSTORE_URL } from '../constants/links';
 import { smoothScrollTo } from '../hooks/useGsapSmoothScroll';
 
@@ -52,7 +53,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             className="flex items-center gap-2.5 text-left focus:outline-none group focus-visible:ring-2 focus-visible:ring-[#0071E3] rounded-lg p-0.5"
             aria-label="ChatBridge Homepage"
           >
-            <ChatBridgeLogo size={26} className="w-6.5 h-6.5" />
+            <LiquidLogoCanvas size={26} className="w-6.5 h-6.5" />
             <span className="font-semibold text-sm tracking-tight text-[#1D1D1F] dark:text-white group-hover:opacity-85 transition-opacity">
               ChatBridge
             </span>

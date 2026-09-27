@@ -35,7 +35,7 @@ const STORAGE_PARTITIONS = [
 ];
 
 export const LocalPrivacyView: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<'visualizer' | 'threat-model' | 'machine-spec'>('visualizer');
+  const [activeTab, setActiveTab] = useState<'visualizer' | 'threat-model' | 'machine-spec'>('threat-model');
   const [simulationPrompt, setSimulationPrompt] = useState(
     'Architecture decision: use 16 striped locks with FNV-1a hashing for the Go LRU cache.'
   );

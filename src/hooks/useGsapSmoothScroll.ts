@@ -1,22 +1,60 @@
 import { useEffect } from 'react';
 import gsap from 'gsap';
-import { ScrollToPlugin } from 'gsap/ScrollToPlugin';
 
-// Register GSAP plugins
-if (typeof window !== 'undefined') {
-  gsap.registerPlugin(ScrollToPlugin);
+// Reference to any active GSAP scroll tween so user interaction can cancel it immediately
+let activeScrollTween: gsap.core.Tween | null = null;
+
+interface SmoothScrollOptions {
+  offset?: number;
+  duration?: number;
+  container?: HTMLElement | Window;
 }
 
 /**
- * Programmatically smooth-scroll to a target selector or element with GSAP
+ * Optimizes scrolling containers with GPU composition hints:
+ * - will-change: transform
+ * - backface-visibility: hidden
+ * Eliminates raster stuttering and prevents frame drops during scroll animations.
+ */
+function applyGpuAcceleration(element: HTMLElement) {
+  element.style.willChange = 'transform';
+  element.style.backfaceVisibility = 'hidden';
+  (element.style as any).webkitBackfaceVisibility = 'hidden';
+}
+
+function removeGpuAcceleration(element: HTMLElement) {
+  element.style.willChange = '';
+  element.style.backfaceVisibility = '';
+  (element.style as any).webkitBackfaceVisibility = '';
+}
+
+/**
+ * Interrupt handler: If the user touches trackpad, mouse wheel, or keys,
+ * cancel any running programmatic scroll tween immediately.
+ * This guarantees the user NEVER gets stuck or locked during animations.
+ */
+function killActiveScrollTween() {
+  if (activeScrollTween) {
+    activeScrollTween.kill();
+    activeScrollTween = null;
+    if (typeof document !== 'undefined') {
+      removeGpuAcceleration(document.documentElement);
+      removeGpuAcceleration(document.body);
+    }
+  }
+}
+
+/**
+ * Programmatic smooth scroll utility powered by GSAP with GPU hardware acceleration
+ * and instant user interruption recovery.
  */
 export function smoothScrollTo(
   target: string | HTMLElement,
-  options: { offset?: number; duration?: number } = {}
+  options: SmoothScrollOptions = {}
 ) {
   if (typeof window === 'undefined') return;
 
-  const { offset = 70, duration = 0.85 } = options;
+  const { offset = 60, duration = 0.55 } = options;
   let targetEl: HTMLElement | null = null;
 
   if (typeof target === 'string') {
@@ -25,101 +63,90 @@ export function smoothScrollTo(
     targetEl = target;
   }
 
-  if (!targetEl) return;
+  // Kill previous tween to avoid competing tweens
+  killActiveScrollTween();
 
+  const startY = window.pageYOffset || document.documentElement.scrollTop || 0;
+  let targetY = 0;
+
+  if (targetEl) {
+    const rect = targetEl.getBoundingClientRect();
+    targetY = Math.max(0, rect.top + startY - offset);
+  }
+
+  // If already at target position, return
+  if (Math.abs(startY - targetY) < 2) return;
+
+  // Reduced motion preference check
   const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   if (prefersReducedMotion) {
-    targetEl.scrollIntoView({ behavior: 'auto' });
+    window.scrollTo({ top: targetY, behavior: 'auto' });
     return;
   }
 
-  gsap.to(window, {
-    duration,
-    scrollTo: {
-      y: targetEl,
-      offsetY: offset,
-      autoKill: true,
+  // Prepare GPU layer acceleration on root scrolling containers
+  const docEl = document.documentElement;
+  const bodyEl = document.body;
+  applyGpuAcceleration(docEl);
+  applyGpuAcceleration(bodyEl);
+
+  const scrollProxy = { y: startY };
+
+  activeScrollTween = gsap.to(scrollProxy, {
+    y: targetY,
+    duration: Math.min(0.7, Math.max(0.35, duration)),
+    ease: 'power2.out',
+    onUpdate: () => {
+      window.scrollTo(0, scrollProxy.y);
     },
-    ease: 'power3.out',
+    onComplete: () => {
+      removeGpuAcceleration(docEl);
+      removeGpuAcceleration(bodyEl);
+      activeScrollTween = null;
+    },
+    onInterrupt: () => {
+      removeGpuAcceleration(docEl);
+      removeGpuAcceleration(bodyEl);
+      activeScrollTween = null;
+    }
   });
 }
 
 /**
- * Hook to initialize buttery-smooth momentum scrolling powered by GSAP
+ * Hook to initialize hardware-accelerated scrolling containers
+ * and register passive user-interruption listeners to resolve 'stuck' scrolling behavior.
  */
 export function useGsapSmoothScroll() {
   useEffect(() => {
     if (typeof window === 'undefined') return;
 
-    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (prefersReducedMotion) return;
+    // Apply will-change: transform and backface-visibility: hidden to primary scrollable containers
+    const scrollContainers = document.querySelectorAll<HTMLElement>(
+      'main, section, [data-scroll-container], .custom-scrollbar'
+    );
 
-    let currentScroll = window.scrollY;
-    let targetScroll = currentScroll;
-    let isWheeling = false;
-    let wheelTimeout: NodeJS.Timeout | null = null;
+    scrollContainers.forEach((container) => {
+      applyGpuAcceleration(container);
+    });
 
-    const onWheel = (e: WheelEvent) => {
-      // Don't intercept if modifier keys are pressed (zoom, etc.) or if inside a scrollable modal/pre/textarea
-      if (e.ctrlKey || e.metaKey || e.altKey) return;
-
-      const target = e.target as HTMLElement | null;
-      if (
-        target &&
-        (target.closest('[data-lenis-prevent]') ||
-          target.closest('.overflow-y-auto') ||
-          target.closest('textarea') ||
-          target.closest('pre'))
-      ) {
-        return;
-      }
-
-      // Detect mouse wheel step vs trackpad inertia
-      const isTrackpad = Math.abs(e.deltaY) < 40 && Math.abs(e.deltaX) === 0 && e.deltaMode === 0;
-
-      // For standard mouse wheels with chunky steps (e.g. deltaMode 1 or large deltaY), smooth it out!
-      if (!isTrackpad) {
-        e.preventDefault();
-
-        const docHeight = document.documentElement.scrollHeight - window.innerHeight;
-        const delta = e.deltaMode === 1 ? e.deltaY * 33 : e.deltaY;
-        
-        targetScroll = Math.max(0, Math.min(docHeight, targetScroll + delta * 1.15));
-
-        isWheeling = true;
-        gsap.to(window, {
-          scrollTo: { y: targetScroll, autoKill: true },
-          duration: 0.65,
-          ease: 'power2.out',
-          overwrite: true,
-          onComplete: () => {
-            isWheeling = false;
-          },
-        });
-
-        if (wheelTimeout) clearTimeout(wheelTimeout);
-        wheelTimeout = setTimeout(() => {
-          isWheeling = false;
-        }, 150);
-      } else {
-        // Trackpad momentum is already continuous; keep target in sync
-        targetScroll = window.scrollY;
+    // Passive listeners: If user manually scrolls via wheel, touch or key, kill running tween immediately
+    const handleUserInterrupt = () => {
+      if (activeScrollTween) {
+        killActiveScrollTween();
       }
     };
 
-    const onScroll = () => {
-      if (!isWheeling) {
-        targetScroll = window.scrollY;
-      }
-    };
-
-    window.addEventListener('wheel', onWheel, { passive: false });
-    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('wheel', handleUserInterrupt, { passive: true });
+    window.addEventListener('touchstart', handleUserInterrupt, { passive: true });
+    window.addEventListener('touchmove', handleUserInterrupt, { passive: true });
+    window.addEventListener('keydown', handleUserInterrupt, { passive: true });
 
     return () => {
-      window.removeEventListener('wheel', onWheel);
-      window.removeEventListener('scroll', onScroll);
-      if (wheelTimeout) clearTimeout(wheelTimeout);
+      killActiveScrollTween();
+      window.removeEventListener('wheel', handleUserInterrupt);
+      window.removeEventListener('touchstart', handleUserInterrupt);
+      window.removeEventListener('touchmove', handleUserInterrupt);
+      window.removeEventListener('keydown', handleUserInterrupt);
     };
   }, []);
 }

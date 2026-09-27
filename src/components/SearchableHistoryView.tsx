@@ -2,7 +2,6 @@ import React, { useState, useMemo, useEffect } from 'react';
 import {
   IconSearch,
   IconPin,
-  IconPinnedOff,
   IconTrash,
   IconCopy,
   IconCheck,
@@ -13,15 +12,19 @@ import {
   IconTerminal,
   IconKey,
   IconClock,
-  IconFilter,
   IconX,
-  IconExternalLink,
-  IconBrain
+  IconEye,
+  IconCode,
+  IconMessageCircle,
+  IconFileText,
+  IconGitCompare
 } from '@tabler/icons-react';
 import { SavedContextSegment, PageView } from '../types';
 import { getSavedContextSegments, saveContextSegments } from '../data/historyData';
 import { useToast } from '../context/ToastContext';
-import { ChatBridgeLogo } from './Logo';
+import { DiffViewer } from './DiffViewer';
+import { LiquidLogoCanvas } from './LiquidLogoCanvas';
+import { LiquidGlassCard } from './ui/LiquidGlassCard';
 
 interface SearchableHistoryViewProps {
   onOpenInstall?: () => void;
@@ -29,7 +32,7 @@ interface SearchableHistoryViewProps {
 }
 
 export const SearchableHistoryView: React.FC<SearchableHistoryViewProps> = ({
-  onOpenInstall,
+  onOpenInstall: _onOpenInstall,
   onNavigateHome
 }) => {
   const { toast } = useToast();
@@ -40,7 +43,9 @@ export const SearchableHistoryView: React.FC<SearchableHistoryViewProps> = ({
   const [selectedCategoryFilter, setSelectedCategoryFilter] = useState<string>('All');
   const [pinnedOnly, setPinnedOnly] = useState(false);
   const [targetModel, setTargetModel] = useState<'Claude' | 'ChatGPT' | 'Gemini' | 'DeepSeek'>('Claude');
+  const [previewTab, setPreviewTab] = useState<'beautified' | 'diff' | 'raw' | 'transcript'>('beautified');
   const [copiedPrompt, setCopiedPrompt] = useState(false);
+  const [copiedCodeSnippet, setCopiedCodeSnippet] = useState(false);
   const [isSimulatingInject, setIsSimulatingInject] = useState(false);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
@@ -70,19 +75,15 @@ export const SearchableHistoryView: React.FC<SearchableHistoryViewProps> = ({
   const filteredSegments = useMemo(() => {
     const query = searchQuery.trim().toLowerCase();
     return segments.filter((seg) => {
-      // Model filter
       if (selectedModelFilter !== 'All' && seg.originModel !== selectedModelFilter) {
         return false;
       }
-      // Category filter
       if (selectedCategoryFilter !== 'All' && seg.category !== selectedCategoryFilter) {
         return false;
       }
-      // Pinned filter
       if (pinnedOnly && !seg.isPinned) {
         return false;
       }
-      // Text query
       if (!query) return true;
 
       const titleMatch = seg.title.toLowerCase().includes(query);
@@ -217,13 +218,14 @@ Target Goal: Continue task execution with loaded context.`,
             <span className="text-[#0071E3] dark:text-[#2997FF]">Context Search & Injection</span>
           </div>
           <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-[#1D1D1F] dark:text-white flex items-center gap-3">
+            <LiquidLogoCanvas size={34} />
             <span>Saved Context Segments</span>
             <span className="text-xs font-mono font-medium px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
               AES-256 Sandboxed
             </span>
           </h1>
           <p className="text-xs sm:text-sm text-neutral-500 dark:text-neutral-400 mt-1 max-w-2xl">
-            Quickly search, inspect, and preview conversational memory segments before injecting them into target models like Claude, ChatGPT, Gemini, or DeepSeek.
+            Quickly search, inspect with markdown quick-preview, and format conversational memory segments before injecting them into target models like Claude, ChatGPT, Gemini, or DeepSeek.
           </p>
         </div>
 
@@ -449,7 +451,7 @@ Target Goal: Continue task execution with loaded context.`,
                     <span>·</span>
                     <span>Captured {selectedSegment.timestamp}</span>
                     <span>·</span>
-                    <span>RRF Score: {selectedSegment.rrfScore.toFixed(4)}</span>
+                    <span>RRF: {selectedSegment.rrfScore.toFixed(4)}</span>
                   </div>
                   <h3 className="text-lg sm:text-xl font-bold tracking-tight text-[#1D1D1F] dark:text-white mt-1">
                     {selectedSegment.title}
@@ -484,7 +486,7 @@ Target Goal: Continue task execution with loaded context.`,
               )}
             </div>
 
-            {/* Target Model Selector & Injection Simulator */}
+            {/* Target Model Selector & Injection Studio */}
             <div className="p-4 sm:p-6 space-y-5">
               {/* Target Model Chooser */}
               <div className="space-y-2">
@@ -500,10 +502,10 @@ Target Goal: Continue task execution with loaded context.`,
 
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                   {[
-                    { id: 'Claude' as const, name: 'Claude 3.7', desc: 'Anthropic', color: 'border-orange-500/30 text-orange-600 dark:text-orange-400' },
-                    { id: 'ChatGPT' as const, name: 'ChatGPT-4o', desc: 'OpenAI', color: 'border-emerald-500/30 text-emerald-600 dark:text-emerald-400' },
-                    { id: 'Gemini' as const, name: 'Gemini 2.0', desc: 'Google', color: 'border-blue-500/30 text-blue-600 dark:text-blue-400' },
-                    { id: 'DeepSeek' as const, name: 'DeepSeek R1', desc: 'Reasoning', color: 'border-purple-500/30 text-purple-600 dark:text-purple-400' }
+                    { id: 'Claude' as const, name: 'Claude 3.7', desc: 'Anthropic' },
+                    { id: 'ChatGPT' as const, name: 'ChatGPT-4o', desc: 'OpenAI' },
+                    { id: 'Gemini' as const, name: 'Gemini 2.0', desc: 'Google' },
+                    { id: 'DeepSeek' as const, name: 'DeepSeek R1', desc: 'Reasoning' }
                   ].map((m) => {
                     const isTarget = targetModel === m.id;
                     return (
@@ -534,53 +536,164 @@ Target Goal: Continue task execution with loaded context.`,
                 </div>
               </div>
 
-              {/* Formatted Target Model Prompt Buffer Preview */}
-              <div className="space-y-1.5">
-                <div className="flex items-center justify-between text-xs">
-                  <span className="font-mono text-neutral-500 dark:text-neutral-400 flex items-center gap-1.5">
-                    <IconTerminal className="w-3.5 h-3.5 text-[#0071E3] dark:text-[#2997FF]" />
-                    <span>Injected Prompt Buffer Preview ({targetModel})</span>
-                  </span>
-                  <span className="text-[11px] font-mono text-emerald-600 dark:text-emerald-400 font-medium">
+              {/* QUICK-PREVIEW PANE WITH BEAUTIFIED MARKDOWN */}
+              <div className="space-y-2">
+                {/* View Mode Segmented Controls */}
+                <div className="flex items-center justify-between border-b border-neutral-200 dark:border-white/10 pb-2">
+                  <div className="flex items-center gap-1 bg-neutral-100 dark:bg-white/5 p-0.5 rounded-lg border border-neutral-200/80 dark:border-white/5 text-xs font-mono">
+                    <button
+                      type="button"
+                      onClick={() => setPreviewTab('beautified')}
+                      className={`flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] transition-colors ${
+                        previewTab === 'beautified'
+                          ? 'bg-white dark:bg-[#1E1E2C] text-[#0071E3] dark:text-[#2997FF] font-semibold shadow-xs'
+                          : 'text-neutral-500 hover:text-neutral-900 dark:hover:text-white'
+                      }`}
+                    >
+                      <IconEye className="w-3.5 h-3.5" />
+                      <span>Quick Preview (Beautified)</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setPreviewTab('diff')}
+                      className={`flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] transition-colors ${
+                        previewTab === 'diff'
+                          ? 'bg-white dark:bg-[#1E1E2C] text-emerald-600 dark:text-emerald-400 font-semibold shadow-xs'
+                          : 'text-neutral-500 hover:text-neutral-900 dark:hover:text-white'
+                      }`}
+                    >
+                      <IconGitCompare className="w-3.5 h-3.5 text-emerald-500" />
+                      <span>Show Changes</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setPreviewTab('raw')}
+                      className={`flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] transition-colors ${
+                        previewTab === 'raw'
+                          ? 'bg-white dark:bg-[#1E1E2C] text-[#0071E3] dark:text-[#2997FF] font-semibold shadow-xs'
+                          : 'text-neutral-500 hover:text-neutral-900 dark:hover:text-white'
+                      }`}
+                    >
+                      <IconCode className="w-3.5 h-3.5" />
+                      <span>Raw Payload</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setPreviewTab('transcript')}
+                      className={`flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] transition-colors ${
+                        previewTab === 'transcript'
+                          ? 'bg-white dark:bg-[#1E1E2C] text-[#0071E3] dark:text-[#2997FF] font-semibold shadow-xs'
+                          : 'text-neutral-500 hover:text-neutral-900 dark:hover:text-white'
+                      }`}
+                    >
+                      <IconMessageCircle className="w-3.5 h-3.5" />
+                      <span>Original Turn</span>
+                    </button>
+                  </div>
+
+                  <span className="text-[11px] font-mono text-emerald-600 dark:text-emerald-400 font-medium hidden sm:inline">
                     {selectedSegment.compressedTokens} Tokens (Reduced from {selectedSegment.originalTokens})
                   </span>
                 </div>
 
-                <div className="relative rounded-xl border border-neutral-200 dark:border-white/10 bg-neutral-950 p-3.5 sm:p-4 text-xs font-mono text-neutral-200 overflow-x-auto shadow-inner leading-relaxed">
-                  <div className="text-[#38BDF8] select-none mb-2 pb-2 border-b border-neutral-800">
-                    // ChatBridge Context Injection Payload for {targetModel}
-                  </div>
-                  <pre className="whitespace-pre-wrap font-mono text-neutral-300">
-                    {selectedSegment.suggestedPrompt || 'Context payload from past dialogue:'}
-                    {'\n\n'}
-                    {selectedSegment.compressedContextPill}
-                  </pre>
-                </div>
-              </div>
+                {/* Pane Content based on previewTab */}
+                {previewTab === 'beautified' && (
+                  <div className="rounded-xl border border-neutral-200 dark:border-white/10 bg-neutral-50/70 dark:bg-[#07070B] p-4 sm:p-5 text-xs overflow-y-auto max-h-[340px] space-y-3.5 shadow-inner">
+                    {/* Header Banner with Show Changes Action */}
+                    <div className="p-3 rounded-lg bg-[#0071E3]/10 dark:bg-[#2997FF]/10 border border-[#0071E3]/20 dark:border-[#2997FF]/20 flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <IconSparkles className="w-4 h-4 text-[#0071E3] dark:text-[#2997FF]" />
+                        <span className="font-mono font-semibold text-[#0071E3] dark:text-[#2997FF]">
+                          ChatBridge Injected Context Capsule
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <button
+                          type="button"
+                          onClick={() => setPreviewTab('diff')}
+                          className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-emerald-500 hover:bg-emerald-600 text-white text-[10px] font-semibold transition-colors"
+                          title="Show diff of what is being appended"
+                        >
+                          <IconGitCompare className="w-3 h-3" />
+                          <span>Show Changes</span>
+                        </button>
+                        <span className="text-[10px] font-mono text-neutral-500">
+                          Target: {targetModel}
+                        </span>
+                      </div>
+                    </div>
 
-              {/* Raw Dialogue Transcript Drawer / Toggle */}
-              <details className="group border border-neutral-200/80 dark:border-white/10 rounded-xl bg-neutral-50/50 dark:bg-black/20 p-3 text-xs transition-colors">
-                <summary className="font-medium text-neutral-700 dark:text-neutral-300 cursor-pointer flex items-center justify-between select-none">
-                  <span className="flex items-center gap-1.5">
-                    <IconClock className="w-3.5 h-3.5 text-neutral-400" />
-                    <span>View Original Uncompressed Dialogue Transcript ({selectedSegment.originalTokens} tokens)</span>
-                  </span>
-                  <span className="text-[10px] text-neutral-400 group-open:rotate-180 transition-transform">
-                    ▼
-                  </span>
-                </summary>
-                <div className="mt-3 pt-3 border-t border-neutral-200/70 dark:border-white/10 space-y-2 text-neutral-600 dark:text-neutral-300 font-sans leading-relaxed">
-                  <pre className="whitespace-pre-wrap font-mono text-[11px] text-neutral-700 dark:text-neutral-300 bg-white dark:bg-[#07070B] p-3 rounded-lg border border-neutral-200 dark:border-white/5 max-h-48 overflow-y-auto">
-                    {selectedSegment.rawTranscript}
-                  </pre>
-                </div>
-              </details>
+                    {/* Suggested Prompt Kicker */}
+                    <div className="space-y-1">
+                      <span className="text-[10px] font-mono uppercase tracking-wider text-neutral-400">
+                        Prompt Preamble
+                      </span>
+                      <p className="text-xs font-medium text-neutral-800 dark:text-neutral-200 italic bg-white dark:bg-[#12121A] p-2.5 rounded-lg border border-neutral-200/80 dark:border-white/5">
+                        "{selectedSegment.suggestedPrompt}"
+                      </p>
+                    </div>
+
+                    {/* Beautified Markdown Breakdown */}
+                    <div className="space-y-2 pt-1">
+                      <span className="text-[10px] font-mono uppercase tracking-wider text-neutral-400">
+                        Structured Context Breakdown
+                      </span>
+                      <div className="space-y-2 bg-white dark:bg-[#101018] p-3.5 rounded-xl border border-neutral-200/80 dark:border-white/10 font-sans text-xs">
+                        <BeautifiedMarkdownContent content={selectedSegment.compressedContextPill} />
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {previewTab === 'diff' && (
+                  <div className="space-y-2">
+                    <DiffViewer
+                      oldText={selectedSegment.rawTranscript}
+                      newText={`${selectedSegment.suggestedPrompt || 'Context handoff from previous session:'}\n\n${selectedSegment.compressedContextPill}`}
+                      oldLabel={`Historical Context (${selectedSegment.originModel})`}
+                      newLabel={`Appended Target Buffer (${targetModel})`}
+                    />
+                  </div>
+                )}
+
+                {previewTab === 'raw' && (
+                  <div className="relative rounded-xl border border-neutral-200 dark:border-white/10 bg-neutral-950 p-4 text-xs font-mono text-neutral-200 overflow-x-auto shadow-inner leading-relaxed max-h-[340px]">
+                    <div className="text-[#38BDF8] select-none mb-2 pb-2 border-b border-neutral-800 flex items-center justify-between">
+                      <span>// Formatted Injection Payload for {targetModel}</span>
+                      <button
+                        onClick={handleCopyInjectedPayload}
+                        className="text-[11px] text-neutral-400 hover:text-white flex items-center gap-1"
+                      >
+                        <IconCopy className="w-3 h-3" />
+                        <span>Copy</span>
+                      </button>
+                    </div>
+                    <pre className="whitespace-pre-wrap font-mono text-neutral-300">
+                      {selectedSegment.suggestedPrompt || 'Context payload from past dialogue:'}
+                      {'\n\n'}
+                      {selectedSegment.compressedContextPill}
+                    </pre>
+                  </div>
+                )}
+
+                {previewTab === 'transcript' && (
+                  <div className="rounded-xl border border-neutral-200 dark:border-white/10 bg-white dark:bg-[#07070B] p-4 text-xs font-mono text-neutral-700 dark:text-neutral-300 overflow-y-auto max-h-[340px] leading-relaxed">
+                    <div className="text-neutral-400 select-none mb-2 pb-2 border-b border-neutral-200 dark:border-white/10 flex items-center justify-between">
+                      <span>Original Dialogue Turn ({selectedSegment.originalTokens} tokens uncompressed)</span>
+                      <span className="text-[10px]">{selectedSegment.originModel}</span>
+                    </div>
+                    <pre className="whitespace-pre-wrap font-mono text-[11px] text-neutral-800 dark:text-neutral-200">
+                      {selectedSegment.rawTranscript}
+                    </pre>
+                  </div>
+                )}
+              </div>
 
               {/* Primary Injected Actions */}
               <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-3 border-t border-neutral-200/80 dark:border-white/10">
                 <div className="flex items-center gap-2 text-xs text-neutral-500 font-mono self-start sm:self-auto">
                   <IconKey className="w-3.5 h-3.5 text-neutral-400" />
-                  <span>Shortcut: ⌘+Shift+K to summon anywhere</span>
+                  <span>Shortcut: ⌘+Shift+K to summon in any tab</span>
                 </div>
 
                 <div className="flex items-center gap-2.5 w-full sm:w-auto justify-end">
@@ -749,3 +862,68 @@ Target Goal: Continue task execution with loaded context.`,
     </div>
   );
 };
+
+/**
+ * Beautified Markdown Content Parser and Renderer
+ * Parses key-values, bullet points, headers, inline code, and highlights.
+ */
+function BeautifiedMarkdownContent({ content }: { content: string }) {
+  const lines = content.split('\n').filter((l) => l.trim().length > 0);
+
+  return (
+    <div className="space-y-2 leading-relaxed">
+      {lines.map((line, idx) => {
+        const trimmed = line.trim();
+
+        // Title or bracketed banner
+        if (trimmed.startsWith('[') && trimmed.endsWith(']')) {
+          return (
+            <div
+              key={idx}
+              className="text-xs font-mono font-semibold text-[#0071E3] dark:text-[#2997FF] pb-1 border-b border-neutral-200 dark:border-white/10"
+            >
+              {trimmed.replace(/[\[\]]/g, '')}
+            </div>
+          );
+        }
+
+        // Key-Value pattern: "Key: Value" or "- Key: Value"
+        const kvMatch = trimmed.match(/^[-•*]?\s*([A-Za-z0-9\s_-]+):\s*(.+)$/);
+        if (kvMatch) {
+          const key = kvMatch[1].trim();
+          const val = kvMatch[2].trim();
+          return (
+            <div key={idx} className="flex flex-col sm:flex-row sm:items-baseline gap-1 sm:gap-2">
+              <span className="font-mono text-[11px] font-semibold text-neutral-700 dark:text-neutral-300 min-w-[130px] shrink-0">
+                {key}:
+              </span>
+              <span className="text-neutral-600 dark:text-neutral-300 font-mono text-[11px] bg-neutral-100 dark:bg-white/5 px-2 py-0.5 rounded-md border border-neutral-200/60 dark:border-white/5 break-all">
+                {val}
+              </span>
+            </div>
+          );
+        }
+
+        // Bullet point
+        if (trimmed.startsWith('-') || trimmed.startsWith('•') || trimmed.startsWith('*')) {
+          const text = trimmed.replace(/^[-•*]\s*/, '');
+          return (
+            <div key={idx} className="flex items-start gap-2 pl-1">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#0071E3] dark:bg-[#2997FF] mt-1.5 shrink-0" />
+              <span className="text-neutral-700 dark:text-neutral-200 text-xs">
+                {text}
+              </span>
+            </div>
+          );
+        }
+
+        // Standard text line
+        return (
+          <p key={idx} className="text-neutral-600 dark:text-neutral-300 text-xs">
+            {trimmed}
+          </p>
+        );
+      })}
+    </div>
+  );
+}

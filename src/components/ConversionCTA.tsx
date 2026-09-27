@@ -40,13 +40,8 @@ export const ConversionCTA: React.FC<ConversionCTAProps> = ({
 
       {/* Content Container */}
       <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 text-center space-y-8">
-        {/* Top Badge */}
-        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-medium border border-[#D1D1D6] dark:border-[#2E2E40] bg-white/80 dark:bg-[#12121A]/80 backdrop-blur-md transition-all shadow-sm">
-          <span className="w-1.5 h-1.5 rounded-full bg-[#34C759] animate-pulse" />
-          <span className="text-[#333336] dark:text-[#C7C7CC]">
-            Instant Setup • Free Chrome Extension
-          </span>
-        </div>
+        {/* Spatial spacer preserving vertical hierarchy without chip pill */}
+        <div aria-hidden="true" className="h-7 pointer-events-none select-none" />
 
         {/* Headline */}
         <div className="space-y-4">

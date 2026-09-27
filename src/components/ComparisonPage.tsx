@@ -8,6 +8,8 @@ import {
   LockIcon,
   TerminalIcon
 } from './Icons';
+import { LiquidGlassCard } from './ui/LiquidGlassCard';
+import { LiquidLogoCanvas } from './LiquidLogoCanvas';
 import { CHROME_WEBSTORE_URL } from '../constants/links';
 
 interface ComparisonPageProps {
@@ -93,9 +95,8 @@ export const ComparisonPage: React.FC<ComparisonPageProps> = ({
 
       {/* Hero Header */}
       <header className="text-center max-w-3xl mx-auto mb-14">
-        <div className="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-[#AF52DE]/10 text-[#AF52DE] border border-[#AF52DE]/25 text-xs font-mono mb-6">
-          <SparklesIcon className="w-3.5 h-3.5" />
-          <span>Independent Architectural Comparison</span>
+        <div aria-hidden="true" className="h-7 mb-4 pointer-events-none select-none flex justify-center">
+          <LiquidLogoCanvas size={36} />
         </div>
 
         <h1 className="text-3xl sm:text-5xl font-semibold tracking-tight leading-tight mb-5">
@@ -122,8 +123,8 @@ export const ComparisonPage: React.FC<ComparisonPageProps> = ({
         </a>
       </header>
 
-      {/* Token Savings Interactive Calculator */}
-      <section className="mb-16 rounded-2xl bg-gradient-to-br from-[#2997FF]/10 via-[#14141E] to-[#0A0A0F] border border-[#2997FF]/25 p-6 sm:p-8">
+      {/* Token Savings Interactive Calculator with Liquid Glass Caustics */}
+      <LiquidGlassCard className="mb-16 p-6 sm:p-8" glowColor="rgba(41, 151, 255, 0.18)">
         <div className="flex flex-col md:flex-row items-center justify-between gap-8">
           <div className="space-y-3 max-w-md">
             <span className="text-xs font-mono uppercase tracking-wider text-[#2997FF]">
@@ -152,14 +153,14 @@ export const ComparisonPage: React.FC<ComparisonPageProps> = ({
           </div>
 
           <div className="grid grid-cols-2 gap-4 w-full md:w-auto">
-            <div className="p-4 rounded-xl bg-[#1C1C28] border border-[#2A2A3C] text-center">
+            <div className="p-4 rounded-xl bg-[#1C1C28]/80 border border-[#2A2A3C] text-center shadow-xs">
               <span className="text-xs font-mono text-[#86868B] block mb-1">Monthly Tokens Saved</span>
               <span className="text-2xl font-bold font-mono text-[#30D158]">
                 {(monthlyTokensSaved / 1_000).toLocaleString()}k
               </span>
               <span className="text-[10px] text-[#86868B] block mt-1">~95% token reduction</span>
             </div>
-            <div className="p-4 rounded-xl bg-[#1C1C28] border border-[#2A2A3C] text-center">
+            <div className="p-4 rounded-xl bg-[#1C1C28]/80 border border-[#2A2A3C] text-center shadow-xs">
               <span className="text-xs font-mono text-[#86868B] block mb-1">Est. API Cost Saved</span>
               <span className="text-2xl font-bold font-mono text-[#2997FF]">
                 ${monthlyDollarsSaved}
@@ -168,7 +169,7 @@ export const ComparisonPage: React.FC<ComparisonPageProps> = ({
             </div>
           </div>
         </div>
-      </section>
+      </LiquidGlassCard>
 
       {/* Feature Comparison Matrix Table */}
       <section className="mb-20">

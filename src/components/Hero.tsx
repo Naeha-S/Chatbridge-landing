@@ -124,13 +124,8 @@ Next Step: Create a 3-bullet takeaway slide for tomorrow's team sync.`,
           animate="visible"
           className="max-w-3xl mx-auto text-center space-y-4"
         >
-          <motion.div
-            variants={MOTION_VARIANTS.itemFadeInUp}
-            className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#0071E3]/10 dark:bg-[#38BDF8]/10 border border-[#0071E3]/20 dark:border-[#38BDF8]/20 text-[#0071E3] dark:text-[#38BDF8] text-xs font-medium mb-1 backdrop-blur-md shadow-xs"
-          >
-            <ChatBridgeLogo size={16} className="w-4 h-4" />
-            <span className="font-medium">Cross-Model Local Memory &bull; ChatGPT &bull; Claude &bull; Gemini</span>
-          </motion.div>
+          {/* Spatial spacer preserving vertical hierarchy without chip pill */}
+          <div aria-hidden="true" className="h-8 sm:h-9 pointer-events-none select-none" />
 
           <motion.h1
             variants={MOTION_VARIANTS.itemFadeInUp}
@@ -143,7 +138,7 @@ Next Step: Create a 3-bullet takeaway slide for tomorrow's team sync.`,
             variants={MOTION_VARIANTS.itemFadeInUp}
             className="text-base sm:text-lg md:text-xl text-[#515154] dark:text-[#A1A1A6] max-w-2xl mx-auto pt-1 leading-relaxed"
           >
-            Switch between ChatGPT, Claude, and Gemini without starting from scratch. ChatBridge carries your active project context between tabs with one click — 100% private on your device.
+            Switch between ChatGPT, Claude, and Gemini without starting from scratch. ChatBridge carries your active project context between tabs with one click (100% private on your device).
           </motion.p>
 
           {/* Action Row */}
@@ -159,7 +154,7 @@ Next Step: Create a 3-bullet takeaway slide for tomorrow's team sync.`,
               className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-7 py-3.5 rounded-full text-sm font-semibold transition-all shadow-md hover:scale-[1.02] active:scale-[0.98] bg-[#1D1D1F] hover:bg-neutral-800 dark:bg-white dark:hover:bg-neutral-100 text-white dark:text-neutral-950"
             >
               <DownloadIcon className="w-4 h-4 text-[#0071E3] dark:text-[#0071E3]" />
-              <span className="text-white dark:text-neutral-950 font-semibold">Add to Chrome — It's Free</span>
+              <span className="text-white dark:text-neutral-950 font-semibold">Add to Chrome (Free)</span>
             </a>
 
             <button

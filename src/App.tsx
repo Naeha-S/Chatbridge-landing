@@ -26,8 +26,9 @@ import { ComparisonPage } from './components/ComparisonPage';
 import { FAQPage } from './components/FAQPage';
 import { HowItWorksPage } from './components/HowItWorksPage';
 import { SearchableHistoryView } from './components/SearchableHistoryView';
+import { SubpageConnectors } from './components/SubpageConnectors';
+import { TermsOfServiceView } from './components/TermsOfServiceView';
 import TabsDemo from './components/tabs-demo';
-import { IconSearch } from '@tabler/icons-react';
 
 export default function App() {
   useGsapSmoothScroll();
@@ -147,10 +148,13 @@ export default function App() {
               {/* 3. Interactive Demo Simulator */}
               <InteractiveDemo onOpenInstall={() => setIsInstallOpen(true)} />
 
-              {/* 4. Target Users */}
+              {/* 4. The 5 Layers of ChatBridge (System Strata & Subpage Connectors) */}
+              <SubpageConnectors onNavigate={(view) => setCurrentView(view)} />
+
+              {/* 5. Specialized Workflows */}
               <TargetUsersSection />
 
-              {/* 5. Conversion CTA Banner with Originkit Prism Film */}
+              {/* 6. Conversion CTA Banner with Originkit Prism Film */}
               <ConversionCTA
                 isDarkMode={isDarkMode}
                 onOpenInstall={() => setIsInstallOpen(true)}
@@ -204,6 +208,13 @@ export default function App() {
           )}
 
           {(currentView === 'privacy' || currentView === 'local-privacy') && <LocalPrivacyView />}
+
+          {currentView === 'terms' && (
+            <TermsOfServiceView
+              onNavigateHome={() => setCurrentView('home')}
+              onNavigatePrivacy={() => setCurrentView('local-privacy')}
+            />
+          )}
 
           {currentView === 'guides' && (
             <BlogGuidesView

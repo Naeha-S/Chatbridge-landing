@@ -48,7 +48,7 @@ export const FAQPage: React.FC<FAQPageProps> = ({
     {
       category: 'privacy',
       q: 'Where are my encryption keys stored, and who can access them?',
-      a: 'The AES-256-GCM cryptographic key is generated inside your device’s Chromium sandbox using the standard WebCrypto SubtleCrypto API (`window.crypto.subtle`). It is stored securely with extractable set to false. No one—not even the ChatBridge developers—can view your key or decrypt your records.'
+      a: 'The AES-256-GCM cryptographic key is generated inside your device’s Chromium sandbox using the standard WebCrypto SubtleCrypto API (`window.crypto.subtle`). It is stored securely with extractable set to false. No one, including the ChatBridge developers, can view your key or decrypt your records.'
     },
     {
       category: 'privacy',
