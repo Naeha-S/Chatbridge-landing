@@ -134,7 +134,10 @@ export default function App() {
               <Hero
                 onOpenInstall={() => setIsInstallOpen(true)}
                 onScrollToDemo={handleScrollToDemo}
-                onExploreEngineering={() => setCurrentView('features')}
+                onExploreEngineering={() => {
+                  setCurrentView('how-it-works');
+                  smoothScrollTo(document.body, { offset: 0, duration: 0.65 });
+                }}
                 isDarkMode={isDarkMode}
               />
 
@@ -144,71 +147,18 @@ export default function App() {
               {/* 3. Interactive Demo Simulator */}
               <InteractiveDemo onOpenInstall={() => setIsInstallOpen(true)} />
 
-              {/* Context History & Memory Vault Preview Bar */}
-              <div className="max-w-6xl mx-auto px-4 sm:px-6 my-6">
-                <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-blue-500/10 via-indigo-500/10 to-purple-500/10 border border-[#0071E3]/25 dark:border-[#2997FF]/25 flex flex-col sm:flex-row items-center justify-between gap-4 backdrop-blur-md">
-                  <div className="flex items-center gap-3 text-left">
-                    <div className="w-10 h-10 rounded-xl bg-[#0071E3] text-white flex items-center justify-center shrink-0 shadow-md">
-                      <IconSearch className="w-5 h-5" />
-                    </div>
-                    <div>
-                      <h4 className="text-sm font-semibold text-[#1D1D1F] dark:text-white">
-                        Searchable Context History & Injection Vault
-                      </h4>
-                      <p className="text-xs text-neutral-500 dark:text-neutral-400">
-                        Find and preview encrypted past conversation segments before choosing which model to inject them into.
-                      </p>
-                    </div>
-                  </div>
-                  <button
-                    onClick={() => {
-                      setCurrentView('history');
-                      smoothScrollTo(document.body, { offset: 0, duration: 0.65 });
-                    }}
-                    className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#0071E3] hover:bg-[#0077ED] text-white text-xs font-semibold shrink-0 shadow-xs transition-colors"
-                  >
-                    <span>Open History Vault</span>
-                    <ArrowRightIcon className="w-3.5 h-3.5" />
-                  </button>
-                </div>
-              </div>
-
-              {/* 4. Technical Architecture: How Continuity Works */}
-              <section id="architecture" className="py-16 md:py-24 border-b border-neutral-200/80 dark:border-white/10 bg-white/60 dark:bg-black/40 backdrop-blur-xl transition-colors">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6">
-                  <div className="text-center max-w-3xl mx-auto mb-6">
-                    <span className="text-xs font-mono uppercase tracking-wider text-[#2997FF] font-semibold">
-                      Technical Architecture
-                    </span>
-                    <h2 className="text-2xl sm:text-4xl font-bold tracking-tight text-[#1D1D1F] dark:text-[#F5F5F7] mt-2">
-                      How Continuity Works
-                    </h2>
-                    <p className="mt-2 text-xs sm:text-sm text-[#86868B] max-w-2xl mx-auto">
-                      Explore the 5-stage client-side pipeline: observation, hybrid RRF vector indexing, hardware AES-256 encryption, token compression, and cross-model injection.
-                    </p>
-                  </div>
-                  <TabsDemo />
-                </div>
-              </section>
-
-              {/* 5. Deep Technical Features with Hybrid Retrieval Diagram */}
-              <FeaturesSection isDarkMode={isDarkMode} />
-
-              {/* 6. Target Users */}
+              {/* 4. Target Users */}
               <TargetUsersSection />
 
-              {/* 7. Conversion CTA Banner with Originkit Prism Film */}
+              {/* 5. Conversion CTA Banner with Originkit Prism Film */}
               <ConversionCTA
                 isDarkMode={isDarkMode}
                 onOpenInstall={() => setIsInstallOpen(true)}
                 onExploreFeatures={() => {
-                  setCurrentView('features');
+                  setCurrentView('how-it-works');
                   smoothScrollTo(document.body, { offset: 0, duration: 0.65 });
                 }}
               />
-
-              {/* 8. Frequently Asked Questions */}
-              <FAQSection />
             </>
           )}
 
