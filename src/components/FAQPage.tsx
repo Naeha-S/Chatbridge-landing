@@ -7,6 +7,14 @@ import {
   TerminalIcon,
   CheckIcon
 } from './Icons';
+import {
+  IconChevronDown,
+  IconThumbUp,
+  IconThumbDown,
+  IconMessageQuestion,
+  IconX,
+  IconShieldCheck
+} from '@tabler/icons-react';
 import { CHROME_WEBSTORE_URL } from '../constants/links';
 
 interface FAQPageProps {
@@ -21,6 +29,7 @@ export const FAQPage: React.FC<FAQPageProps> = ({
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [openIndex, setOpenIndex] = useState<number | null>(0);
+  const [helpfulMap, setHelpfulMap] = useState<Record<number, boolean>>({});
 
   const categories = [
     { id: 'all', label: 'All Questions' },
@@ -91,6 +100,14 @@ export const FAQPage: React.FC<FAQPageProps> = ({
     return matchesCategory && matchesSearch;
   });
 
+  const handleAskQuestion = () => {
+    window.dispatchEvent(
+      new CustomEvent('chatbridge:open-feedback', {
+        detail: { category: 'general' }
+      })
+    );
+  };
+
   return (
     <article className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16 text-[#1D1D1F] dark:text-[#F5F5F7]">
       {/* Breadcrumb Navigation */}
@@ -106,64 +123,77 @@ export const FAQPage: React.FC<FAQPageProps> = ({
 
       {/* Hero Header */}
       <header className="text-center max-w-3xl mx-auto mb-12">
-        <div className="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-[#2997FF]/10 text-[#2997FF] border border-[#2997FF]/25 text-xs font-mono mb-6">
+        <div className="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-[#0071E3]/10 dark:bg-[#2997FF]/10 text-[#0071E3] dark:text-[#2997FF] border border-[#0071E3]/20 dark:border-[#2997FF]/25 text-xs font-mono mb-6">
           <SparklesIcon className="w-3.5 h-3.5" />
-          <span>Knowledge Base & Answers</span>
+          <span>Knowledge Base & Technical Architecture</span>
         </div>
 
-        <h1 className="text-3xl sm:text-5xl font-semibold tracking-tight leading-tight mb-5">
+        <h1 className="text-3xl sm:text-5xl font-bold tracking-tight leading-tight mb-5">
           Frequently Asked{' '}
-          <span className="bg-gradient-to-r from-[#2997FF] via-[#5AC8FA] to-[#AF52DE] bg-clip-text text-transparent">
+          <span className="bg-gradient-to-r from-[#0071E3] via-[#2997FF] to-[#AF52DE] bg-clip-text text-transparent">
             Questions
           </span>
         </h1>
 
-        <p className="text-lg text-[#86868B] leading-relaxed mb-8">
+        <p className="text-base sm:text-lg text-[#86868B] leading-relaxed mb-8">
           Clear, transparent answers regarding ChatBridge's privacy guarantees, AES-256-GCM encryption,
           cross-model compatibility, and local retrieval architecture.
         </p>
 
         {/* Live Search Input */}
         <div className="relative max-w-xl mx-auto">
-          <SearchIcon className="w-5 h-5 absolute left-4 top-1/2 -translate-y-1/2 text-[#86868B]" />
+          <SearchIcon className="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-[#86868B]" />
           <input
             type="text"
             placeholder="Search questions on privacy, shortcuts, models, or encryption..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-12 pr-4 py-3.5 rounded-xl bg-white dark:bg-[#14141E] border border-[#D1D1D6] dark:border-[#2C2C3E] text-sm text-[#1D1D1F] dark:text-[#F5F5F7] placeholder-[#86868B] focus:outline-none focus:border-[#2997FF] transition-colors"
+            className="w-full pl-11 pr-10 py-3 rounded-2xl bg-white dark:bg-[#14141E] border border-neutral-200 dark:border-neutral-800 text-sm text-[#1D1D1F] dark:text-[#F5F5F7] placeholder-[#86868B] focus:outline-none focus:border-[#0071E3] dark:focus:border-[#2997FF] transition-colors shadow-xs"
           />
+          {searchTerm && (
+            <button
+              onClick={() => setSearchTerm('')}
+              className="absolute right-3.5 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-neutral-700 dark:hover:text-white"
+            >
+              <IconX className="w-4 h-4" />
+            </button>
+          )}
         </div>
       </header>
 
       {/* Category Filter Pills */}
-      <div className="flex flex-wrap justify-center gap-2 mb-12">
-        {categories.map((cat) => (
-          <button
-            key={cat.id}
-            onClick={() => setSelectedCategory(cat.id)}
-            className={`px-4 py-2 rounded-xl text-xs font-mono transition-colors ${
-              selectedCategory === cat.id
-                ? 'bg-[#2997FF] text-white font-medium shadow-md shadow-[#2997FF]/20'
-                : 'bg-white dark:bg-[#14141C] text-[#86868B] hover:text-[#1D1D1F] dark:hover:text-[#F5F5F7] border border-[#E5E5EA] dark:border-[#222230]'
-            }`}
-          >
-            {cat.label}
-          </button>
-        ))}
+      <div className="flex flex-wrap justify-center gap-1.5 mb-10" role="tablist">
+        {categories.map((cat) => {
+          const isSelected = selectedCategory === cat.id;
+          return (
+            <button
+              key={cat.id}
+              role="tab"
+              aria-selected={isSelected}
+              onClick={() => setSelectedCategory(cat.id)}
+              className={`px-3.5 py-1.5 rounded-full text-xs font-medium transition-all ${
+                isSelected
+                  ? 'bg-[#1D1D1F] hover:bg-neutral-800 dark:bg-white dark:hover:bg-neutral-100 text-white dark:text-neutral-950 font-semibold shadow-2xs'
+                  : 'bg-white dark:bg-[#14141C] text-[#86868B] hover:text-[#1D1D1F] dark:hover:text-[#F5F5F7] border border-[#E5E5EA] dark:border-[#222230]'
+              }`}
+            >
+              {cat.label}
+            </button>
+          );
+        })}
       </div>
 
       {/* Accordion Questions List */}
-      <section className="space-y-4 max-w-3xl mx-auto mb-20">
+      <section className="space-y-3 max-w-3xl mx-auto mb-16">
         {filteredFaqs.length === 0 ? (
-          <div className="text-center py-12 text-[#86868B]">
-            <p>No questions matched your search query "{searchTerm}".</p>
+          <div className="text-center py-12 text-[#86868B] bg-neutral-50 dark:bg-[#111119] rounded-2xl border border-neutral-200 dark:border-neutral-800 space-y-2">
+            <p className="text-sm font-medium">No questions matched your search query "{searchTerm}".</p>
             <button
               onClick={() => {
                 setSearchTerm('');
                 setSelectedCategory('all');
               }}
-              className="mt-3 text-xs text-[#2997FF] underline"
+              className="text-xs text-[#0071E3] dark:text-[#2997FF] underline font-semibold"
             >
               Reset search filters
             </button>
@@ -171,23 +201,83 @@ export const FAQPage: React.FC<FAQPageProps> = ({
         ) : (
           filteredFaqs.map((faq, idx) => {
             const isOpen = openIndex === idx;
+            const isHelpful = helpfulMap[idx];
+
             return (
               <div
                 key={idx}
-                className="rounded-2xl bg-white dark:bg-[#12121A] border border-[#E5E5EA] dark:border-[#222230] overflow-hidden transition-colors"
+                className={`rounded-2xl transition-all duration-200 overflow-hidden border ${
+                  isOpen
+                    ? 'bg-white dark:bg-[#12121C] border-[#0071E3]/50 dark:border-[#2997FF]/50 shadow-sm border-l-4 border-l-[#0071E3] dark:border-l-[#2997FF]'
+                    : 'bg-white/80 dark:bg-[#0E0E16]/80 border-neutral-200/80 dark:border-white/10 hover:border-neutral-300 dark:hover:border-neutral-700'
+                }`}
               >
                 <button
                   onClick={() => setOpenIndex(isOpen ? null : idx)}
-                  className="w-full text-left p-6 flex items-center justify-between gap-4 font-semibold text-base text-[#1D1D1F] dark:text-[#F5F5F7] hover:text-[#2997FF] dark:hover:text-[#2997FF] transition-colors"
+                  className="w-full text-left p-5 flex items-center justify-between gap-4 font-semibold text-sm sm:text-base text-[#1D1D1F] dark:text-[#F5F5F7] transition-colors"
                 >
-                  <span>{faq.q}</span>
-                  <span className="text-lg font-mono text-[#86868B] shrink-0">
-                    {isOpen ? '−' : '+'}
+                  <div className="flex items-center gap-2.5">
+                    <span className="text-[10px] font-mono uppercase px-2 py-0.5 rounded bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400 shrink-0">
+                      {faq.category}
+                    </span>
+                    <span>{faq.q}</span>
+                  </div>
+                  <span
+                    className={`text-[#86868B] shrink-0 transition-transform duration-200 ${
+                      isOpen ? 'rotate-180 text-[#0071E3] dark:text-[#2997FF]' : ''
+                    }`}
+                  >
+                    <IconChevronDown className="w-4 h-4" />
                   </span>
                 </button>
+
                 {isOpen && (
-                  <div className="px-6 pb-6 pt-1 text-sm text-[#86868B] leading-relaxed border-t border-[#F2F2F7] dark:border-[#1E1E28]">
-                    <p>{faq.a}</p>
+                  <div className="px-5 pb-5 pt-1 text-xs sm:text-sm text-neutral-600 dark:text-neutral-400 leading-relaxed space-y-4 border-t border-neutral-100 dark:border-neutral-800/60">
+                    <p className="pt-2">{faq.a}</p>
+
+                    <div className="flex items-center justify-between gap-3 text-xs pt-3 border-t border-neutral-100 dark:border-neutral-800/80 font-mono text-[11px]">
+                      <div className="flex items-center gap-2 text-neutral-500">
+                        <span>Helpful answer?</span>
+                        {isHelpful === undefined ? (
+                          <div className="flex items-center gap-1">
+                            <button
+                              type="button"
+                              onClick={() => setHelpfulMap((prev) => ({ ...prev, [idx]: true }))}
+                              className="px-2 py-0.5 rounded border border-neutral-200 dark:border-neutral-800 hover:bg-neutral-100 dark:hover:bg-neutral-800 inline-flex items-center gap-1 transition-colors"
+                            >
+                              <IconThumbUp className="w-3 h-3 text-emerald-500" />
+                              <span>Yes</span>
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => setHelpfulMap((prev) => ({ ...prev, [idx]: false }))}
+                              className="px-2 py-0.5 rounded border border-neutral-200 dark:border-neutral-800 hover:bg-neutral-100 dark:hover:bg-neutral-800 inline-flex items-center gap-1 transition-colors"
+                            >
+                              <IconThumbDown className="w-3 h-3 text-rose-500" />
+                              <span>No</span>
+                            </button>
+                          </div>
+                        ) : isHelpful ? (
+                          <span className="text-emerald-600 dark:text-emerald-400 font-medium flex items-center gap-1">
+                            <CheckIcon className="w-3 h-3" />
+                            Thanks for letting us know!
+                          </span>
+                        ) : (
+                          <span className="text-amber-600 dark:text-amber-400">
+                            Thanks, we'll clarify this section!
+                          </span>
+                        )}
+                      </div>
+
+                      <button
+                        type="button"
+                        onClick={handleAskQuestion}
+                        className="text-[#0071E3] dark:text-[#2997FF] hover:underline inline-flex items-center gap-1"
+                      >
+                        <IconMessageQuestion className="w-3.5 h-3.5" />
+                        <span>Ask maintainers</span>
+                      </button>
+                    </div>
                   </div>
                 )}
               </div>
@@ -197,11 +287,11 @@ export const FAQPage: React.FC<FAQPageProps> = ({
       </section>
 
       {/* Bottom CTA */}
-      <footer className="text-center p-8 sm:p-12 rounded-2xl bg-gradient-to-br from-[#2997FF]/10 via-[#1C1C26] to-[#0A0A0F] border border-[#2997FF]/20">
-        <h2 className="text-2xl sm:text-3xl font-semibold mb-3">
+      <footer className="text-center p-8 sm:p-12 rounded-3xl bg-neutral-900 dark:bg-[#101018] text-white border border-neutral-800 shadow-xl">
+        <h2 className="text-2xl sm:text-3xl font-bold mb-3">
           Have more questions or want to test it yourself?
         </h2>
-        <p className="text-sm text-[#86868B] max-w-xl mx-auto mb-6">
+        <p className="text-sm text-neutral-400 max-w-xl mx-auto mb-6">
           ChatBridge takes less than 30 seconds to install from the Chrome Web Store.
         </p>
         <a
@@ -209,9 +299,9 @@ export const FAQPage: React.FC<FAQPageProps> = ({
           target="_blank"
           rel="noopener noreferrer"
           onClick={onOpenInstall}
-          className="inline-flex items-center px-6 py-3 rounded-xl bg-[#2997FF] hover:bg-[#1E76D2] text-white font-medium shadow-lg transition-transform hover:scale-105"
+          className="inline-flex items-center px-6 py-3 rounded-full bg-white hover:bg-neutral-100 text-neutral-950 font-semibold shadow-lg transition-transform hover:scale-105"
         >
-          <DownloadIcon className="w-4 h-4 mr-2" />
+          <DownloadIcon className="w-4 h-4 mr-2 text-[#0071E3]" />
           <span>Add ChatBridge to Chrome Free</span>
         </a>
       </footer>

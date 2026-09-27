@@ -536,7 +536,7 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({
           <button
             id="onboarding-next-btn"
             onClick={handleNext}
-            className="px-5 py-2 rounded-full bg-[#1D1D1F] dark:bg-white hover:bg-[#333336] dark:hover:bg-[#E5E5EA] text-white dark:text-[#0A0A0D] text-xs font-semibold flex items-center gap-1.5 transition-colors shadow-2xs"
+            className="px-5 py-2 rounded-full bg-[#1D1D1F] hover:bg-neutral-800 dark:bg-white dark:hover:bg-neutral-100 text-white dark:text-neutral-950 text-xs font-semibold flex items-center gap-1.5 transition-colors shadow-2xs"
           >
             <span>{currentStep === steps.length - 1 ? 'Finish & Explore' : 'Continue'}</span>
             {currentStep < steps.length - 1 && <ChevronRightIcon className="w-3.5 h-3.5" />}

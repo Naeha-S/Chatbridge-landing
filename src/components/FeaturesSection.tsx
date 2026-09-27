@@ -142,7 +142,7 @@ export const FeaturesSection: React.FC<FeaturesSectionProps> = ({ isDarkMode = t
   });
 
   return (
-    <section id="features" className="py-20 md:py-28 border-b border-[#E5E5EA] dark:border-[#22222E] bg-[#FBFBFA] dark:bg-[#040405] text-[#1D1D1F] dark:text-[#F5F5F7] transition-colors">
+    <section id="features" className="py-20 md:py-28 border-b border-neutral-200/80 dark:border-white/10 bg-white/60 dark:bg-black/40 backdrop-blur-xl text-[#1D1D1F] dark:text-[#F5F5F7] transition-colors">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 space-y-16">
         
         {/* Section Header with Staggered Scroll Trigger */}
@@ -214,7 +214,7 @@ export const FeaturesSection: React.FC<FeaturesSectionProps> = ({ isDarkMode = t
               <motion.div
                 variants={MOTION_VARIANTS.itemFadeInUp}
                 key={card.id}
-                className="rounded-2xl border p-6 sm:p-7 flex flex-col justify-between transition-all duration-200 hover:translate-y-[-2px] bg-white dark:bg-[#0D0D14] hover:bg-[#FAFAFC] dark:hover:bg-[#111119] border-[#E5E5EA] dark:border-[#22222E] hover:border-[#D1D1D6] dark:hover:border-[#333346] shadow-xs dark:shadow-lg dark:shadow-black/20"
+                className="rounded-2xl border p-6 sm:p-7 flex flex-col justify-between transition-all duration-200 hover:translate-y-[-2px] bg-white/70 dark:bg-black/60 backdrop-blur-xl border-neutral-200/80 dark:border-white/10 hover:border-neutral-300 dark:hover:border-white/20 shadow-md dark:shadow-2xl"
               >
                 <div className="space-y-4">
                   {/* Top Row: Icon + Badge */}
@@ -272,7 +272,7 @@ export const FeaturesSection: React.FC<FeaturesSectionProps> = ({ isDarkMode = t
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: '-50px' }}
-          className="relative overflow-hidden rounded-3xl border p-6 sm:p-8 transition-colors bg-white/95 dark:bg-[#0D0D14]/95 border-[#E5E5EA] dark:border-[#242434] shadow-md dark:shadow-2xl"
+          className="relative overflow-hidden rounded-3xl border p-6 sm:p-8 transition-colors bg-white/70 dark:bg-black/60 backdrop-blur-xl border-neutral-200/80 dark:border-white/10 shadow-lg dark:shadow-2xl"
         >
           {/* Subtle Ambient Prism Film WebGL Canvas */}
           <div className="absolute inset-0 overflow-hidden pointer-events-none z-0 select-none">

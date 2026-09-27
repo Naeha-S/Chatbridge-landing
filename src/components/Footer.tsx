@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { PageView } from '../types';
 import { DownloadIcon, CloseIcon } from './Icons';
+import { ChatBridgeLogo } from './Logo';
 import { CHROME_WEBSTORE_URL } from '../constants/links';
 import { smoothScrollTo } from '../hooks/useGsapSmoothScroll';
 
@@ -37,7 +38,8 @@ export const Footer: React.FC<FooterProps> = ({
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10">
           {/* Brand Column */}
           <div className="lg:col-span-2 space-y-3">
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2.5">
+              <ChatBridgeLogo size={24} className="w-6 h-6" />
               <span className="font-semibold text-sm tracking-tight text-[#1D1D1F] dark:text-[#F5F5F7]">
                 ChatBridge
               </span>
@@ -54,10 +56,10 @@ export const Footer: React.FC<FooterProps> = ({
                 href={CHROME_WEBSTORE_URL}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#1D1D1F] dark:bg-white hover:bg-[#333336] dark:hover:bg-[#E5E5EA] text-white dark:text-[#0A0A0D] text-xs font-medium transition-colors"
+                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-[#1D1D1F] hover:bg-neutral-800 dark:bg-white dark:hover:bg-neutral-100 text-white dark:text-neutral-950 text-xs font-semibold transition-colors"
               >
-                <DownloadIcon className="w-3.5 h-3.5" />
-                <span>Add to Chrome</span>
+                <DownloadIcon className="w-3.5 h-3.5 text-[#0071E3] dark:text-[#0071E3]" />
+                <span className="text-white dark:text-neutral-950 font-semibold">Add to Chrome</span>
               </a>
               <button
                 id="footer-engineering-btn"
@@ -103,17 +105,6 @@ export const Footer: React.FC<FooterProps> = ({
               <li>
                 <button
                   onClick={() => {
-                    setCurrentView('supported-platforms');
-                    smoothScrollTo(document.body, { offset: 0, duration: 0.65 });
-                  }}
-                  className="hover:text-[#1D1D1F] dark:hover:text-white transition-colors"
-                >
-                  Supported Platforms
-                </button>
-              </li>
-              <li>
-                <button
-                  onClick={() => {
                     setCurrentView('comparison');
                     smoothScrollTo(document.body, { offset: 0, duration: 0.65 });
                   }}
@@ -131,17 +122,6 @@ export const Footer: React.FC<FooterProps> = ({
               Solutions & Migration
             </h4>
             <ul className="space-y-2">
-              <li>
-                <button
-                  onClick={() => {
-                    setCurrentView('chatgpt-to-claude');
-                    smoothScrollTo(document.body, { offset: 0, duration: 0.65 });
-                  }}
-                  className="hover:text-[#1D1D1F] dark:hover:text-white transition-colors text-left"
-                >
-                  ChatGPT to Claude Transfer
-                </button>
-              </li>
               <li>
                 <button
                   onClick={() => {

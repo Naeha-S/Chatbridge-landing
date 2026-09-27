@@ -161,7 +161,7 @@ export const InteractiveDemo: React.FC<InteractiveDemoProps> = ({ onOpenInstall 
   };
 
   return (
-    <section id="demo" className="py-20 md:py-28 border-b border-[#E5E5EA] dark:border-[#22222D] bg-[#FBFBFA] dark:bg-[#040405] relative transition-colors">
+    <section id="demo" className="py-20 md:py-28 border-b border-neutral-200/80 dark:border-white/10 bg-white/60 dark:bg-black/40 backdrop-blur-xl relative transition-colors">
       <div className="max-w-6xl mx-auto px-4 sm:px-6">
         {/* Section Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
@@ -179,7 +179,7 @@ export const InteractiveDemo: React.FC<InteractiveDemoProps> = ({ onOpenInstall 
 
           {/* Scenario Selector & Export State Actions */}
           <div className="flex flex-wrap items-center gap-2 self-start md:self-auto">
-            <div className="flex items-center gap-1 bg-[#F5F5F7] dark:bg-[#161622] p-1 rounded-lg border border-[#E5E5EA] dark:border-[#262638]" role="tablist">
+            <div className="flex items-center gap-1 bg-white/80 dark:bg-black/60 backdrop-blur-md p-1 rounded-lg border border-neutral-200/80 dark:border-white/10 shadow-sm" role="tablist">
               {DEMO_SCENARIOS.map((sc, idx) => (
                 <button
                   key={sc.id}
@@ -193,7 +193,7 @@ export const InteractiveDemo: React.FC<InteractiveDemoProps> = ({ onOpenInstall 
                   }}
                   className={`px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${
                     activeScenarioIndex === idx
-                      ? 'bg-white dark:bg-[#252536] text-[#1D1D1F] dark:text-white shadow-2xs'
+                      ? 'bg-white dark:bg-white/15 text-[#1D1D1F] dark:text-white shadow-2xs border border-neutral-200/60 dark:border-white/10'
                       : 'text-[#6E6E73] dark:text-[#8E8E98] hover:text-[#1D1D1F] dark:hover:text-white'
                   }`}
                 >
@@ -205,7 +205,7 @@ export const InteractiveDemo: React.FC<InteractiveDemoProps> = ({ onOpenInstall 
             <button
               id="demo-export-state-btn"
               onClick={() => setShowExportModal(true)}
-              className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-white dark:bg-[#1A1A28] hover:bg-[#F5F5F7] dark:hover:bg-[#222232] border border-[#D1D1D6] dark:border-[#333346] text-xs font-medium text-[#1D1D1F] dark:text-[#F5F5F7] shadow-2xs transition-colors"
+              className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-white/80 dark:bg-black/50 backdrop-blur-md hover:bg-white dark:hover:bg-black/70 border border-neutral-200/80 dark:border-white/10 text-xs font-medium text-[#1D1D1F] dark:text-[#F5F5F7] shadow-sm transition-colors"
               title="Simulate exporting conversational state"
             >
               <CopyIcon className="w-3.5 h-3.5 text-[#6E6E73] dark:text-[#8E8E98]" />
@@ -215,9 +215,9 @@ export const InteractiveDemo: React.FC<InteractiveDemoProps> = ({ onOpenInstall 
         </div>
 
         {/* Browser Demo Frame */}
-        <div className="bg-white dark:bg-[#0E0E14] rounded-xl border border-[#E5E5EA] dark:border-[#262633] shadow-sm overflow-hidden">
+        <div className="bg-white/70 dark:bg-black/60 backdrop-blur-xl rounded-xl border border-neutral-200/80 dark:border-white/10 shadow-xl overflow-hidden">
           {/* Window Chrome Header */}
-          <div className="px-4 py-3 bg-[#F5F5F7] dark:bg-[#14141E] border-b border-[#E5E5EA] dark:border-[#242432] flex flex-wrap items-center justify-between gap-3">
+          <div className="px-4 py-3 bg-white/80 dark:bg-black/70 backdrop-blur-md border-b border-neutral-200/80 dark:border-white/10 flex flex-wrap items-center justify-between gap-3">
             <div className="flex items-center gap-3">
               <div className="flex items-center gap-1.5" aria-hidden="true">
                 <span className="w-2.5 h-2.5 rounded-full bg-[#D1D1D6] dark:bg-[#3A3A4C]"></span>

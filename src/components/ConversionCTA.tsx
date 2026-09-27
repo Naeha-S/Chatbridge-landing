@@ -16,7 +16,7 @@ export const ConversionCTA: React.FC<ConversionCTAProps> = ({
   onExploreFeatures,
 }) => {
   return (
-    <section className="relative overflow-hidden py-24 md:py-32 border-y border-[#E5E5EA] dark:border-[#22222E] bg-[#F4F4F7] dark:bg-[#07070B] transition-colors">
+    <section className="relative overflow-hidden py-24 md:py-32 border-y border-neutral-200/80 dark:border-white/10 bg-white/60 dark:bg-black/40 backdrop-blur-xl transition-colors">
       {/* Living WebGL Prism Film Background */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none z-0 select-none">
         <div className={`w-full h-full transition-opacity duration-700 ${
@@ -28,6 +28,7 @@ export const ConversionCTA: React.FC<ConversionCTAProps> = ({
             />
           ) : (
             <PrismFilmLight
+              background="#FBFBFA"
               style={{ width: '100%', height: '100%', position: 'absolute', inset: 0 }}
             />
           )}
@@ -64,10 +65,10 @@ export const ConversionCTA: React.FC<ConversionCTAProps> = ({
             href={CHROME_WEBSTORE_URL}
             target="_blank"
             rel="noopener noreferrer"
-            className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-8 py-3.5 rounded-full text-sm font-semibold transition-all duration-200 shadow-lg hover:shadow-xl hover:scale-[1.02] bg-[#1D1D1F] dark:bg-white text-white dark:text-[#0A0A0D] hover:bg-[#333336] dark:hover:bg-[#E5E5EA]"
+            className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-8 py-3.5 rounded-full text-sm font-semibold transition-all duration-200 shadow-lg hover:shadow-xl hover:scale-[1.02] bg-[#1D1D1F] hover:bg-neutral-800 dark:bg-white dark:hover:bg-neutral-100 text-white dark:text-neutral-950"
           >
-            <DownloadIcon className="w-4 h-4" />
-            <span>Add ChatBridge to Chrome</span>
+            <DownloadIcon className="w-4 h-4 text-[#0071E3] dark:text-[#0071E3]" />
+            <span className="text-white dark:text-neutral-950 font-semibold">Add ChatBridge to Chrome</span>
           </a>
 
           <button

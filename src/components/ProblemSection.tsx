@@ -54,7 +54,7 @@ export const ProblemSection: React.FC = () => {
   const current = scenarios[activeScenario];
 
   return (
-    <section className="py-20 md:py-28 border-b border-[#E5E5EA] dark:border-[#22222D] bg-[#FBFBFA] dark:bg-[#040405] transition-colors">
+    <section className="py-20 md:py-28 border-b border-neutral-200/80 dark:border-white/10 bg-white/60 dark:bg-black/40 backdrop-blur-xl transition-colors">
       <div className="max-w-6xl mx-auto px-4 sm:px-6">
         {/* Section Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
@@ -71,12 +71,12 @@ export const ProblemSection: React.FC = () => {
           </div>
 
           {/* Scenario Selector */}
-          <div className="flex items-center gap-1.5 p-1 bg-[#EBEBED] dark:bg-[#1D1D28] rounded-xl self-start md:self-auto border border-[#E5E5EA] dark:border-[#2A2A38]">
+          <div className="flex items-center gap-1.5 p-1 bg-white/80 dark:bg-black/60 backdrop-blur-md rounded-xl self-start md:self-auto border border-neutral-200/80 dark:border-white/10 shadow-sm">
             <button
               onClick={() => setActiveScenario('coding')}
               className={`px-3.5 py-1.5 rounded-lg text-xs font-medium transition-all ${
                 activeScenario === 'coding'
-                  ? 'bg-white dark:bg-[#2A2A3C] text-[#1D1D1F] dark:text-white shadow-2xs'
+                  ? 'bg-white dark:bg-white/15 text-[#1D1D1F] dark:text-white shadow-2xs border border-neutral-200/60 dark:border-white/10'
                   : 'text-[#6E6E73] dark:text-[#8E8E98] hover:text-[#1D1D1F] dark:hover:text-white'
               }`}
             >
@@ -86,7 +86,7 @@ export const ProblemSection: React.FC = () => {
               onClick={() => setActiveScenario('research')}
               className={`px-3.5 py-1.5 rounded-lg text-xs font-medium transition-all ${
                 activeScenario === 'research'
-                  ? 'bg-white dark:bg-[#2A2A3C] text-[#1D1D1F] dark:text-white shadow-2xs'
+                  ? 'bg-white dark:bg-white/15 text-[#1D1D1F] dark:text-white shadow-2xs border border-neutral-200/60 dark:border-white/10'
                   : 'text-[#6E6E73] dark:text-[#8E8E98] hover:text-[#1D1D1F] dark:hover:text-white'
               }`}
             >
@@ -98,45 +98,45 @@ export const ProblemSection: React.FC = () => {
         {/* High-Craft Asymmetric Comparison */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
           {/* Left: Friction / Manual Side */}
-          <div className="lg:col-span-6 bg-white dark:bg-[#0E0E14] rounded-2xl border border-[#E5E5EA] dark:border-[#262633] p-6 sm:p-8 flex flex-col justify-between space-y-6 shadow-xs">
+          <div className="lg:col-span-6 bg-white/70 dark:bg-black/60 backdrop-blur-xl rounded-2xl border border-neutral-200/80 dark:border-white/10 p-6 sm:p-8 flex flex-col justify-between space-y-6 shadow-md">
             <div className="space-y-4">
-              <div className="flex items-center justify-between pb-3 border-b border-[#E5E5EA] dark:border-[#22222D]">
+              <div className="flex items-center justify-between pb-3 border-b border-neutral-200/60 dark:border-white/10">
                 <span className="text-xs font-mono text-[#E03E3E] dark:text-[#FF6B6B] font-medium uppercase tracking-wide">
                   Standard Multi-Tab Reset
                 </span>
-                <span className="text-[11px] font-mono text-[#E03E3E] dark:text-[#FF6B6B] bg-rose-50 dark:bg-rose-950/40 px-2 py-0.5 rounded border border-rose-100 dark:border-rose-900/50">
+                <span className="text-[11px] font-mono text-[#E03E3E] dark:text-[#FF6B6B] bg-rose-500/10 px-2 py-0.5 rounded border border-rose-500/20">
                   {current.oldWay.tokensWasted} wasted
                 </span>
               </div>
               <h3 className="text-base font-semibold text-[#1D1D1F] dark:text-[#F5F5F7]">
                 {current.oldWay.title}
               </h3>
-              <pre className="p-4 bg-[#F5F5F7] dark:bg-[#15151F] rounded-xl text-xs font-mono text-[#515154] dark:text-[#C7C7CC] border border-[#E5E5EA] dark:border-[#262633] whitespace-pre-wrap leading-relaxed">
+              <pre className="p-4 bg-neutral-100/80 dark:bg-black/40 rounded-xl text-xs font-mono text-[#515154] dark:text-[#C7C7CC] border border-neutral-200/70 dark:border-white/10 whitespace-pre-wrap leading-relaxed">
                 <code>{current.oldWay.snippet}</code>
               </pre>
             </div>
 
-            <div className="p-3.5 bg-rose-50/80 dark:bg-rose-950/30 rounded-xl border border-rose-100 dark:border-rose-900/40 text-xs text-[#9E2A2B] dark:text-[#FFA8A8] space-y-1">
+            <div className="p-3.5 bg-rose-500/10 rounded-xl border border-rose-500/20 text-xs text-[#9E2A2B] dark:text-[#FFA8A8] space-y-1">
               <span className="font-semibold block text-[#7D1D1E] dark:text-[#FFBDBD]">Downstream Impact</span>
               <p>{current.oldWay.friction}</p>
             </div>
           </div>
 
           {/* Right: ChatBridge Side */}
-          <div className="lg:col-span-6 bg-[#16161E] dark:bg-[#12121A] text-white rounded-2xl border border-[#2D2D3E] dark:border-[#2D2D3E] p-6 sm:p-8 flex flex-col justify-between space-y-6 shadow-lg">
+          <div className="lg:col-span-6 bg-white/70 dark:bg-black/60 backdrop-blur-xl text-neutral-900 dark:text-white rounded-2xl border border-neutral-200/80 dark:border-white/10 p-6 sm:p-8 flex flex-col justify-between space-y-6 shadow-md">
             <div className="space-y-4">
-              <div className="flex items-center justify-between pb-3 border-b border-white/15 dark:border-white/10">
+              <div className="flex items-center justify-between pb-3 border-b border-neutral-200/60 dark:border-white/10">
                 <span className="text-xs font-mono text-[#34C759] dark:text-[#30D158] font-medium uppercase tracking-wide">
                   ChatBridge Local Injection
                 </span>
-                <span className="text-[11px] font-mono text-[#34C759] dark:text-[#30D158] bg-emerald-950/80 px-2 py-0.5 rounded border border-emerald-800 dark:border-emerald-700/60">
+                <span className="text-[11px] font-mono text-[#34C759] dark:text-[#30D158] bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">
                   {current.bridgeWay.tokensUsed}
                 </span>
               </div>
-              <h3 className="text-base font-semibold text-white">
+              <h3 className="text-base font-semibold text-neutral-900 dark:text-white">
                 {current.bridgeWay.title}
               </h3>
-              <pre className="p-4 bg-white/5 dark:bg-[#08080C] rounded-xl text-xs font-mono text-[#E5E5EA] border border-white/10 dark:border-white/10 whitespace-pre-wrap leading-relaxed">
+              <pre className="p-4 bg-neutral-100/80 dark:bg-black/40 rounded-xl text-xs font-mono text-neutral-800 dark:text-[#E5E5EA] border border-neutral-200/70 dark:border-white/10 whitespace-pre-wrap leading-relaxed">
                 <code>{current.bridgeWay.snippet}</code>
               </pre>
             </div>

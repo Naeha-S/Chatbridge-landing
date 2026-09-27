@@ -329,7 +329,7 @@ const D_METAL: Required<MetalGroup> = { polish: 62, contrast: 108, light: 108 }
 function __OriginkitBase_ChromeCells(props: ChromeCellsProps) {
     const {
         style,
-        background = "#040405",
+        background = "#FBFBFA",
         baseColor = "#989898",
         accentColor = "#FFFFFF",
         speed = 100,

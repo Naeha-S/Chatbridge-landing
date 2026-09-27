@@ -318,7 +318,7 @@ function trackPointer(root: HTMLElement) {
 }
 
 const DEFAULTS = {
-    background: "#0B0A10",
+    background: "#FBFBFA",
     color1: "#FF5FA2",
     color2: "#6C7BFF",
 }

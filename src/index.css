@@ -39,6 +39,12 @@
     scroll-behavior: smooth;
   }
 
+  body {
+    background-color: var(--bg-page);
+    color: var(--text-primary);
+    min-height: 100vh;
+  }
+
   html.dark body {
     background-color: #040405;
     color: #F5F5F7;
@@ -55,107 +61,28 @@
   }
 }
 
-/* Dark mode theme overrides for consistent, high-contrast system palette */
-html.dark .bg-\[\#FBFBFA\],
-html.dark [class*="bg-[#FBFBFA]"] {
-  background-color: #040405 !important;
-}
-
-html.dark .bg-white,
-html.dark [class*="bg-white"] {
-  background-color: #0E0E14 !important;
-}
-
-html.dark .bg-\[\#FAFAFA\],
-html.dark [class*="bg-[#FAFAFA]"] {
-  background-color: #12121A !important;
-}
-
-html.dark .bg-\[\#F5F5F7\],
-html.dark [class*="bg-[#F5F5F7]"],
-html.dark .bg-gray-50,
-html.dark .bg-gray-100 {
-  background-color: #171722 !important;
-}
-
-html.dark .bg-\[\#EBEBED\],
-html.dark [class*="bg-[#EBEBED]"] {
-  background-color: #1F1F2B !important;
-}
-
-html.dark .border-\[\#E5E5EA\],
-html.dark [class*="border-[#E5E5EA]"],
-html.dark .border-gray-200 {
-  border-color: #262633 !important;
-}
-
-html.dark .border-\[\#D1D1D6\],
-html.dark [class*="border-[#D1D1D6]"],
-html.dark .border-gray-300 {
-  border-color: #323242 !important;
-}
-
-html.dark .text-\[\#1D1D1F\],
-html.dark [class*="text-[#1D1D1F]"],
-html.dark .text-black,
-html.dark .text-gray-900 {
-  color: #F5F5F7 !important;
-}
-
-html.dark .text-\[\#515154\],
-html.dark [class*="text-[#515154]"],
-html.dark .text-gray-700,
-html.dark .text-gray-800 {
-  color: #C7C7CC !important;
-}
-
-html.dark .text-\[\#6E6E73\],
-html.dark [class*="text-[#6E6E73]"],
-html.dark .text-gray-500,
-html.dark .text-gray-600 {
-  color: #9E9EA7 !important;
-}
-
-html.dark .text-\[\#86868B\],
-html.dark [class*="text-[#86868B]"],
-html.dark .text-gray-400 {
-  color: #787882 !important;
-}
-
-html.dark .text-\[\#333336\],
-html.dark [class*="text-[#333336]"] {
-  color: #E5E5EA !important;
-}
-
 /* Card & Container distinction in dark mode */
 html.dark input,
 html.dark textarea,
 html.dark select {
-  background-color: #12121A !important;
-  color: #F5F5F7 !important;
-  border-color: #2D2D3B !important;
+  background-color: #12121A;
+  color: #F5F5F7;
+  border-color: #2D2D3B;
 }
 
 html.dark kbd {
-  background-color: #1E1E2A !important;
-  color: #E5E5EA !important;
-  border-color: #353545 !important;
+  background-color: #1E1E2A;
+  color: #E5E5EA;
+  border-color: #353545;
 }
 
 html.dark pre {
-  background-color: #12121A !important;
-  color: #E5E5EA !important;
+  background-color: #12121A;
+  color: #E5E5EA;
 }
 
 html.dark code {
   color: #E5E5EA;
-}
-
-/* Active tab contrast in dark mode */
-html.dark [role="tab"][aria-selected="true"],
-html.dark [role="tab"].bg-white {
-  background-color: #242434 !important;
-  color: #FFFFFF !important;
 }
 
 @keyframes dash {
@@ -164,7 +91,7 @@ html.dark [role="tab"].bg-white {
   }
 }
 
-.animate-\[dash_1s_linear_infinite\] {
+.animate-[dash_1s_linear_infinite] {
   animation: dash 1s linear infinite;
 }
 
@@ -176,3 +103,4 @@ html.dark [role="tab"].bg-white {
     scroll-behavior: auto !important;
   }
 }
+

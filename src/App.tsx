@@ -21,12 +21,11 @@ import { ConversionCTA } from './components/ConversionCTA';
 import { DownloadIcon, ArrowRightIcon } from './components/Icons';
 import { useGsapSmoothScroll, smoothScrollTo } from './hooks/useGsapSmoothScroll';
 import { usePageSeo } from './hooks/usePageSeo';
-import { ChatGPTToClaudeLanding } from './components/ChatGPTToClaudeLanding';
 import { ChatGPTToGeminiLanding } from './components/ChatGPTToGeminiLanding';
 import { ComparisonPage } from './components/ComparisonPage';
-import { SupportedPlatformsPage } from './components/SupportedPlatformsPage';
 import { FAQPage } from './components/FAQPage';
 import { HowItWorksPage } from './components/HowItWorksPage';
+import TabsDemo from './components/tabs-demo';
 
 export default function App() {
   useGsapSmoothScroll();
@@ -143,8 +142,23 @@ export default function App() {
               {/* 3. Interactive Demo Simulator */}
               <InteractiveDemo onOpenInstall={() => setIsInstallOpen(true)} />
 
-              {/* 4. How It Works Pipeline */}
-              <HowItWorks />
+              {/* 4. Technical Architecture: How Continuity Works */}
+              <section id="architecture" className="py-16 md:py-24 border-b border-neutral-200/80 dark:border-white/10 bg-white/60 dark:bg-black/40 backdrop-blur-xl transition-colors">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6">
+                  <div className="text-center max-w-3xl mx-auto mb-6">
+                    <span className="text-xs font-mono uppercase tracking-wider text-[#2997FF] font-semibold">
+                      Technical Architecture
+                    </span>
+                    <h2 className="text-2xl sm:text-4xl font-bold tracking-tight text-[#1D1D1F] dark:text-[#F5F5F7] mt-2">
+                      How Continuity Works
+                    </h2>
+                    <p className="mt-2 text-xs sm:text-sm text-[#86868B] max-w-2xl mx-auto">
+                      Explore the 5-stage client-side pipeline: observation, hybrid RRF vector indexing, hardware AES-256 encryption, token compression, and cross-model injection.
+                    </p>
+                  </div>
+                  <TabsDemo />
+                </div>
+              </section>
 
               {/* 5. Deep Technical Features with Hybrid Retrieval Diagram */}
               <FeaturesSection isDarkMode={isDarkMode} />
@@ -174,13 +188,6 @@ export default function App() {
             />
           )}
 
-          {currentView === 'chatgpt-to-claude' && (
-            <ChatGPTToClaudeLanding
-              onOpenInstall={() => setIsInstallOpen(true)}
-              onNavigateHome={() => setCurrentView('home')}
-            />
-          )}
-
           {currentView === 'chatgpt-to-gemini' && (
             <ChatGPTToGeminiLanding
               onOpenInstall={() => setIsInstallOpen(true)}
@@ -190,13 +197,6 @@ export default function App() {
 
           {currentView === 'comparison' && (
             <ComparisonPage
-              onOpenInstall={() => setIsInstallOpen(true)}
-              onNavigateHome={() => setCurrentView('home')}
-            />
-          )}
-
-          {currentView === 'supported-platforms' && (
-            <SupportedPlatformsPage
               onOpenInstall={() => setIsInstallOpen(true)}
               onNavigateHome={() => setCurrentView('home')}
             />

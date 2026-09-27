@@ -169,7 +169,7 @@ export const BlogGuidesView: React.FC<BlogGuidesViewProps> = ({ initialSlug, onO
                     onClick={() => setSelectedCategory(cat)}
                     className={`px-2.5 py-1 rounded-full text-xs font-medium transition-colors ${
                       selectedCategory === cat
-                        ? 'bg-[#1D1D1F] dark:bg-white text-white dark:text-[#0A0A0D]'
+                        ? 'bg-[#1D1D1F] hover:bg-neutral-800 dark:bg-white dark:hover:bg-neutral-100 text-white dark:text-neutral-950 font-semibold'
                         : 'bg-[#F5F5F7] dark:bg-[#161622] text-[#6E6E73] dark:text-[#A1A1A6] hover:text-[#1D1D1F] dark:hover:text-white hover:bg-[#E5E5EA] dark:hover:bg-[#202030]'
                     }`}
                   >
@@ -228,7 +228,7 @@ export const BlogGuidesView: React.FC<BlogGuidesViewProps> = ({ initialSlug, onO
                     setSearchQuery('');
                     setSelectedCategory('All');
                   }}
-                  className="px-3 py-1.5 bg-[#1D1D1F] dark:bg-white text-white dark:text-[#0A0A0D] rounded-lg text-xs font-medium"
+                  className="px-3 py-1.5 bg-[#1D1D1F] hover:bg-neutral-800 dark:bg-white dark:hover:bg-neutral-100 text-white dark:text-neutral-950 rounded-lg text-xs font-semibold"
                 >
                   Clear search filters
                 </button>
@@ -284,10 +284,10 @@ export const BlogGuidesView: React.FC<BlogGuidesViewProps> = ({ initialSlug, onO
               <button
                 id="sidebar-install-cta-btn"
                 onClick={onOpenInstall}
-                className="w-full py-2 rounded-full bg-[#1D1D1F] dark:bg-white hover:bg-[#333336] dark:hover:bg-[#E5E5EA] text-white dark:text-[#0A0A0D] font-medium text-xs flex items-center justify-center gap-1.5 transition-colors shadow-2xs"
+                className="w-full py-2 rounded-full bg-[#1D1D1F] hover:bg-neutral-800 dark:bg-white dark:hover:bg-neutral-100 text-white dark:text-neutral-950 font-semibold text-xs flex items-center justify-center gap-1.5 transition-colors shadow-2xs"
               >
-                <DownloadIcon className="w-3.5 h-3.5 text-[#0071E3]" />
-                <span>Add to Chrome</span>
+                <DownloadIcon className="w-3.5 h-3.5 text-[#0071E3] dark:text-[#0071E3]" />
+                <span className="text-white dark:text-neutral-950 font-semibold">Add to Chrome</span>
               </button>
             </div>
           </div>
@@ -379,10 +379,10 @@ export const BlogGuidesView: React.FC<BlogGuidesViewProps> = ({ initialSlug, onO
               </div>
               <button
                 onClick={onOpenInstall}
-                className="px-4 py-2 rounded-full bg-[#1D1D1F] dark:bg-white hover:bg-[#333336] dark:hover:bg-[#E5E5EA] text-white dark:text-[#0A0A0D] font-medium text-xs inline-flex items-center gap-1.5 shrink-0 transition-colors shadow-2xs"
+                className="px-4 py-2 rounded-full bg-[#1D1D1F] hover:bg-neutral-800 dark:bg-white dark:hover:bg-neutral-100 text-white dark:text-neutral-950 font-semibold text-xs inline-flex items-center gap-1.5 shrink-0 transition-colors shadow-2xs"
               >
-                <DownloadIcon className="w-3.5 h-3.5 text-[#0071E3]" />
-                <span>Add to Chrome</span>
+                <DownloadIcon className="w-3.5 h-3.5 text-[#0071E3] dark:text-[#0071E3]" />
+                <span className="text-white dark:text-neutral-950 font-semibold">Add to Chrome</span>
               </button>
             </div>
           </div>

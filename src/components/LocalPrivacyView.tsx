@@ -136,7 +136,7 @@ export const LocalPrivacyView: React.FC = () => {
             onClick={() => setActiveTab('visualizer')}
             className={`px-4 py-2 rounded-xl text-xs font-medium transition-all ${
               activeTab === 'visualizer'
-                ? 'bg-[#1D1D1F] dark:bg-white text-white dark:text-[#0A0A0D] shadow-xs'
+                ? 'bg-[#1D1D1F] hover:bg-neutral-800 dark:bg-white dark:hover:bg-neutral-100 text-white dark:text-neutral-950 font-semibold shadow-xs'
                 : 'bg-white dark:bg-[#14141E] text-[#515154] dark:text-[#A1A1A6] border border-[#E5E5EA] dark:border-[#262638] hover:bg-[#F5F5F7] dark:hover:bg-[#1E1E2C]'
             }`}
           >
@@ -148,7 +148,7 @@ export const LocalPrivacyView: React.FC = () => {
             onClick={() => setActiveTab('threat-model')}
             className={`px-4 py-2 rounded-xl text-xs font-medium transition-all ${
               activeTab === 'threat-model'
-                ? 'bg-[#1D1D1F] dark:bg-white text-white dark:text-[#0A0A0D] shadow-xs'
+                ? 'bg-[#1D1D1F] hover:bg-neutral-800 dark:bg-white dark:hover:bg-neutral-100 text-white dark:text-neutral-950 font-semibold shadow-xs'
                 : 'bg-white dark:bg-[#14141E] text-[#515154] dark:text-[#A1A1A6] border border-[#E5E5EA] dark:border-[#262638] hover:bg-[#F5F5F7] dark:hover:bg-[#1E1E2C]'
             }`}
           >
@@ -160,7 +160,7 @@ export const LocalPrivacyView: React.FC = () => {
             onClick={() => setActiveTab('machine-spec')}
             className={`px-4 py-2 rounded-xl text-xs font-medium transition-all ${
               activeTab === 'machine-spec'
-                ? 'bg-[#1D1D1F] dark:bg-white text-white dark:text-[#0A0A0D] shadow-xs'
+                ? 'bg-[#1D1D1F] hover:bg-neutral-800 dark:bg-white dark:hover:bg-neutral-100 text-white dark:text-neutral-950 font-semibold shadow-xs'
                 : 'bg-white dark:bg-[#14141E] text-[#515154] dark:text-[#A1A1A6] border border-[#E5E5EA] dark:border-[#262638] hover:bg-[#F5F5F7] dark:hover:bg-[#1E1E2C]'
             }`}
           >
@@ -493,7 +493,7 @@ export const LocalPrivacyView: React.FC = () => {
                 <button
                   id="privacy-copy-spec-btn"
                   onClick={handleCopySpec}
-                  className="px-3.5 py-2 rounded-xl bg-[#1D1D1F] dark:bg-white hover:bg-[#333336] dark:hover:bg-[#E5E5EA] text-white dark:text-[#0A0A0D] text-xs font-medium inline-flex items-center gap-1.5 transition-colors self-start sm:self-auto"
+                  className="px-3.5 py-2 rounded-xl bg-[#1D1D1F] hover:bg-neutral-800 dark:bg-white dark:hover:bg-neutral-100 text-white dark:text-neutral-950 font-semibold text-xs inline-flex items-center gap-1.5 transition-colors self-start sm:self-auto"
                 >
                   {copiedSpec ? <CheckIcon className="w-3.5 h-3.5" /> : <CopyIcon className="w-3.5 h-3.5" />}
                   <span>{copiedSpec ? 'Copied Specification' : 'Copy JSON Spec'}</span>

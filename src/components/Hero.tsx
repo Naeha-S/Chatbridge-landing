@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { DownloadIcon, ArrowRightIcon, CopyIcon, CheckIcon } from './Icons';
+import { ChatBridgeLogo } from './Logo';
 import ChromeCellsDark from './originkit/ui/chrome-cells-custom-style';
 import ChromeCellsLight from './originkit/ui/chrome-cells-custom-style-2';
 import { MOTION_VARIANTS } from '../theme';
@@ -77,7 +78,7 @@ Next Step: Create a 3-bullet takeaway slide for tomorrow's team sync.`,
   };
 
   return (
-    <section className="relative pt-16 pb-20 md:pt-24 md:pb-28 border-b border-[#E5E5EA] dark:border-[#22222E] bg-[#FBFBFA] dark:bg-[#040405] text-[#1D1D1F] dark:text-[#F5F5F7] transition-colors overflow-hidden">
+    <section className="relative pt-16 pb-20 md:pt-24 md:pb-28 border-b border-neutral-200/80 dark:border-white/10 bg-white/60 dark:bg-black/40 backdrop-blur-xl text-[#1D1D1F] dark:text-[#F5F5F7] transition-colors overflow-hidden">
       {/* Originkit Chrome Cells Living WebGL Background */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none z-0 select-none">
         <div className={`w-full h-full transition-opacity duration-700 ${
@@ -97,6 +98,9 @@ Next Step: Create a 3-bullet takeaway slide for tomorrow's team sync.`,
             />
           ) : (
             <ChromeCellsLight
+              background="#FBFBFA"
+              baseColor="#C7C7CC"
+              accentColor="#0071E3"
               style={{
                 position: 'absolute',
                 inset: 0,
@@ -120,6 +124,14 @@ Next Step: Create a 3-bullet takeaway slide for tomorrow's team sync.`,
           animate="visible"
           className="max-w-3xl mx-auto text-center space-y-4"
         >
+          <motion.div
+            variants={MOTION_VARIANTS.itemFadeInUp}
+            className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#0071E3]/10 dark:bg-[#38BDF8]/10 border border-[#0071E3]/20 dark:border-[#38BDF8]/20 text-[#0071E3] dark:text-[#38BDF8] text-xs font-medium mb-1 backdrop-blur-md shadow-xs"
+          >
+            <ChatBridgeLogo size={16} className="w-4 h-4" />
+            <span className="font-medium">Cross-Model Local Memory &bull; ChatGPT &bull; Claude &bull; Gemini</span>
+          </motion.div>
+
           <motion.h1
             variants={MOTION_VARIANTS.itemFadeInUp}
             className="text-4xl sm:text-5xl md:text-6xl font-semibold tracking-tight text-[#1D1D1F] dark:text-[#F5F5F7] leading-tight"
@@ -144,10 +156,10 @@ Next Step: Create a 3-bullet takeaway slide for tomorrow's team sync.`,
               href={CHROME_WEBSTORE_URL}
               target="_blank"
               rel="noopener noreferrer"
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-7 py-3.5 rounded-full text-sm font-semibold transition-all shadow-md hover:scale-[1.02] active:scale-[0.98] bg-[#1D1D1F] dark:bg-white text-white dark:text-[#0A0A0D] hover:bg-[#333336] dark:hover:bg-[#F2F2F7]"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-7 py-3.5 rounded-full text-sm font-semibold transition-all shadow-md hover:scale-[1.02] active:scale-[0.98] bg-[#1D1D1F] hover:bg-neutral-800 dark:bg-white dark:hover:bg-neutral-100 text-white dark:text-neutral-950"
             >
               <DownloadIcon className="w-4 h-4 text-[#0071E3] dark:text-[#0071E3]" />
-              <span>Add to Chrome — It's Free</span>
+              <span className="text-white dark:text-neutral-950 font-semibold">Add to Chrome — It's Free</span>
             </a>
 
             <button
@@ -203,9 +215,9 @@ Next Step: Create a 3-bullet takeaway slide for tomorrow's team sync.`,
           viewport={{ once: true, margin: '-50px' }}
           className="mt-20 md:mt-28 max-w-4xl mx-auto"
         >
-          <div className="rounded-2xl border shadow-xl overflow-hidden backdrop-blur-md transition-colors bg-white/95 dark:bg-[#0D0D14]/95 border-[#E5E5EA] dark:border-[#28283A]">
+          <div className="rounded-2xl border shadow-xl overflow-hidden backdrop-blur-xl transition-colors bg-white/70 dark:bg-black/60 border-neutral-200/80 dark:border-white/10">
             {/* Window Chrome Header */}
-            <div className="px-4 py-3 border-b border-[#E5E5EA] dark:border-[#22222E] bg-[#F5F5F7] dark:bg-[#14141E] flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+            <div className="px-4 py-3 border-b border-neutral-200/80 dark:border-white/10 bg-white/80 dark:bg-black/70 backdrop-blur-md flex flex-col sm:flex-row sm:items-center justify-between gap-2">
               <div className="flex items-center gap-2">
                 <div className="flex items-center gap-1.5" aria-hidden="true">
                   <span className="w-2.5 h-2.5 rounded-full bg-[#FF5F56]/80" />

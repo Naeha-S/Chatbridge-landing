@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { DownloadIcon, CloseIcon, CheckIcon, ExternalLinkIcon, CopyIcon } from './Icons';
+import { ChatBridgeLogo } from './Logo';
 import { CHROME_WEBSTORE_URL } from '../constants/links';
 
 interface InstallModalProps {
@@ -46,17 +47,22 @@ export const InstallModal: React.FC<InstallModalProps> = ({
 
         {/* Extension Info Header */}
         <div className="space-y-1.5 pb-4 border-b border-[#E5E5EA] dark:border-[#222232] pr-8">
-          <div className="flex items-center gap-2">
-            <h3 className="text-xl font-semibold tracking-tight text-[#1D1D1F] dark:text-white">
-              Install ChatBridge Extension
-            </h3>
-            <span className="text-[11px] font-mono text-[#6E6E73] dark:text-[#8E8E98] bg-[#F5F5F7] dark:bg-[#1A1A28] px-2 py-0.5 rounded border border-[#E5E5EA] dark:border-[#28283C]">
-              v0.4.2
-            </span>
+          <div className="flex items-center gap-3">
+            <ChatBridgeLogo size={32} className="w-8 h-8" />
+            <div>
+              <div className="flex items-center gap-2">
+                <h3 className="text-xl font-semibold tracking-tight text-[#1D1D1F] dark:text-white">
+                  Install ChatBridge Extension
+                </h3>
+                <span className="text-[11px] font-mono text-[#6E6E73] dark:text-[#8E8E98] bg-[#F5F5F7] dark:bg-[#1A1A28] px-2 py-0.5 rounded border border-[#E5E5EA] dark:border-[#28283C]">
+                  v0.4.2
+                </span>
+              </div>
+              <p className="text-xs text-[#515154] dark:text-[#A1A1A6] mt-0.5">
+                Official Chrome Web Store package for ChatGPT, Claude, and Gemini continuity.
+              </p>
+            </div>
           </div>
-          <p className="text-xs text-[#515154] dark:text-[#A1A1A6]">
-            Official Chrome Web Store package for ChatGPT, Claude, and Gemini continuity.
-          </p>
         </div>
 
         {/* Primary Action Button - Working Chrome Web Store Link */}
@@ -66,10 +72,10 @@ export const InstallModal: React.FC<InstallModalProps> = ({
             href={CHROME_WEBSTORE_URL}
             target="_blank"
             rel="noopener noreferrer"
-            className="w-full py-3.5 px-6 rounded-xl bg-[#1D1D1F] dark:bg-white hover:bg-[#333336] dark:hover:bg-[#E5E5EA] text-white dark:text-[#0A0A0D] font-medium text-sm inline-flex items-center justify-center gap-2.5 transition-all shadow-md hover:shadow-lg group"
+            className="w-full py-3.5 px-6 rounded-xl bg-[#1D1D1F] hover:bg-neutral-800 dark:bg-white dark:hover:bg-neutral-100 text-white dark:text-neutral-950 font-semibold text-sm inline-flex items-center justify-center gap-2.5 transition-all shadow-md hover:shadow-lg group"
           >
-            <DownloadIcon className="w-4 h-4 text-[#0071E3]" />
-            <span>Open in Chrome Web Store</span>
+            <DownloadIcon className="w-4 h-4 text-[#0071E3] dark:text-[#0071E3]" />
+            <span className="text-white dark:text-neutral-950 font-semibold">Open in Chrome Web Store</span>
             <ExternalLinkIcon className="w-3.5 h-3.5 opacity-60 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
           </a>
 

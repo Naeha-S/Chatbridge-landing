@@ -93,5 +93,8 @@ export interface FeedbackSubmission {
   message: string;
   email?: string;
   rating?: number;
+  severity?: 'minor' | 'moderate' | 'critical';
+  tags?: string[];
+  diagnosticIncluded?: boolean;
   timestamp: string;
 }

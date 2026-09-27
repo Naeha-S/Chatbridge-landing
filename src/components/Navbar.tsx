@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { PageView } from '../types';
 import { DownloadIcon, CloseIcon, SunIcon, MoonIcon } from './Icons';
+import { ChatBridgeLogo } from './Logo';
 import { CHROME_WEBSTORE_URL } from '../constants/links';
 import { smoothScrollTo } from '../hooks/useGsapSmoothScroll';
 
@@ -27,8 +28,6 @@ export const Navbar: React.FC<NavbarProps> = ({
   const navItems: { label: string; view: PageView }[] = [
     { label: 'Overview', view: 'home' },
     { label: 'How It Works', view: 'how-it-works' },
-    { label: 'ChatGPT → Claude', view: 'chatgpt-to-claude' },
-    { label: 'Platforms', view: 'supported-platforms' },
     { label: 'Compare', view: 'comparison' },
     { label: 'FAQ', view: 'faq' },
     { label: 'Privacy', view: 'local-privacy' },
@@ -49,8 +48,10 @@ export const Navbar: React.FC<NavbarProps> = ({
           <button
             id="nav-logo-btn"
             onClick={() => handleNavClick('home')}
-            className="flex items-center gap-2 text-left focus:outline-none group"
+            className="flex items-center gap-2.5 text-left focus:outline-none group focus-visible:ring-2 focus-visible:ring-[#0071E3] rounded-lg p-0.5"
+            aria-label="ChatBridge Homepage"
           >
+            <ChatBridgeLogo size={26} className="w-6.5 h-6.5" />
             <span className="font-semibold text-sm tracking-tight text-[#1D1D1F] dark:text-white group-hover:opacity-85 transition-opacity">
               ChatBridge
             </span>
@@ -116,10 +117,10 @@ export const Navbar: React.FC<NavbarProps> = ({
             href={CHROME_WEBSTORE_URL}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-medium transition-all shadow-xs bg-[#1D1D1F] dark:bg-white text-white dark:text-[#0A0A0D] hover:bg-[#333336] dark:hover:bg-[#F2F2F7] dark:font-semibold"
+            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all shadow-xs bg-[#1D1D1F] hover:bg-neutral-800 dark:bg-white dark:hover:bg-neutral-100 text-white dark:text-neutral-950"
           >
-            <DownloadIcon className="w-3.5 h-3.5 text-[#0071E3]" />
-            <span>Add to Chrome</span>
+            <DownloadIcon className="w-3.5 h-3.5 text-[#0071E3] dark:text-[#0071E3]" />
+            <span className="text-white dark:text-neutral-950 font-semibold">Add to Chrome</span>
           </a>
 
           {/* Mobile Menu Trigger */}
@@ -162,10 +163,10 @@ export const Navbar: React.FC<NavbarProps> = ({
             href={CHROME_WEBSTORE_URL}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center justify-center gap-2 w-full mt-2 px-4 py-2.5 rounded-xl bg-[#1D1D1F] dark:bg-white text-white dark:text-[#0A0A0D] text-xs font-semibold"
+            className="inline-flex items-center justify-center gap-2 w-full mt-2 px-4 py-2.5 rounded-xl bg-[#1D1D1F] hover:bg-neutral-800 dark:bg-white dark:hover:bg-neutral-100 text-white dark:text-neutral-950 text-xs font-semibold"
           >
-            <DownloadIcon className="w-3.5 h-3.5 text-[#0071E3]" />
-            <span>Open in Chrome Web Store</span>
+            <DownloadIcon className="w-3.5 h-3.5 text-[#0071E3] dark:text-[#0071E3]" />
+            <span className="text-white dark:text-neutral-950">Open in Chrome Web Store</span>
           </a>
         </div>
       )}
