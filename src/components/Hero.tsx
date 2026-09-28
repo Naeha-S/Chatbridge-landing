@@ -1,12 +1,19 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { DownloadIcon, ArrowRightIcon, CopyIcon, CheckIcon } from './Icons';
+import { DownloadIcon, ArrowRightIcon, CheckIcon } from './Icons';
 import { ChatBridgeLogo } from './Logo';
 import ChromeCellsDark from './originkit/ui/chrome-cells-custom-style';
 import ChromeCellsLight from './originkit/ui/chrome-cells-custom-style-2';
 import { MOTION_VARIANTS } from '../theme';
-import { useToast } from '../context/ToastContext';
 import { CHROME_WEBSTORE_URL } from '../constants/links';
+import {
+  IconSparkles,
+  IconShieldCheck,
+  IconFileCode,
+  IconSettings,
+  IconCheck,
+  IconBrandChrome
+} from '@tabler/icons-react';
 
 interface HeroProps {
   onOpenInstall: () => void;
@@ -20,66 +27,13 @@ interface HeroProps {
 export const Hero: React.FC<HeroProps> = ({
   onOpenInstall,
   onScrollToDemo,
-  onOpenOnboarding,
-  onExploreEngineering,
   isDarkMode = true
 }) => {
-  const [activeTab, setActiveTab] = useState<'writing' | 'coding' | 'research'>('writing');
-  const [copied, setCopied] = useState(false);
-
-  const contextPresets = {
-    writing: {
-      originModel: 'ChatGPT',
-      targetModel: 'Claude',
-      label: 'Email & Blog Tone Polish',
-      scenario: 'You drafted an email announcement in ChatGPT and want Claude to polish the tone.',
-      payload: `[ChatBridge Context]
-Project: Q3 Product Launch Email & Social Copy
-Audience: Existing newsletter subscribers (friendly & punchy tone)
-Key Points: Free tier launch, zero-setup Chrome extension, 1-click continuity
-Next Step: Polish the opening hook and generate 3 compelling email subject lines.`,
-      handoffTime: 'Transferred in 0.1s'
-    },
-    coding: {
-      originModel: 'Claude',
-      targetModel: 'ChatGPT',
-      label: 'React Component & Tests',
-      scenario: 'Claude generated a React component; now you want ChatGPT to add unit tests.',
-      payload: `[ChatBridge Context]
-Component: Interactive pricing tier card with monthly/annual toggle
-Stack: Next.js 14, React 18, Tailwind CSS
-Requirements: Add Vitest tests for discount calculation and accessible ARIA attributes.`,
-      handoffTime: 'Transferred in 0.1s'
-    },
-    research: {
-      originModel: 'Gemini',
-      targetModel: 'Claude',
-      label: 'Executive Summary Brief',
-      scenario: 'Gemini synthesized web research; now you want Claude to draft the executive summary.',
-      payload: `[ChatBridge Context]
-Research Topic: B2C SaaS browser extension retention benchmarks
-Key Findings: 38% higher retention when onboarding takes <60s; privacy-first positioning drives organic word of mouth.
-Next Step: Create a 3-bullet takeaway slide for tomorrow's team sync.`,
-      handoffTime: 'Transferred in 0.1s'
-    }
-  };
-
-  const { toast } = useToast();
-  const currentPreset = contextPresets[activeTab];
-
-  const handleCopyPayload = () => {
-    navigator.clipboard.writeText(currentPreset.payload);
-    setCopied(true);
-    toast.copied(
-      `Context for ${currentPreset.targetModel} copied!`,
-      `Ready to paste directly into ${currentPreset.targetModel} with ⌘+Shift+K.`
-    );
-    setTimeout(() => setCopied(false), 2000);
-  };
+  const [activeAgentTab, setActiveAgentTab] = useState<'all' | 'agent1' | 'agent2' | 'agent3'>('all');
 
   return (
-    <section className="relative pt-16 pb-20 md:pt-24 md:pb-28 border-b border-neutral-200/80 dark:border-white/10 bg-white/60 dark:bg-black/40 backdrop-blur-xl text-[#1D1D1F] dark:text-[#F5F5F7] transition-colors overflow-hidden">
-      {/* Originkit Chrome Cells Living WebGL Background */}
+    <section className="relative pt-12 pb-16 md:pt-20 md:pb-24 border-b border-neutral-200/80 dark:border-white/10 bg-white/60 dark:bg-black/40 backdrop-blur-xl text-[#1D1D1F] dark:text-[#F5F5F7] transition-colors overflow-hidden">
+      {/* Originkit Chrome Cells Living WebGL Background (Preserved as requested) */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none z-0 select-none">
         <div className={`w-full h-full transition-opacity duration-700 ${
           isDarkMode ? 'opacity-70' : 'opacity-40'
@@ -112,244 +66,235 @@ Next Step: Create a 3-bullet takeaway slide for tomorrow's team sync.`,
         </div>
       </div>
 
-      <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6">
-        {/* Main Hero Staggered Typography Group */}
-        <motion.div
-          variants={MOTION_VARIANTS.containerStagger}
-          initial="hidden"
-          animate="visible"
-          className="text-center max-w-3xl mx-auto space-y-6"
-        >
-          {/* Subtle Privacy Badge */}
-          <motion.div variants={MOTION_VARIANTS.itemFadeInUp}>
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/80 dark:bg-black/50 backdrop-blur-md border border-neutral-200/80 dark:border-white/10 text-xs font-mono text-neutral-700 dark:text-neutral-300 shadow-xs">
-              <span className="w-2 h-2 rounded-full bg-[#0071E3] dark:bg-[#2997FF] animate-pulse" />
-              <span>Client-Side Extension • Zero Cloud Telemetry</span>
-            </div>
-          </motion.div>
-
-          {/* Main Headline */}
-          <motion.h1
-            variants={MOTION_VARIANTS.itemFadeInUp}
-            className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight text-[#1D1D1F] dark:text-white leading-[1.08]"
-          >
-            Bridge AI conversations.{' '}
-            <span className="bg-gradient-to-r from-[#0071E3] via-[#2997FF] to-[#30D158] bg-clip-text text-transparent">
-              Zero re-typing.
-            </span>
-          </motion.h1>
-
-          {/* Subtitle */}
-          <motion.p
-            variants={MOTION_VARIANTS.itemFadeInUp}
-            className="text-base sm:text-lg text-neutral-600 dark:text-neutral-300 leading-relaxed max-w-2xl mx-auto font-sans"
-          >
-            Carry active research context, code specs, and reasoning chains between ChatGPT, Claude 3.7, and Google Gemini in one keystroke without copying walls of text.
-          </motion.p>
-
-          {/* Call-to-Action Buttons */}
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* 2-Column Hero Layout matching the redesigned mock */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-center">
+          
+          {/* LEFT COLUMN: Typography & CTAs & Trust Metrics */}
           <motion.div
-            variants={MOTION_VARIANTS.itemFadeInUp}
-            className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-3"
+            variants={MOTION_VARIANTS.containerStagger}
+            initial="hidden"
+            animate="visible"
+            className="lg:col-span-6 space-y-6 text-left"
           >
-            <a
-              id="hero-install-chrome-btn"
-              href={CHROME_WEBSTORE_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              onClick={onOpenInstall}
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-full bg-[#1D1D1F] hover:bg-black dark:bg-white dark:hover:bg-neutral-100 text-white dark:text-neutral-950 font-semibold text-sm shadow-md transition-all hover:scale-105 active:scale-95"
+            {/* Top Spacing Container - Preserved spacing for headline alignment */}
+            <div className="h-6 flex items-center gap-2" aria-hidden="true" />
+
+            {/* Main Headline */}
+            <motion.h1
+              variants={MOTION_VARIANTS.itemFadeInUp}
+              className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-[#1D1D1F] dark:text-white leading-[1.08] font-sans"
             >
-              <DownloadIcon className="w-4 h-4 text-[#0071E3] dark:text-[#0071E3]" />
-              <span>Add to Chrome (Free)</span>
-            </a>
-
-            <button
-              id="hero-try-demo-btn"
-              onClick={onScrollToDemo}
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-full bg-white/80 dark:bg-black/50 hover:bg-neutral-100 dark:hover:bg-white/10 border border-neutral-300 dark:border-white/15 text-[#1D1D1F] dark:text-neutral-200 font-medium text-sm transition-all backdrop-blur-md cursor-pointer"
-            >
-              <span>See Interactive Demo</span>
-              <ArrowRightIcon className="w-4 h-4 text-neutral-500" />
-            </button>
-          </motion.div>
-
-          {/* Value Props Micro-Ribbon */}
-          <motion.div
-            variants={MOTION_VARIANTS.itemFadeInUp}
-            className="pt-1 flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-xs text-neutral-500 dark:text-neutral-400 font-mono"
-          >
-            <span>Free & Open Source</span>
-            <span>•</span>
-            <span>No account or signup needed</span>
-            <span>•</span>
-            <span>100% on your device</span>
-          </motion.div>
-
-          {/* Supported AI Tools Ribbon */}
-          <motion.div
-            variants={MOTION_VARIANTS.itemFadeInUp}
-            className="pt-4 flex flex-wrap items-center justify-center gap-2 text-xs"
-          >
-            <span className="text-[11px] font-medium mr-1 text-neutral-500 dark:text-neutral-400">
-              Works seamlessly on:
-            </span>
-            {['ChatGPT', 'Claude', 'Google Gemini', 'DeepSeek', 'Perplexity'].map((tool) => (
-              <span
-                key={tool}
-                className="px-3 py-1 rounded-full font-medium border transition-colors bg-white/80 dark:bg-[#14141E] border-neutral-200/80 dark:border-white/10 text-neutral-700 dark:text-neutral-300 shadow-2xs"
-              >
-                {tool}
+              Bridge AI conversations.{' '}
+              <span className="block bg-gradient-to-r from-[#0071E3] via-[#00A3FF] to-[#00F2FE] bg-clip-text text-transparent">
+                Zero re-typing.
               </span>
-            ))}
+            </motion.h1>
+
+            {/* Subtitle */}
+            <motion.p
+              variants={MOTION_VARIANTS.itemFadeInUp}
+              className="text-base sm:text-lg text-neutral-700 dark:text-neutral-300 leading-relaxed max-w-xl font-sans"
+            >
+              Carry active research context, code specs, files, and instructions between different AI chatbots — without copying walls of text.
+            </motion.p>
+
+            {/* Action Buttons */}
+            <motion.div
+              variants={MOTION_VARIANTS.itemFadeInUp}
+              className="pt-2 flex flex-wrap items-center gap-4"
+            >
+              {/* Primary CTA: Glowing Pill */}
+              <a
+                id="hero-install-chrome-btn"
+                href={CHROME_WEBSTORE_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={onOpenInstall}
+                className="inline-flex items-center gap-2.5 px-6 py-3.5 rounded-full bg-[#1D1D1F] hover:bg-black dark:bg-[#121824] dark:hover:bg-[#1A2234] border border-neutral-800 dark:border-[#00F2FE]/50 text-white font-semibold text-sm shadow-lg shadow-black/10 dark:shadow-[#00F2FE]/10 transition-all hover:scale-105 active:scale-95 backdrop-blur-md group"
+              >
+                <div className="w-5 h-5 rounded-full bg-white dark:bg-black/60 flex items-center justify-center p-0.5">
+                  <IconBrandChrome className="w-4 h-4 text-[#0071E3] dark:text-[#00F2FE]" />
+                </div>
+                <span>Add to Chrome (Free)</span>
+                <ArrowRightIcon className="w-4 h-4 text-[#00A3FF] dark:text-[#00F2FE] group-hover:translate-x-0.5 transition-transform" />
+              </a>
+
+              {/* Secondary CTA: Text link */}
+              <button
+                id="hero-try-demo-btn"
+                onClick={onScrollToDemo}
+                className="inline-flex items-center gap-2 px-4 py-3 text-neutral-800 dark:text-neutral-200 hover:text-[#0071E3] dark:hover:text-[#00F2FE] font-medium text-sm transition-colors cursor-pointer group"
+              >
+                <span>See it in action</span>
+                <ArrowRightIcon className="w-4 h-4 text-neutral-500 group-hover:text-[#0071E3] dark:group-hover:text-[#00F2FE] group-hover:translate-x-0.5 transition-transform" />
+              </button>
+            </motion.div>
+
+            {/* Trusted Early Adopters Micro Ribbon */}
+            <motion.div
+              variants={MOTION_VARIANTS.itemFadeInUp}
+              className="pt-6 border-t border-neutral-200/80 dark:border-white/10 space-y-3"
+            >
+              <span className="text-[10px] font-mono uppercase tracking-widest text-neutral-600 dark:text-neutral-400 block font-semibold">
+                TRUSTED BY EARLY ADOPTERS
+              </span>
+
+              <div className="flex flex-wrap items-center gap-x-6 gap-y-3 text-xs">
+                <div className="flex items-baseline gap-1.5">
+                  <span className="text-base font-bold text-[#1D1D1F] dark:text-white font-mono">3</span>
+                  <span className="text-neutral-600 dark:text-neutral-400">AI models</span>
+                </div>
+                <div className="h-4 w-px bg-neutral-200 dark:bg-white/15" />
+                <div className="flex items-baseline gap-1.5">
+                  <span className="text-base font-bold text-[#1D1D1F] dark:text-white font-mono">1</span>
+                  <span className="text-neutral-600 dark:text-neutral-400">seamless flow</span>
+                </div>
+                <div className="h-4 w-px bg-neutral-200 dark:bg-white/15" />
+                <div className="flex items-baseline gap-1.5">
+                  <span className="text-base font-bold text-[#0071E3] dark:text-[#00F2FE] font-mono">100%</span>
+                  <span className="text-neutral-600 dark:text-neutral-400">on your device</span>
+                </div>
+                <div className="h-4 w-px bg-neutral-200 dark:bg-white/15 hidden sm:block" />
+                <div className="flex items-center gap-1.5 text-neutral-700 dark:text-neutral-300 font-medium">
+                  <IconShieldCheck className="w-4 h-4 text-[#0071E3] dark:text-[#00F2FE]" />
+                  <span>No data leaves your device</span>
+                </div>
+              </div>
+            </motion.div>
           </motion.div>
-        </motion.div>
 
-        {/* Product Visual Container: Instant Cross-Tab AI Handoff Liquid Glass Card */}
-        <motion.div
-          variants={MOTION_VARIANTS.cardScaleReveal}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: '-50px' }}
-          className="mt-16 md:mt-24 max-w-4xl mx-auto relative group"
-        >
-          {/* Ambient Radial Background Glow */}
-          <div className="absolute -inset-1 bg-gradient-to-r from-[#0071E3]/20 via-[#2997FF]/20 to-[#30D158]/20 rounded-3xl blur-xl opacity-60 group-hover:opacity-80 transition-opacity pointer-events-none" />
+          {/* RIGHT COLUMN: Interactive Agent Handoff Window Mockup */}
+          <motion.div
+            variants={MOTION_VARIANTS.cardScaleReveal}
+            initial="hidden"
+            animate="visible"
+            className="lg:col-span-6 relative"
+          >
+            {/* Ambient Radial Background Glow */}
+            <div className="absolute -inset-1 bg-gradient-to-r from-[#0071E3]/20 via-[#00F2FE]/20 to-[#7C3AED]/20 rounded-3xl blur-2xl opacity-70 pointer-events-none" />
 
-          <div className="relative rounded-3xl border border-neutral-200/80 dark:border-white/15 shadow-2xl overflow-hidden backdrop-blur-2xl transition-colors bg-white/80 dark:bg-black/70">
-            {/* Window Chrome Header */}
-            <div className="px-5 py-3.5 border-b border-neutral-200/80 dark:border-white/10 bg-white/90 dark:bg-black/80 backdrop-blur-md flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-              <div className="flex items-center gap-2.5">
-                <div className="flex items-center gap-1.5" aria-hidden="true">
-                  <span className="w-2.5 h-2.5 rounded-full bg-[#FF5F56]" />
-                  <span className="w-2.5 h-2.5 rounded-full bg-[#FFBD2E]" />
-                  <span className="w-2.5 h-2.5 rounded-full bg-[#27C93F]" />
+            {/* Window Container */}
+            <div className="relative rounded-2xl border border-neutral-200/80 dark:border-white/15 shadow-2xl overflow-hidden bg-white/90 dark:bg-[#090D16]/90 backdrop-blur-2xl transition-colors text-neutral-900 dark:text-white">
+              
+              {/* Window Header */}
+              <div className="px-4 py-3 border-b border-neutral-200/80 dark:border-white/10 bg-neutral-100/90 dark:bg-[#080B12]/90 backdrop-blur-md flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-1.5" aria-hidden="true">
+                    <span className="w-2.5 h-2.5 rounded-full bg-[#FF5F56]" />
+                    <span className="w-2.5 h-2.5 rounded-full bg-[#FFBD2E]" />
+                    <span className="w-2.5 h-2.5 rounded-full bg-[#27C93F]" />
+                  </div>
+                  <div className="flex items-center gap-2 ml-1">
+                    <ChatBridgeLogo size={18} className="w-4.5 h-4.5" />
+                    <span className="text-xs font-mono font-bold text-neutral-800 dark:text-white">
+                      ChatBridge
+                    </span>
+                  </div>
                 </div>
-                <div className="flex items-center gap-2 ml-1">
-                  <ChatBridgeLogo size={18} className="w-4.5 h-4.5" />
-                  <span className="text-xs font-mono font-semibold text-[#1D1D1F] dark:text-white">
-                    Instant Cross-Tab AI Handoff
-                  </span>
+
+                <div className="flex items-center gap-2.5">
+                  <div className="flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[#00F2FE]/10 text-[#00F2FE] border border-[#00F2FE]/25 text-[11px] font-mono">
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#00F2FE] animate-pulse" />
+                    <span>Handoff Active</span>
+                  </div>
+                  <IconSettings className="w-3.5 h-3.5 text-neutral-400 hover:text-white cursor-pointer transition-colors" />
                 </div>
               </div>
 
-              {/* Scenario Toggle Tabs */}
-              <div className="flex items-center gap-1 p-1 rounded-xl text-xs font-medium border border-neutral-200/80 dark:border-white/10 bg-neutral-100/80 dark:bg-[#1A1A24] self-start sm:self-auto" role="tablist">
-                {(['writing', 'coding', 'research'] as const).map((tab) => (
-                  <button
-                    key={tab}
-                    role="tab"
-                    aria-selected={activeTab === tab}
-                    onClick={() => setActiveTab(tab)}
-                    className={`px-3 py-1.5 rounded-lg transition-all text-xs cursor-pointer ${
-                      activeTab === tab
-                        ? 'bg-white dark:bg-[#2A2A3E] text-[#0071E3] dark:text-[#2997FF] font-bold shadow-xs border border-neutral-200/60 dark:border-white/10'
-                        : 'text-neutral-500 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white'
-                    }`}
-                  >
-                    {tab === 'writing' ? 'Writing Polish' : tab === 'coding' ? 'Web App Dev' : 'Research Brief'}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Product Body with AnimatePresence */}
-            <div className="p-6 sm:p-8 space-y-5">
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={activeTab}
-                  variants={MOTION_VARIANTS.tabContentFade}
-                  initial="hidden"
-                  animate="visible"
-                  exit="exit"
-                  className="space-y-5"
-                >
-                  {/* Transfer banner */}
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3.5 rounded-2xl border bg-neutral-50 dark:bg-[#12121C] border-neutral-200/80 dark:border-white/10">
-                    <div className="flex flex-wrap items-center gap-2.5">
-                      <span className="px-3 py-1 rounded-lg text-xs font-bold bg-white dark:bg-[#222232] text-neutral-900 dark:text-white shadow-2xs border border-neutral-200/80 dark:border-white/10">
-                        {currentPreset.originModel}
-                      </span>
-                      <div className="flex items-center gap-1 text-[#0071E3] dark:text-[#2997FF]">
-                        <span className="w-1.5 h-1.5 rounded-full bg-[#0071E3] dark:bg-[#2997FF] animate-ping" />
-                        <ArrowRightIcon className="w-3.5 h-3.5" />
-                      </div>
-                      <span className="px-3 py-1 rounded-lg text-xs font-bold bg-[#0071E3] text-white shadow-2xs">
-                        {currentPreset.targetModel}
-                      </span>
-                      <span className="text-xs font-semibold text-neutral-700 dark:text-neutral-300 ml-1">
-                        {currentPreset.label}
-                      </span>
-                    </div>
-
-                    <div className="flex items-center gap-2 text-xs font-mono font-semibold text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 px-2.5 py-1 rounded-full border border-emerald-500/20 self-start sm:self-auto">
-                      <span className="w-2 h-2 rounded-full bg-emerald-500" />
-                      <span>{currentPreset.handoffTime}</span>
-                    </div>
+              {/* Window Body: Connected Agent Workflow Stream */}
+              <div className="p-4 sm:p-6 space-y-4 relative">
+                
+                {/* Agent 1 Card */}
+                <div className="relative z-10 flex items-start gap-3 p-3.5 sm:p-4 rounded-xl bg-neutral-50 dark:bg-[#0F1420]/80 border border-neutral-200/80 dark:border-white/10 transition-all hover:border-[#00F2FE]/40">
+                  <div className="w-8 h-8 rounded-lg bg-blue-500/20 text-[#2563EB] dark:text-[#3B82F6] flex items-center justify-center shrink-0 border border-blue-500/30">
+                    <IconSparkles className="w-4.5 h-4.5" />
                   </div>
-
-                  {/* Injected Context Preview */}
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between text-xs">
-                      <span className="font-bold text-[#1D1D1F] dark:text-white">
-                        Auto-Prepared Context for {currentPreset.targetModel}:
-                      </span>
-                      <button
-                        onClick={handleCopyPayload}
-                        className="inline-flex items-center gap-1.5 text-[#0071E3] dark:text-[#2997FF] hover:underline font-semibold cursor-pointer"
-                      >
-                        {copied ? (
-                          <>
-                            <CheckIcon className="w-3.5 h-3.5 text-emerald-500" />
-                            <span className="text-emerald-500">Copied to clipboard</span>
-                          </>
-                        ) : (
-                          <>
-                            <CopyIcon className="w-3.5 h-3.5" />
-                            <span>Copy sample context</span>
-                          </>
-                        )}
-                      </button>
+                  <div className="flex-1 space-y-2">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-bold text-neutral-900 dark:text-white">Agent 1</span>
+                      <span className="text-[10px] font-mono text-neutral-400">2:14 PM</span>
                     </div>
-
-                    <div className="border border-neutral-200/80 dark:border-white/10 rounded-2xl p-4 font-mono text-xs whitespace-pre-wrap leading-relaxed bg-neutral-50/90 dark:bg-[#06060A] text-neutral-800 dark:text-neutral-200 shadow-inner">
-                      {currentPreset.payload}
-                    </div>
-                  </div>
-
-                  {/* Target Prompt Box Preview */}
-                  <div className="border border-neutral-200/80 dark:border-white/10 rounded-2xl p-4 transition-colors bg-white dark:bg-[#12121A]">
-                    <div className="flex items-center justify-between text-xs pb-2.5 border-b border-neutral-200/80 dark:border-white/10">
-                      <span className="font-semibold text-neutral-700 dark:text-neutral-300">
-                        Continue chatting in {currentPreset.targetModel}:
-                      </span>
-                      <span className="text-[11px] font-mono px-2.5 py-1 rounded-full bg-[#0071E3]/10 text-[#0071E3] dark:text-[#2997FF] border border-[#0071E3]/20 font-semibold">
-                        Shortcut: ⌘ + Shift + K
-                      </span>
-                    </div>
-                    <p className="text-xs mt-2.5 font-normal text-neutral-600 dark:text-neutral-300 leading-relaxed">
-                      Ready! Simply press Enter or continue typing. {currentPreset.targetModel} already knows your project guidelines.
+                    <p className="text-xs text-neutral-600 dark:text-neutral-300 leading-relaxed font-sans">
+                      Here's the project context and key requirements for the research analysis...
                     </p>
+                    <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-white dark:bg-[#151C2C] border border-neutral-200/80 dark:border-white/10 text-[11px] font-mono text-neutral-700 dark:text-neutral-300">
+                      <IconFileCode className="w-3.5 h-3.5 text-neutral-400" />
+                      <span>research-context.md</span>
+                      <span className="text-[9px] text-neutral-400">2.4 KB</span>
+                    </div>
                   </div>
-                </motion.div>
-              </AnimatePresence>
 
-              {/* Footer row inside demo card */}
-              <div className="pt-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs border-t border-neutral-200/80 dark:border-white/10 text-neutral-500 dark:text-neutral-400 font-mono">
-                <span>Zero cloud servers • Everything stored locally in your browser storage</span>
-                {onExploreEngineering && (
-                  <button
-                    onClick={onExploreEngineering}
-                    className="text-[#0071E3] dark:text-[#2997FF] hover:underline inline-flex items-center gap-1 font-semibold cursor-pointer"
-                  >
-                    <span>Curious how it works? See technical details</span>
-                    <ArrowRightIcon className="w-3 h-3" />
-                  </button>
-                )}
+                  {/* Connected Handoff Complete Badge */}
+                  <div className="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-cyan-500/10 text-[#00F2FE] border border-[#00F2FE]/30 text-[10px] font-mono shrink-0 self-center">
+                    <IconCheck className="w-3 h-3 text-[#00F2FE]" />
+                    <span>Handoff complete</span>
+                  </div>
+                </div>
+
+                {/* Connecting Node Graphic */}
+                <div className="flex justify-center -my-2 relative z-0">
+                  <div className="w-0.5 h-6 bg-gradient-to-b from-[#3B82F6] to-[#00F2FE] relative">
+                    <span className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-[#00F2FE] shadow-sm shadow-[#00F2FE]" />
+                  </div>
+                </div>
+
+                {/* Agent 2 Card */}
+                <div className="relative z-10 flex items-start gap-3 p-3.5 sm:p-4 rounded-xl bg-neutral-50 dark:bg-[#0F1420]/80 border border-neutral-200/80 dark:border-white/10 transition-all hover:border-[#00F2FE]/40 ml-2 sm:ml-6">
+                  <div className="w-8 h-8 rounded-lg bg-teal-500/20 text-[#00F2FE] flex items-center justify-center shrink-0 border border-teal-500/30">
+                    <div className="w-4 h-4 rounded-md border-2 border-current" />
+                  </div>
+                  <div className="flex-1 space-y-2">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-bold text-neutral-900 dark:text-white">Agent 2</span>
+                      <span className="text-[10px] font-mono text-neutral-400">2:17 PM</span>
+                    </div>
+                    <p className="text-xs text-neutral-600 dark:text-neutral-300 leading-relaxed font-sans">
+                      Got it. I've analyzed the context and prepared the reasoning chain. Here are the key insights...
+                    </p>
+                    <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-white dark:bg-[#151C2C] border border-neutral-200/80 dark:border-white/10 text-[11px] font-mono text-neutral-700 dark:text-neutral-300">
+                      <IconFileCode className="w-3.5 h-3.5 text-neutral-400" />
+                      <span>analysis.md</span>
+                      <span className="text-[9px] text-neutral-400">4.8 KB</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Connecting Node Graphic 2 */}
+                <div className="flex justify-center -my-2 relative z-0">
+                  <div className="w-0.5 h-6 bg-gradient-to-b from-[#00F2FE] to-[#7C3AED] relative">
+                    <span className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-[#7C3AED] shadow-sm shadow-[#7C3AED]" />
+                  </div>
+                </div>
+
+                {/* Agent 3 Card */}
+                <div className="relative z-10 flex items-start gap-3 p-3.5 sm:p-4 rounded-xl bg-neutral-50 dark:bg-[#0F1420]/80 border border-neutral-200/80 dark:border-white/10 transition-all hover:border-[#00F2FE]/40 ml-4 sm:ml-12">
+                  <div className="w-8 h-8 rounded-lg bg-purple-500/20 text-[#A855F7] flex items-center justify-center shrink-0 border border-purple-500/30">
+                    <div className="w-4 h-4 rounded-full border-2 border-current flex items-center justify-center">
+                      <div className="w-1.5 h-1.5 rounded-full bg-current" />
+                    </div>
+                  </div>
+                  <div className="flex-1 space-y-2">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-bold text-neutral-900 dark:text-white">Agent 3</span>
+                      <span className="text-[10px] font-mono text-neutral-400">2:20 PM</span>
+                    </div>
+                    <p className="text-xs text-neutral-600 dark:text-neutral-300 leading-relaxed font-sans">
+                      Based on Agent 2's analysis, here's the final summary with recommendations...
+                    </p>
+                    <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-white dark:bg-[#151C2C] border border-neutral-200/80 dark:border-white/10 text-[11px] font-mono text-neutral-700 dark:text-neutral-300">
+                      <IconFileCode className="w-3.5 h-3.5 text-neutral-400" />
+                      <span>final-summary.md</span>
+                      <span className="text-[9px] text-neutral-400">3.1 KB</span>
+                    </div>
+                  </div>
+                </div>
+
               </div>
             </div>
-          </div>
-        </motion.div>
+          </motion.div>
+
+        </div>
       </div>
     </section>
   );

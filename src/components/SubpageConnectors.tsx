@@ -166,7 +166,7 @@ export const SubpageConnectors: React.FC<SubpageConnectorsProps> = ({ onNavigate
                     <IconWallet className="w-3.5 h-3.5" />
                   </div>
                   <span className="text-xs font-semibold text-neutral-900 dark:text-white leading-tight">
-                    AES-256 GCM
+                    Encrypted Vault
                   </span>
                 </div>
 

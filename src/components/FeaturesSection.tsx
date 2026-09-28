@@ -100,7 +100,7 @@ export const FeaturesSection: React.FC<FeaturesSectionProps> = ({ isDarkMode = t
       category: ['writers', 'devs', 'researchers'],
       title: '100% On-Device Privacy',
       subtitle: 'Your prompts never touch a central server',
-      whatItDoes: 'Stores all captured context in your local browser SQLite/IndexedDB encrypted with AES-256-GCM. Zero cloud telemetry.',
+      whatItDoes: 'Stores all captured context in your local browser storage with WebCrypto encryption. Zero cloud storage.',
       whyItMatters: 'Safe for proprietary codebases, confidential business emails, financial figures, and unreleased client research.',
       statBadge: 'Zero server storage',
       icon: ShieldCheckIcon

@@ -457,10 +457,10 @@ Target Goal: Continue task execution with loaded context.`,
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ duration: 0.3, delay: Math.min(idx * 0.04, 0.2) }}
                       onClick={() => setSelectedId(seg.id)}
-                      className={`p-4 rounded-2xl border transition-all cursor-pointer relative group ${
+                      className={`p-4 rounded-2xl border transition-all duration-200 ease-out cursor-pointer relative group hover:-translate-y-1 ${
                         isSelected
-                          ? 'bg-blue-50/80 dark:bg-[#141C2B] border-[#0071E3] dark:border-[#2997FF] shadow-xs ring-1 ring-[#0071E3]/20'
-                          : 'bg-white dark:bg-[#111118] border-neutral-200/80 dark:border-white/10 hover:border-neutral-300 dark:hover:border-white/20'
+                          ? 'bg-blue-50/80 dark:bg-[#141C2B] border-[#0071E3] dark:border-[#2997FF] shadow-md ring-1 ring-[#0071E3]/20 hover:shadow-xl dark:hover:shadow-black/70'
+                          : 'bg-white dark:bg-[#111118] border-neutral-200/80 dark:border-white/10 hover:border-neutral-300 dark:hover:border-white/25 shadow-xs hover:shadow-xl dark:hover:shadow-black/60'
                       }`}
                     >
                       {/* Top Row: Model & Pin/Delete */}
